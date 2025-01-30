@@ -232,13 +232,19 @@ for col in required_columns:
 # Streamlit app title
 st.markdown("""
     <style>
-    .title {
+    .title-main {
         color: #0b5394;
         font-size: 36px;
         font-weight: bold;
     }
+    .title-sub {
+        color: #0b5394;
+        font-size: 20px;
+        font-weight: bold;
+    }
     </style>
-    <div class="title">Calculadora de Rentabilidad Inmobiliaria</div>
+    <div class="title-main">Calculadora de Rentabilidad Inmobiliaria</div>
+    <div class="title-sub">Zaragoza</div>
     """, unsafe_allow_html=True)
 
 # Custom CSS to style the horizontal line
@@ -246,7 +252,7 @@ st.markdown("""
     <style>
         hr {
             border: 1px solid #0b5394 !important; /* Make the line bolder and blue */
-            margin: 20px 0; /* Add spacing above and below */
+            margin: 0px 0; /* Add spacing above and below */
             width: 100%; /* Ensure full width */
         }
     </style>
