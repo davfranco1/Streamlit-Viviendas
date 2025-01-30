@@ -1,5 +1,6 @@
 # Ficheros MacOS
 .DS_Store
+.pyc
 
 # Tokens
 .env

@@ -2,10 +2,6 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 import ast
-import time
-from PIL import Image
-import base64
-from io import BytesIO
 
 import sys
 sys.path.append("../src")
@@ -111,6 +107,19 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
+st.markdown("""
+    <style>
+        a {
+            color: #3253AA !important; /* Custom blue color */
+            text-decoration: none; /* Remove underline (optional) */
+            font-weight: bold; /* Make links bold (optional) */
+        }
+        a:hover {
+            color: #1F3A82 !important; /* Darker shade on hover */
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 
 # Create MongoDB connection
 bd = sm.conectar_a_mongo('ProyectoRentabilidad')
@@ -150,7 +159,7 @@ def render_image_carousel(image_urls):
     
     <style>
         .slick-prev:before, .slick-next:before {{
-            color: black; /* Change this to any color you want */
+            color: #3253AA; /* Change this to any color you want */
             font-size: 24px; /* Adjust size if needed */
         }}
     </style>
@@ -197,28 +206,9 @@ def go_to_results():
     st.session_state.navigation = "Resultados"
 
 
-
-# Function to convert image to Base64
-def get_image_base64(image):
-    buffered = BytesIO()
-    image.save(buffered, format="PNG")  # Convert to PNG
-    return base64.b64encode(buffered.getvalue()).decode()
-
-# Load and resize the image with high-quality resampling
-image = Image.open("images/logo_transparent.png")
-image_resized = image.resize((200, 200), Image.LANCZOS)  # Best for reducing size
-image_base64 = get_image_base64(image_resized)
-
 # Center the image in the sidebar using HTML & CSS
 with st.sidebar:
-    st.markdown(
-        f"""
-        <div style="display: flex; justify-content: center;">
-            <img src="data:image/png;base64,{image_base64}" width="200">
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.image("images/logo_transparent.png")
 
     # Navigation
     st.sidebar.radio(
@@ -414,9 +404,16 @@ elif st.session_state.page == "Resultados":
 
             st.markdown(
                 f"""
+                <style>
+                    .custom-title {{
+                        text-transform: capitalize; /* Capitalizes the first letter of each word */
+                        color: #1f67bf; /* Custom color */
+                        font-weight: bold; /* Optional: Makes it bold */
+                    }}
+                </style>
                 <div class="card">
                     <div class="card-details">
-                        <h3><a href="{idealista_url}" target="_blank">{row.get('direccion', 'Sin dirección')}</a></h3>
+                        <h3><a href="{idealista_url}" target="_blank" class="custom-title">{row.get('direccion', 'Sin dirección')}</a></h3>
                         <p><strong>Precio:</strong> €{row['precio']}</p>
                         <p><strong>Metros cuadrados:</strong> {row['tamanio']} m²</p>
                         <p><strong>Habitaciones:</strong> {row['habitaciones']}</p>
