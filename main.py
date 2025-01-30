@@ -242,17 +242,21 @@ st.markdown("""
         font-size: 20px;
         font-weight: bold;
     }
-    hr {
-        border: 2px solid #0b5394 !important; /* Make the line bolder and blue */
-        margin: 10px 0; /* Add spacing above and below */
-        width: 100%; /* Ensure full width */
-    }
     </style>
     <div class="title-main">Calculadora de Rentabilidad Inmobiliaria</div>
-    <hr>
     <div class="title-sub">Zaragoza</div>
-    <hr>
     """, unsafe_allow_html=True)
+
+# Custom CSS to style the horizontal line
+st.markdown("""
+    <style>
+        hr {
+            border: 1px solid #0b5394 !important; /* Make the line bolder and blue */
+            margin: 0px 0; /* Add spacing above and below */
+            width: 100%; /* Ensure full width */
+        }
+    </style>
+""", unsafe_allow_html=True)
 
 # Insert a bold, colored horizontal line
 st.markdown("<hr>", unsafe_allow_html=True)
