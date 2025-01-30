@@ -16,6 +16,13 @@ import src.soporte_mongo as sm
 # Set Streamlit page config
 st.set_page_config(page_title="Rentabilidad Inmobiliaria", layout="wide")
 
+st.config.set_option("theme.base", "light")
+st.config.set_option("theme.primaryColor", "#170058")
+st.config.set_option("theme.backgroundColor", "#EFEFEF")  # White background
+st.config.set_option("theme.secondaryBackgroundColor", "#EFEFEF")  # Light gray sidebar
+st.config.set_option("theme.textColor", "#00185E")  # text
+st.config.set_option("theme.font", "sans serif")  # Default font
+
 # Add custom styles
 st.markdown(
     """
@@ -30,7 +37,7 @@ st.markdown(
 
 
     .stApp {
-        background-color: #e6f7ff;
+        background-color: #EFEFEF;
         border-radius: 15px;
         padding: 20px;
     }
@@ -91,6 +98,20 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+
+st.markdown("""
+    <style>
+        [data-testid="stSidebar"] {
+            background: #4B5F6D !important; /* Sidebar background color */
+            padding: 20px !important; /* Internal spacing */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2) !important; /* Sidebar shadow */
+            color: white !important; /* Text color */
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+
+
 # Create MongoDB connection
 bd = sm.conectar_a_mongo('ProyectoRentabilidad')
 
@@ -127,6 +148,13 @@ def render_image_carousel(image_urls):
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
     
+    <style>
+        .slick-prev:before, .slick-next:before {{
+            color: black; /* Change this to any color you want */
+            font-size: 24px; /* Adjust size if needed */
+        }}
+    </style>
+
     <div class="carousel" style="max-width: 300px; margin: auto;">
         {"".join([f'<div><img src="{url}" style="width:100%; border-radius:10px; max-height:200px; object-fit:cover;"></div>' for url in image_urls])}
     </div>
@@ -168,14 +196,6 @@ def go_to_results():
     st.session_state.page = "Resultados"
     st.session_state.navigation = "Resultados"
 
-# Navigation
-st.sidebar.radio(
-    "Navegación",
-    ["Datos de compra y financiación", "Resultados", "Mapa", "Datos Completos"],
-    key="navigation",
-    on_change=handle_nav_change,
-    index=["Datos de compra y financiación", "Resultados", "Mapa", "Datos Completos"].index(st.session_state.page)
-)
 
 
 # Function to convert image to Base64
@@ -200,6 +220,15 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
+    # Navigation
+    st.sidebar.radio(
+        "Navegación",
+        ["Datos de compra y financiación", "Resultados", "Mapa", "Datos Completos"],
+        key="navigation",
+        on_change=handle_nav_change,
+        index=["Datos de compra y financiación", "Resultados", "Mapa", "Datos Completos"].index(st.session_state.page)
+    )
+
 
 data = load_data()
 
@@ -222,10 +251,36 @@ st.markdown("""
     <div class="title">Calculadora de Rentabilidad Inmobiliaria</div>
     """, unsafe_allow_html=True)
 
+# Custom CSS to style the horizontal line
+st.markdown("""
+    <style>
+        hr {
+            border: 1px solid #0b5394 !important; /* Make the line bolder and blue */
+            margin: 20px 0; /* Add spacing above and below */
+            width: 100%; /* Ensure full width */
+        }
+    </style>
+""", unsafe_allow_html=True)
 
+# Insert a bold, colored horizontal line
+st.markdown("<hr>", unsafe_allow_html=True)
+
+
+# Inject JavaScript to remove the number input spinner buttons
+st.markdown("""
+    <script>
+        // Wait until the page fully loads
+        document.addEventListener("DOMContentLoaded", function() {
+            let inputs = document.querySelectorAll('input[type=number]');
+            inputs.forEach(input => {
+                input.style.cssText = 'appearance: textfield; -moz-appearance: textfield;';
+            });
+        });
+    </script>
+""", unsafe_allow_html=True)
 
 if st.session_state.page == "Datos de compra y financiación":
-    st.markdown('<p style="color: #007bff; font-size: 18px;">Introduce los datos correspondientes a la compra y la financiación</p>', unsafe_allow_html=True)
+    st.markdown('<p style="color: #224094; font-size: 18px;">Introduce los datos correspondientes a la compra y la financiación</p>', unsafe_allow_html=True)
 
     # Create two columns
     col1, col2 = st.columns(2)
@@ -299,9 +354,10 @@ if st.session_state.page == "Datos de compra y financiación":
 
     if st.button("Ver resultados", on_click=go_to_results):
         pass
+    
 
 elif st.session_state.page == "Resultados":
-    st.markdown('<p style="color: #007bff; font-size: 18px;">Mostrando los resultados de tu consulta, de mayor a menor rentabilidad bruta.</p>', unsafe_allow_html=True)
+    st.markdown('<p style="color: #224094; font-size: 18px;">Mostrando los resultados de tu consulta, de mayor a menor rentabilidad bruta.</p>', unsafe_allow_html=True)
 
     # Filters
     col1, col2, col3 = st.columns(3)
