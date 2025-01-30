@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 import ast
+import math
 
 import sys
 sys.path.append("../src")
@@ -164,8 +165,8 @@ def render_image_carousel(image_urls):
         }}
     </style>
 
-    <div class="carousel" style="max-width: 300px; margin: auto;">
-        {"".join([f'<div><img src="{url}" style="width:100%; border-radius:10px; max-height:200px; object-fit:cover;"></div>' for url in image_urls])}
+    <div class="carousel" style="max-width: 90%; margin: auto;">
+        {"".join([f'<div><img src="{url}" style="width:100%; border-radius:10px; max-height:90%; object-fit:cover;"></div>' for url in image_urls])}
     </div>
 
     <script>
@@ -181,7 +182,7 @@ def render_image_carousel(image_urls):
     </script>
     """
 
-    st.components.v1.html(carousel_html, height=300)
+    st.components.v1.html(carousel_html, height=400)
 
 if 'page' not in st.session_state:
     st.session_state.page = "Datos de compra y financiación"
@@ -276,7 +277,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 if st.session_state.page == "Datos de compra y financiación":
-    st.markdown('<p style="color: #224094; font-size: 18px;">Introduce los datos correspondientes a la compra y la financiación</p>', unsafe_allow_html=True)
+    st.markdown('<p style="color: #224094; font-size: 18px;">Introduce los datos correspondientes a la compra y la financiación, seguido del botón <strong>Ver resultados<strong>.</p>', unsafe_allow_html=True)
 
     # Create two columns
     col1, col2 = st.columns(2)
@@ -353,7 +354,10 @@ if st.session_state.page == "Datos de compra y financiación":
     
 
 elif st.session_state.page == "Resultados":
-    st.markdown('<p style="color: #224094; font-size: 18px;">Mostrando los resultados de tu consulta, de mayor a menor rentabilidad bruta.</p>', unsafe_allow_html=True)
+    st.markdown(
+        '<p style="color: #224094; font-size: 18px;">Mostrando hasta <strong>20 resultados por página</strong> de tu consulta, ordenados de mayor a menor rentabilidad bruta. Usa el selector de página para navegar entre los resultados. Clica en la dirección de la vivienda para ir al anuncio de idealista.</p>',
+        unsafe_allow_html=True
+    )
 
     # Filters
     col1, col2, col3 = st.columns(3)
@@ -396,10 +400,66 @@ elif st.session_state.page == "Resultados":
         # Calculate profitability
         resultados_rentabilidad = sr.calcular_rentabilidad_inmobiliaria_wrapper(
             filtered_data,
-            **st.session_state.inputs  # Aquí se pasa correctamente
+            **st.session_state.inputs  
         )
 
-        for _, row in resultados_rentabilidad.iterrows():
+        # Pagination setup
+        results_per_page = 3
+        total_pages = math.ceil(len(filtered_data) / results_per_page)
+
+        # Apply custom styles using Streamlit's internal container system
+        st.markdown(
+            """
+            <style>
+                /* Ensure only this specific selectbox is targeted */
+                div[data-testid="stSelectbox"] {
+                    max-width: 100px !important;  /* Reduce width */
+                }
+
+                /* Remove background, border, and shadow */
+                div[data-testid="stSelectbox"] > div {
+                    background-color: transparent !important;  /* Make background invisible */
+                    border: none !important;  /* No borders */
+                    box-shadow: none !important;  /* No shadow */
+                    padding: 2px 5px !important;  /* Adjust padding */
+                }
+
+                /* Keep text readable */
+                div[data-testid="stSelectbox"] > div span {
+                    color: black !important;  /* Ensure text is visible */
+                    font-size: 14px !important;
+                }
+
+                /* Remove hover and focus effects */
+                div[data-testid="stSelectbox"] > div:hover,
+                div[data-testid="stSelectbox"] > div:focus {
+                    background-color: transparent !important;
+                    border: none !important;
+                    outline: none !important;
+                    box-shadow: none !important;
+                }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+
+        # Place pagination selector inside a Streamlit container to ensure the styling applies correctly
+        with st.container():
+            page_number = st.selectbox(
+                "Página:",
+                options=list(range(1, total_pages + 1)),
+                index=0,
+                key="pagination_dropdown"
+            )
+        
+        # Calculate indexes for slicing data
+        start_idx = (page_number - 1) * results_per_page
+        end_idx = start_idx + results_per_page
+
+        # Get paginated data
+        paginated_data = resultados_rentabilidad.iloc[start_idx:end_idx]
+
+        for _, row in paginated_data.iterrows():
             image_urls = row["urls_imagenes"] if row["urls_imagenes"] else []
             rentabilidad_bruta = (
                 f"{float(row['Rentabilidad Bruta']):.2f}%" 
@@ -412,19 +472,19 @@ elif st.session_state.page == "Resultados":
                 f"""
                 <style>
                     .custom-title {{
-                        text-transform: capitalize; /* Capitalizes the first letter of each word */
-                        color: #1f67bf; /* Custom color */
-                        font-weight: bold; /* Optional: Makes it bold */
+                        text-transform: capitalize;
+                        color: #1f67bf;
+                        font-weight: bold;
                     }}
                 </style>
                 <div class="card">
                     <div class="card-details">
                         <h3><a href="{idealista_url}" target="_blank" class="custom-title">{row.get('direccion', 'Sin dirección')}</a></h3>
-                        <p><strong>Precio:</strong> €{row['precio']}</p>
+                        <p><strong>Distrito:</strong> {row['distrito']}</p>
+                        <p><strong>Precio:</strong> {row['precio']}€</p>
                         <p><strong>Metros cuadrados:</strong> {row['tamanio']} m²</p>
                         <p><strong>Habitaciones:</strong> {row['habitaciones']}</p>
                         <p><strong>Rentabilidad Bruta:</strong> {rentabilidad_bruta}</p>
-                        <p><strong>Distrito:</strong> {row['distrito']}</p>
                     </div>
                     <div>
                         <img src="{image_urls[0]}" alt="Imagen de la propiedad">
@@ -436,33 +496,76 @@ elif st.session_state.page == "Resultados":
 
             # Expandable details with carousel and bullets
             with st.expander(f"Más detalles: {row.get('direccion', 'Sin dirección')}"):
-                # Display row details as bullet points
-                st.markdown(
-                    f"""
-                    - **Precio**: €{row['precio']}
-                    - **Metros cuadrados**: {row['tamanio']} m²
-                    - **Habitaciones**: {row['habitaciones']}
-                    - **Estado del baño**: {row['puntuacion_banio']}
-                    - **Estado de la cocina**: {row['puntuacion_cocina']}
-                    """
-                )
+                col1, col2 = st.columns([1, 2])
 
-                # Image carousel
-                if image_urls:
-                    render_image_carousel(image_urls)
+                with col1:
+                    st.markdown(
+                        f"""
+                        - **Precio**: €{row['precio']}
+                        - **Metros cuadrados**: {row['tamanio']} m²
+                        - **Planta**: {row['planta']}
+                        - **Habitaciones y baños**: {row['habitaciones']} y {row['banios']}. 
+                        - **Estado del baño**: {row['puntuacion_banio']}
+                        - **Estado de la cocina**: {row['puntuacion_cocina']}
+                        - **Cuota de la hipoteca**: {row['Cuota Mensual Hipoteca']}€
+                        - **Período de recuperación (ROCE)**: {row['ROCE (Años)']} años
+                        
+                        - **Contacto**: {row['anunciante']}, {row['contacto']}
+                        """
+                    )
+
+                with col2:
+                    # Image carousel
+                    if image_urls:
+                        render_image_carousel(image_urls)
+                
+                st.markdown(
+                        f"""
+                        - **Descripción**: {row['descripcion']}
+                        """
+                    )
+
 
         st.markdown("</div>", unsafe_allow_html=True)
+
+        # Show current page and total pages
+        st.markdown(f"**Página {page_number} de {total_pages}**")
+
     else:
         st.write("No hay propiedades que coincidan con los filtros.")
 
+
 elif st.session_state.page == "Mapa":
-    st.markdown('<p style="color: #007bff; font-size: 18px;">Configura tus filtros.</p>', unsafe_allow_html=True)
-    selected_distritos = st.multiselect("Selecciona distritos", options=data["distrito"].unique(), default=data["distrito"].unique())
-    precio_min, precio_max = st.slider("Precio (€)", int(data["precio"].min()), int(data["precio"].max()), (int(data["precio"].min()), int(data["precio"].max())))
-    metros_min, metros_max = st.slider("Metros cuadrados", int(data["tamanio"].min()), int(data["tamanio"].max()), (int(data["tamanio"].min()), int(data["tamanio"].max())))
-    
-    filtered_data = data[(data["distrito"].isin(selected_distritos)) & (data["tamanio"].between(metros_min, metros_max)) & (data["precio"].between(precio_min, precio_max))].dropna(subset=["lat", "lon"])
-    
+    st.markdown('<p style="color: #224094; font-size: 18px;">Configura tus filtros.</p>', unsafe_allow_html=True)
+
+    selected_distritos = st.multiselect("Selecciona los distritos", options=data["distrito"].unique(), default=data["distrito"].unique())
+
+    # Create two columns for the filters
+    col1, col2 = st.columns(2)
+
+    with col1:
+        precio_min, precio_max = st.slider(
+            "Precio (€)",
+            int(data["precio"].min()),
+            int(data["precio"].max()),
+            (int(data["precio"].min()), int(data["precio"].max()))
+        )
+
+    with col2:
+        metros_min, metros_max = st.slider(
+            "Metros cuadrados",
+            int(data["tamanio"].min()),
+            int(data["tamanio"].max()),
+            (int(data["tamanio"].min()), int(data["tamanio"].max()))
+        )
+
+    # Filter the data based on selected options
+    filtered_data = data[
+        (data["distrito"].isin(selected_distritos)) &
+        (data["tamanio"].between(metros_min, metros_max)) &
+        (data["precio"].between(precio_min, precio_max))
+    ].dropna(subset=["lat", "lon"])
+
     if not filtered_data.empty:
         # Calculate profitability
         resultados_rentabilidad = sr.calcular_rentabilidad_inmobiliaria_wrapper(
@@ -478,8 +581,8 @@ elif st.session_state.page == "Mapa":
                 lon="lon",
                 hover_name="direccion",
                 hover_data=["precio", "habitaciones", "tamanio", "Rentabilidad Bruta"],
-                zoom=10,
-                height=500
+                zoom=12,
+                height=600
             ).update_layout(mapbox_style="open-street-map"),
             use_container_width=True
         )
@@ -489,6 +592,8 @@ elif st.session_state.page == "Mapa":
 
 elif st.session_state.page == "Datos Completos":
     st.header("Datos completos con filtros")
+    st.markdown('<p style="color: #224094; font-size: 18px;">Los resultados se muestran en orden de Rentabilidad Bruta descendiente.</p>', unsafe_allow_html=True)
+
 
     # Dropdown to select districts
     selected_distritos = st.multiselect(
@@ -498,21 +603,26 @@ elif st.session_state.page == "Datos Completos":
         key="distrito_filtro"
     )
 
-    # Slider for price range
-    precio_min, precio_max = st.slider(
-        "Precio (€)",
-        int(data["precio"].min()), int(data["precio"].max()),
-        (int(data["precio"].min()), int(data["precio"].max())),
-        key="precio_filtro"
-    )
+    # Create two columns for filters
+    col1, col2 = st.columns(2)
 
-    # Slider for square meters range
-    metros_min, metros_max = st.slider(
-        "Metros cuadrados",
-        int(data["tamanio"].min()), int(data["tamanio"].max()),
-        (int(data["tamanio"].min()), int(data["tamanio"].max())),
-        key="metros_filtro"
-    )
+    with col1:
+        # Slider for price range
+        precio_min, precio_max = st.slider(
+            "Precio (€)",
+            int(data["precio"].min()), int(data["precio"].max()),
+            (int(data["precio"].min()), int(data["precio"].max())),
+            key="precio_filtro"
+        )
+
+    with col2:
+        # Slider for square meters range
+        metros_min, metros_max = st.slider(
+            "Metros cuadrados",
+            int(data["tamanio"].min()), int(data["tamanio"].max()),
+            (int(data["tamanio"].min()), int(data["tamanio"].max())),
+            key="metros_filtro"
+        )
 
     # Apply filters
     filtered_data = data[
@@ -541,6 +651,10 @@ elif st.session_state.page == "Datos Completos":
             default=available_columns,  # Show all allowed columns by default
             key="columnas_filtro"
         )
+
+        # Sort the data by "Rentabilidad Bruta" in descending order
+        if "Rentabilidad Bruta" in resultados_rentabilidad.columns:
+            resultados_rentabilidad = resultados_rentabilidad.sort_values(by="Rentabilidad Bruta", ascending=False)
 
         # Display DataFrame with selected columns
         st.dataframe(resultados_rentabilidad[selected_columns])
