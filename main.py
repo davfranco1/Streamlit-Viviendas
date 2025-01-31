@@ -1,6 +1,7 @@
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+import plotly.graph_objects as go
 import ast
 import math
 
@@ -26,16 +27,18 @@ st.config.set_option("theme.font", "sans serif")  # Default font
 st.markdown(
     """
     <style>
-    /* Responsive Container */
     .block-container {
-        padding: 3rem 10%; /* Use percentages for dynamic width */
-        max-width: 100%;
+        padding-top: 5rem;
+        padding-bottom: 5rem;
+        padding-left: 5rem;
+        padding-right: 5rem;
     }
-
-    /* Responsive padding adjustments */
+    
+    /* Make padding responsive on mobile */
     @media (max-width: 768px) {
         .block-container {
-            padding: 2rem 5%;
+            padding-left: 1rem;
+            padding-right: 1rem;
         }
     }
 
@@ -129,6 +132,16 @@ st.markdown(
         [data-testid="stSidebar"] {
             padding: 10px !important;
         }
+    }
+
+    .custom-title {
+    text-transform: capitalize;
+    color: #3253AA !important;  /* Ensure color applies */
+    font-weight: bold;
+    text-decoration: none;  /* Remove underline */
+    }
+    .custom-title:hover {
+        text-decoration: underline; /* Add underline on hover */
     }
 
     </style>
@@ -508,13 +521,6 @@ elif st.session_state.page == "Resultados":
 
             st.markdown(
                 f"""
-                <style>
-                    .custom-title {{
-                        text-transform: capitalize;
-                        color: #1f67bf;
-                        font-weight: bold;
-                    }}
-                </style>
                 <div class="card">
                     <div class="card-details">
                         <h3><a href="{idealista_url}" target="_blank" class="custom-title">{row.get('direccion', 'Sin dirección')}</a></h3>
@@ -617,19 +623,47 @@ elif st.session_state.page == "Mapa":
             **st.session_state.inputs
         )
 
-        # Map visualization
-        st.plotly_chart(
-            px.scatter_mapbox(
-                resultados_rentabilidad,
-                lat="lat",
-                lon="lon",
-                hover_name="direccion",
-                hover_data=["precio", "tamanio", "habitaciones", "Rentabilidad Bruta", "alquiler_predicho", "Cuota Mensual Hipoteca"],
-                zoom=12,
-                height=600
-            ).update_layout(mapbox_style="open-street-map"),
-            use_container_width=True
+        # Base Map Figure
+        fig = go.Figure()
+
+        # Add Property Locations
+        fig.add_trace(go.Scattermapbox(
+            lat=resultados_rentabilidad["lat"],
+            lon=resultados_rentabilidad["lon"],
+            mode="markers",
+            marker=dict(
+                size=10,
+                symbol="circle",
+                color="#3253aa"
+            ),
+            text=resultados_rentabilidad.apply(lambda row: (
+                f"<b>{row['direccion']}</b><br>"
+                f"Precio: {row['precio']}€<br>"
+                f"Tamaño: {row['tamanio']} m²<br>"
+                f"Habitaciones: {row['habitaciones']}<br>"
+                f"Rentabilidad Bruta: {row['Rentabilidad Bruta']:.2f}%<br>"
+                f"Alquiler Predicho: {row['alquiler_predicho']}€<br>"
+                f"Cuota Mensual Hipoteca: {row['Cuota Mensual Hipoteca']}€"
+            ), axis=1),
+            hoverinfo="text"
+        ))
+
+        # 📌 Set Proper Layout (Fix Blank Space Issue)
+        fig.update_layout(
+            mapbox=dict(
+                style="open-street-map",
+                zoom=11,
+                center=dict(
+                    lat=resultados_rentabilidad["lat"].mean(),
+                    lon=resultados_rentabilidad["lon"].mean()
+                )
+            ),
+            margin=dict(l=0, r=0, t=0, b=0),
+            #height=600  # Set fixed height to prevent blank space
         )
+
+        st.plotly_chart(fig, use_container_width=True)
+
     else:
         st.write("No hay datos para mostrar en el mapa.")
 
@@ -715,82 +749,157 @@ elif st.session_state.page == "Datos Completos":
 elif st.session_state.page == "Información de Soporte":
 
     st.header("Métricas Financieras para Inversión en Vivienda")
+
+    st.markdown("### Métricas Básicas")
+    st.write("""
+    - **Coste Total**: Suma total de todos los gastos relacionados con la adquisición de la vivienda, incluyendo el precio de compra, reformas, comisiones, impuestos y gastos notariales.
     
-    st.markdown("### 1. Beneficio Antes de Impuestos")
-    st.write("El beneficio antes de impuestos representa el dinero neto que se obtiene del alquiler después de descontar costos operativos y financieros, pero antes de aplicar impuestos.")
-    st.latex(r"""
-        \begin{aligned}
-        \text{Beneficio} &= \text{Ingresos Anuales} - \text{Seguro Impago} - \text{Seguro Hogar} \\
-        &- \text{Seguro de Vida} - \text{IBI} - \text{Impuesto de Basuras} \\
-        &- \text{Mantenimiento y Comunidad} - \text{Periodos Vacíos} \\
-        &- \text{Intereses Hipotecarios}
-        \end{aligned}
-        """)
+    - **Cash Necesario Compra**: Cantidad de dinero efectivo necesario para realizar la compra, incluyendo la entrada, comisiones, gastos notariales e impuestos.
     
-    st.markdown("### 2. Rentabilidad Bruta")
-    st.write("Mide el porcentaje de ingresos por alquiler en relación con el precio de compra de la vivienda.")
-    st.latex(r"""
-        \text{Rentabilidad Bruta} = \left( \frac{\text{Ingresos Anuales}}{\text{Precio de Compra}} \right) \times 100
-        """)
+    - **Cash Total Compra y Reforma**: Total de efectivo necesario incluyendo tanto los gastos de compra como los de reforma.
+    """)
+
+    st.markdown("### Métricas de Rentabilidad")
+    st.write("""
+    - **Rentabilidad Bruta**: Porcentaje que representa los ingresos anuales por alquiler respecto al coste total de la inversión, sin considerar gastos ni impuestos.
     
-    st.markdown("### 3. Rentabilidad Neta")
-    st.write("Considera costos adicionales, como impuestos y mantenimiento, proporcionando una visión más precisa del retorno real.")
-    st.latex(r"""
-        \text{Rentabilidad Neta} = \left( \frac{\text{Beneficio Antes de Impuestos}}{\text{Precio de Compra}} \right) \times 100
-        """)
+    - **Rentabilidad Neta**: Porcentaje que representa el beneficio neto anual (después de todos los gastos e impuestos) respecto al coste total de la inversión.
     
-    st.markdown("### 4. Cálculo de la Hipoteca")
-    st.write("Determina el pago mensual y total de la hipoteca basado en el monto prestado y la tasa de interés.")
-    st.latex(r"""
-        \text{Pago Mensual} = \frac{\text{Monto Prestado} \times \text{TIN}}{1 - (1 + \text{TIN})^{-\text{Anios} \times 12}}
-        """)
-    st.latex(r"""
-        \text{Pago Total} = \text{Pago Mensual} \times \text{Anios} \times 12
-        """)
+    - **Beneficio Antes de Impuestos**: Ingresos por alquiler menos todos los gastos operativos y financieros, antes de aplicar impuestos.
     
-    st.markdown("### 5. Cash Necesario para la Compra")
-    st.write("Suma los costos de entrada, comisión de agencia, notaría e impuestos.")
-    st.latex(r"""
-        \text{Cash Necesario} = \text{Pago Entrada} + \text{Comisión Agencia} + \text{Coste Notario} + \text{ITP}
-        """)
+    - **Beneficio Neto**: Beneficio final después de considerar todos los gastos e impuestos.
+    """)
+
+    st.markdown("### Métricas de Flujo de Caja")
+    st.write("""
+    - **Cashflow Antes de Impuestos**: Beneficio antes de impuestos menos el pago anual del principal de la hipoteca.
     
-    st.markdown("### 6. Cash Total Compra y Reforma")
-    st.write("Incluye todos los costos de compra más los costos de reforma.")
-    st.latex(r"""
-        \text{Cash Total} = \text{Pago Entrada} + \text{Coste Reformas} + \text{Coste Notario} + \text{ITP}
-        """)
+    - **Cashflow Después de Impuestos**: Beneficio neto menos el pago anual del principal de la hipoteca.
+    """)
+
+    st.markdown("### Métricas de Retorno de Inversión")
+    st.write("""
+    - **ROCE (Return on Capital Employed)**: Porcentaje que representa los ingresos anuales respecto al capital total invertido. Mide la eficiencia con la que se utiliza el capital invertido.
     
-    st.markdown("### 7. Beneficio Neto")
-    st.write("Se obtiene tras aplicar impuestos al beneficio antes de impuestos.")
-    st.latex(r"""
-        \text{Beneficio Neto} = \text{Beneficio Antes de Impuestos} + \text{IRPF}
-        """)
+    - **ROCE Años**: Tiempo estimado en años para recuperar el capital invertido basado en el ROCE.
     
-    st.markdown("### 8. Cashflow Antes de Impuestos")
-    st.write("Beneficio antes de impuestos menos el pago anual de capital hipotecario.")
-    st.latex(r"""
-        \text{Cashflow Antes de Impuestos} = \text{Beneficio Antes de Impuestos} - \text{Capital Anual}
-        """)
+    - **Cash-on-Cash Return (COCR)**: Porcentaje que representa el flujo de caja después de impuestos respecto al capital total invertido. Mide el rendimiento efectivo anual de la inversión.
     
-    st.markdown("### 9. Cashflow Después de Impuestos")
-    st.write("Beneficio neto menos el pago anual de capital hipotecario.")
-    st.latex(r"""
-        \text{Cashflow Después de Impuestos} = \text{Beneficio Neto} - \text{Capital Anual}
-        """)
+    - **COCR Años**: Tiempo estimado en años para recuperar la inversión inicial basado en el flujo de caja después de impuestos.
+    """)
+
+    st.markdown("### Costes Operativos")
+    st.write("""
+    - **Seguro Impago**: Seguro que cubre el riesgo de impago por parte del inquilino (4% de los ingresos anuales).
     
-    st.markdown("### 10. ROCE (Return on Capital Employed)")
-    st.write("Mide la rentabilidad en relación con el capital invertido.")
-    st.latex(r"""
-        \text{ROCE} = \left( \frac{\text{Alquiler Anual}}{\text{Inversión Inicial}} \right) \times 100
-        """)
+    - **Seguro Hogar**: Seguro obligatorio que cubre daños en la vivienda (coste fijo anual).
     
-    st.markdown("### 11. Cash-on-Cash Return (COCR)")
-    st.write("Mide la rentabilidad del cashflow después de impuestos en relación con la inversión inicial.")
-    st.latex(r"""
-        \text{COCR} = \left( \frac{\text{Cashflow Después de Impuestos}}{\text{Inversión Inicial}} \right) \times 100
-        """)
+    - **IBI (Impuesto sobre Bienes Inmuebles)**: Impuesto municipal anual sobre la propiedad (0.4047% del valor catastral).
     
-    st.markdown("### Valores Fijos en el Cálculo")
+    - **Mantenimiento y Comunidad**: Gastos estimados para el mantenimiento del inmueble y cuotas de comunidad (10% de los ingresos anuales).
+    
+    - **Periodos Vacíos**: Provisión para períodos sin inquilinos (5% de los ingresos anuales).
+    """)
+
+    st.markdown("### Aspectos Fiscales")
+    st.write("""
+    - **Base Amortización**: Valor sobre el que se calcula la amortización anual, incluyendo el precio de compra y otros gastos asociados.
+    
+    - **Amortización Anual**: Desgaste teórico anual del inmueble que puede deducirse fiscalmente (3% de la base de amortización).
+    
+    - **Deducción Larga Duración**: Reducción fiscal aplicable al beneficio menos la amortización (60% del resultado).
+    
+    - **IRPF**: Impuesto sobre la Renta aplicado a la base imponible después de deducciones.
+    """)
+
+    st.markdown("### 1. Costes Iniciales")
+    st.write("Cálculo de los costes iniciales y necesidades de efectivo.")
+    st.latex(r"""
+    \begin{aligned}
+    \text{ITP} &= \text{Precio Compra} \times \text{Tasa ITP} \\
+    \text{Coste Notario} &= \text{Precio Compra} \times \text{Tasa Notario} \\
+    \text{Coste Total} &= \text{Precio Compra} + \text{Coste Reformas} + \text{Comisión Agencia} + \text{Coste Notario} + \text{ITP} \\
+    \text{Pago Entrada} &= \text{Porcentaje Entrada} \times \text{Precio Compra} \\
+    \text{Cash Necesario Compra} &= \text{Pago Entrada} + \text{Comisión Agencia} + \text{Coste Notario} + \text{ITP} \\
+    \text{Cash Total Compra y Reforma} &= \text{Pago Entrada} + \text{Coste Reformas} + \text{Coste Notario} + \text{ITP}
+    \end{aligned}
+    """)
+
+    st.markdown("### 2. Costes Operativos Anuales")
+    st.write("Cálculo de los gastos operativos anuales del inmueble.")
+    st.latex(r"""
+    \begin{aligned}
+    \text{Seguro Impago} &= \text{Tasa Seguro Impago} \times \text{Ingresos Anuales} \\
+    \text{Seguro Hogar} &= \text{CONST\_SEGURO\_HOGAR} \\
+    \text{IBI} &= \text{Precio Vivienda} \times \text{Tasa IBI} \\
+    \text{Impuesto Basuras} &= \text{CONST\_IMPUESTO\_BASURAS} \\
+    \text{Mantenimiento y Comunidad} &= \text{Tasa Mantenimiento} \times \text{Ingresos Anuales} \\
+    \text{Periodos Vacíos} &= \text{Tasa Periodos Vacíos} \times \text{Ingresos Anuales}
+    \end{aligned}
+    """)
+
+    st.markdown("### 3. Cálculos Hipotecarios")
+    st.write("Cálculos relacionados con la hipoteca y sus pagos.")
+    st.latex(r"""
+    \begin{aligned}
+    \text{Monto Préstamo} &= \text{Precio Compra} \times (1 - \text{Porcentaje Entrada}) \\
+    \text{Hipoteca Mensual} &= \text{PMT}(\text{TIN}/12, \text{Años} \times 12, \text{Monto Préstamo}) \\
+    \text{Total Pagado} &= \text{Hipoteca Mensual} \times (\text{Años} \times 12) \\
+    \text{Interés Total} &= \text{Total Pagado} - \text{Monto Préstamo} \\
+    \text{Capital Anual} &= \text{Monto Préstamo}/\text{Años} \\
+    \text{Capital Mensual} &= \text{Capital Anual}/12 \\
+    \text{Interés Anual} &= \text{Interés Total}/\text{Años}
+    \end{aligned}
+    """)
+
+    st.markdown("### 4. Cálculo del Beneficio")
+    st.write("Cálculo del beneficio antes de impuestos.")
+    st.latex(r"""
+    \begin{aligned}
+    \text{Beneficio Antes de Impuestos} &= \text{Ingresos Anuales} - \text{Seguro Impago} - \text{Seguro Hogar} \\
+    &- \text{Seguro Vida} - \text{IBI} - \text{Impuesto Basuras} \\
+    &- \text{Mantenimiento y Comunidad} - \text{Periodos Vacíos} \\
+    &- \text{Intereses Hipoteca}
+    \end{aligned}
+    """)
+
+    st.markdown("### 5. Cálculos Fiscales")
+    st.write("Cálculos relacionados con impuestos y deducciones.")
+    st.latex(r"""
+    \begin{aligned}
+    \text{Base Amortización} &= \text{Porcentaje Amortización} \times \text{Precio Compra} + \\
+    &(\text{Coste Reformas} + \text{Comisión Agencia} + \text{Coste Notario} + \text{ITP}) \\
+    \text{Amortización Anual} &= \text{Tasa Amortización} \times \text{Base Amortización} \\
+    \text{Deducción Larga Duración} &= (\text{Beneficio Antes de Impuestos} - \text{Amortización Anual}) \times \text{Tasa Deducción} \\
+    \text{IRPF} &= -(\text{Deducción Larga Duración} \times \text{Tipo IRPF}) \\
+    \text{Beneficio Neto} &= \text{Beneficio Antes de Impuestos} + \text{IRPF}
+    \end{aligned}
+    """)
+
+    st.markdown("### 6. Métricas de Rentabilidad")
+    st.write("Cálculo de las principales métricas de rentabilidad.")
+    st.latex(r"""
+    \begin{aligned}
+    \text{Rentabilidad Bruta} &= \frac{\text{Ingresos Anuales}}{\text{Coste Total}} \times 100 \\
+    \text{Rentabilidad Neta} &= \frac{\text{Beneficio Neto}}{\text{Coste Total}} \times 100 \\
+    \text{Cashflow Antes de Impuestos} &= \text{Beneficio Antes de Impuestos} - \text{Capital Anual} \\
+    \text{Cashflow Después de Impuestos} &= \text{Beneficio Neto} - \text{Capital Anual}
+    \end{aligned}
+    """)
+
+    st.markdown("### 7. Métricas de Retorno de Inversión")
+    st.write("Cálculo de métricas ROI y años de recuperación.")
+    st.latex(r"""
+    \begin{aligned}
+    \text{Inversión Inicial} &= \text{Pago Entrada} + \text{Coste Reformas} + \text{Comisión Agencia} + \text{Coste Notario} + \text{ITP} \\
+    \text{ROCE} &= \frac{\text{Ingresos Anuales}}{\text{Inversión Inicial}} \times 100 \\
+    \text{ROCE Años} &= \frac{\text{Pago Entrada}}{\text{Pago Entrada} \times \text{ROCE}} \times 100 \\
+    \text{COCR} &= \frac{\text{Cashflow Después de Impuestos}}{\text{Inversión Inicial}} \times 100 \\
+    \text{COCR Años} &= \frac{\text{Inversión Inicial}}{\text{Cashflow Después de Impuestos}}
+    \end{aligned}
+    """)
+    
+    st.markdown("### Valores Constantes en el Cálculo")
     st.write("Algunos valores utilizados en los cálculos tienen montos fijos:")
     st.write("- Impuesto de Basuras Ayuntamiento Zaragoza: 283€")
     st.write("- Seguro de Hogar: 176.29€. Fuente: https://selectra.es/seguros/seguros-hogar/precios-seguros-hogar")
@@ -800,3 +909,5 @@ elif st.session_state.page == "Información de Soporte":
     st.write("- IBI Ayuntamiento Zaragoza: 0.4047% del precio de compra")
     st.write("- Coste Notario: 2% del precio de compra")
     st.write("- ITP Zaragoza: 8% del precio de compra")
+    st.write("- Tasa de Deducción por Larga Duración: 60%")
+    st.write("- Tasa de Amortización: 3%")
