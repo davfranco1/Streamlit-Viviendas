@@ -159,14 +159,25 @@ def render_image_carousel(image_urls):
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
     
     <style>
+        .carousel {{
+            max-width: 90%;
+            margin: auto;
+            height: 290px; /* Set desired height */
+        }}
+        .carousel img {{
+            width: 100%;
+            height: 290px; /* Set desired height */
+            border-radius: 10px;
+            object-fit: cover;
+        }}
         .slick-prev:before, .slick-next:before {{
-            color: #3253AA; /* Change this to any color you want */
-            font-size: 24px; /* Adjust size if needed */
+            color: #3253AA;
+            font-size: 24px;
         }}
     </style>
 
-    <div class="carousel" style="max-width: 90%; margin: auto;">
-        {"".join([f'<div><img src="{url}" style="width:100%; border-radius:10px; max-height:90%; object-fit:cover;"></div>' for url in image_urls])}
+    <div class="carousel">
+        {"".join([f'<div><img src="{url}" alt="carousel-image"></div>' for url in image_urls])}
     </div>
 
     <script>
@@ -181,8 +192,8 @@ def render_image_carousel(image_urls):
     }});
     </script>
     """
+    st.components.v1.html(carousel_html, height=300)
 
-    st.components.v1.html(carousel_html, height=400)
 
 if 'page' not in st.session_state:
     st.session_state.page = "Datos de compra y financiación"
@@ -214,10 +225,10 @@ with st.sidebar:
     # Navigation
     st.sidebar.radio(
         "Navegación",
-        ["Datos de compra y financiación", "Resultados", "Mapa", "Datos Completos"],
+        ["Datos de compra y financiación", "Resultados", "Mapa", "Datos Completos", "Información de Soporte"],
         key="navigation",
         on_change=handle_nav_change,
-        index=["Datos de compra y financiación", "Resultados", "Mapa", "Datos Completos"].index(st.session_state.page)
+        index=["Datos de compra y financiación", "Resultados", "Mapa", "Datos Completos", "Información de Soporte"].index(st.session_state.page)
     )
 
 
@@ -482,7 +493,7 @@ elif st.session_state.page == "Resultados":
                         <h3><a href="{idealista_url}" target="_blank" class="custom-title">{row.get('direccion', 'Sin dirección')}</a></h3>
                         <p><strong>Distrito:</strong> {row['distrito']}</p>
                         <p><strong>Precio:</strong> {row['precio']}€</p>
-                        <p><strong>Metros cuadrados:</strong> {row['tamanio']} m²</p>
+                        <p><strong>Tamaño:</strong> {row['tamanio']} m²</p>
                         <p><strong>Habitaciones:</strong> {row['habitaciones']}</p>
                         <p><strong>Rentabilidad Bruta:</strong> {rentabilidad_bruta}</p>
                     </div>
@@ -501,15 +512,15 @@ elif st.session_state.page == "Resultados":
                 with col1:
                     st.markdown(
                         f"""
-                        - **Precio**: €{row['precio']}
-                        - **Metros cuadrados**: {row['tamanio']} m²
+                        - **Precio**: {row['precio']}€
+                        - **Tamaño**: {row['tamanio']} m²
                         - **Planta**: {row['planta']}
                         - **Habitaciones y baños**: {row['habitaciones']} y {row['banios']}. 
                         - **Estado del baño**: {row['puntuacion_banio']}
                         - **Estado de la cocina**: {row['puntuacion_cocina']}
+                        - **Alquiler predicho**: {row['alquiler_predicho']}
                         - **Cuota de la hipoteca**: {row['Cuota Mensual Hipoteca']}€
                         - **Período de recuperación (ROCE)**: {row['ROCE (Años)']} años
-                        
                         - **Contacto**: {row['anunciante']}, {row['contacto']}
                         """
                     )
@@ -661,3 +672,93 @@ elif st.session_state.page == "Datos Completos":
 
     else:
         st.write("No hay datos que coincidan con los filtros.")
+
+
+elif st.session_state.page == "Información de Soporte":
+
+    st.header("Métricas Financieras para Inversión en Vivienda")
+    
+    st.markdown("### 1. Beneficio Antes de Impuestos")
+    st.write("El beneficio antes de impuestos representa el dinero neto que se obtiene del alquiler después de descontar costos operativos y financieros, pero antes de aplicar impuestos.")
+    st.latex(r"""
+        \begin{aligned}
+        \text{Beneficio} &= \text{Ingresos Anuales} - \text{Seguro Impago} - \text{Seguro Hogar} \\
+        &- \text{Seguro de Vida} - \text{IBI} - \text{Impuesto de Basuras} \\
+        &- \text{Mantenimiento y Comunidad} - \text{Periodos Vacíos} \\
+        &- \text{Intereses Hipotecarios}
+        \end{aligned}
+        """)
+    
+    st.markdown("### 2. Rentabilidad Bruta")
+    st.write("Mide el porcentaje de ingresos por alquiler en relación con el precio de compra de la vivienda.")
+    st.latex(r"""
+        \text{Rentabilidad Bruta} = \left( \frac{\text{Ingresos Anuales}}{\text{Precio de Compra}} \right) \times 100
+        """)
+    
+    st.markdown("### 3. Rentabilidad Neta")
+    st.write("Considera costos adicionales, como impuestos y mantenimiento, proporcionando una visión más precisa del retorno real.")
+    st.latex(r"""
+        \text{Rentabilidad Neta} = \left( \frac{\text{Beneficio Antes de Impuestos}}{\text{Precio de Compra}} \right) \times 100
+        """)
+    
+    st.markdown("### 4. Cálculo de la Hipoteca")
+    st.write("Determina el pago mensual y total de la hipoteca basado en el monto prestado y la tasa de interés.")
+    st.latex(r"""
+        \text{Pago Mensual} = \frac{\text{Monto Prestado} \times \text{TIN}}{1 - (1 + \text{TIN})^{-\text{Anios} \times 12}}
+        """)
+    st.latex(r"""
+        \text{Pago Total} = \text{Pago Mensual} \times \text{Anios} \times 12
+        """)
+    
+    st.markdown("### 5. Cash Necesario para la Compra")
+    st.write("Suma los costos de entrada, comisión de agencia, notaría e impuestos.")
+    st.latex(r"""
+        \text{Cash Necesario} = \text{Pago Entrada} + \text{Comisión Agencia} + \text{Coste Notario} + \text{ITP}
+        """)
+    
+    st.markdown("### 6. Cash Total Compra y Reforma")
+    st.write("Incluye todos los costos de compra más los costos de reforma.")
+    st.latex(r"""
+        \text{Cash Total} = \text{Pago Entrada} + \text{Coste Reformas} + \text{Coste Notario} + \text{ITP}
+        """)
+    
+    st.markdown("### 7. Beneficio Neto")
+    st.write("Se obtiene tras aplicar impuestos al beneficio antes de impuestos.")
+    st.latex(r"""
+        \text{Beneficio Neto} = \text{Beneficio Antes de Impuestos} + \text{IRPF}
+        """)
+    
+    st.markdown("### 8. Cashflow Antes de Impuestos")
+    st.write("Beneficio antes de impuestos menos el pago anual de capital hipotecario.")
+    st.latex(r"""
+        \text{Cashflow Antes de Impuestos} = \text{Beneficio Antes de Impuestos} - \text{Capital Anual}
+        """)
+    
+    st.markdown("### 9. Cashflow Después de Impuestos")
+    st.write("Beneficio neto menos el pago anual de capital hipotecario.")
+    st.latex(r"""
+        \text{Cashflow Después de Impuestos} = \text{Beneficio Neto} - \text{Capital Anual}
+        """)
+    
+    st.markdown("### 10. ROCE (Return on Capital Employed)")
+    st.write("Mide la rentabilidad en relación con el capital invertido.")
+    st.latex(r"""
+        \text{ROCE} = \left( \frac{\text{Alquiler Anual}}{\text{Inversión Inicial}} \right) \times 100
+        """)
+    
+    st.markdown("### 11. Cash-on-Cash Return (COCR)")
+    st.write("Mide la rentabilidad del cashflow después de impuestos en relación con la inversión inicial.")
+    st.latex(r"""
+        \text{COCR} = \left( \frac{\text{Cashflow Después de Impuestos}}{\text{Inversión Inicial}} \right) \times 100
+        """)
+    
+    st.markdown("### Valores Fijos en el Cálculo")
+    st.write("Algunos valores utilizados en los cálculos tienen montos fijos:")
+    st.write("- Impuesto de Basuras Ayuntamiento Zaragoza: 283€")
+    st.write("- Seguro de Hogar: 176.29€. Fuente: https://selectra.es/seguros/seguros-hogar/precios-seguros-hogar")
+    st.write("- Seguro de Impago: 4% del ingreso anual")
+    st.write("- Mantenimiento y Comunidad: 10% del ingreso anual. Fuente: https://www.donpiso.com/blog/mantener-piso-vacio-cuesta-2-300-euros-al-ano/")
+    st.write("- Periodos Vacíos: 5% del ingreso anual")
+    st.write("- IBI Ayuntamiento Zaragoza: 0.4047% del precio de compra")
+    st.write("- Coste Notario: 2% del precio de compra")
+    st.write("- ITP Zaragoza: 8% del precio de compra")
