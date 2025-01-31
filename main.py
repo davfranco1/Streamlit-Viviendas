@@ -217,7 +217,6 @@ def handle_nav_change():
 
 def go_to_results():
     st.session_state.page = "Resultados"
-    st.session_state.navigation = "Resultados"
 
 
 # Center the image in the sidebar using HTML & CSS
