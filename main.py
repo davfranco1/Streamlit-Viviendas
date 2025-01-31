@@ -38,7 +38,7 @@ st.markdown(
     .stApp {
         background-color: #EFEFEF;
         border-radius: 15px;
-        padding: 20px;
+        padding: 0px;
     }
 
     .scrollable-container {
