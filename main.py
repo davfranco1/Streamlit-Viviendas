@@ -400,7 +400,7 @@ if st.session_state.page == "Datos de compra y financiación":
 
 elif st.session_state.page == "Resultados":
     st.markdown(
-        '<p style="color: #224094; font-size: 18px;">Mostrando hasta <strong>20 resultados por página</strong> de tu consulta, ordenados de mayor a menor rentabilidad bruta. Usa el selector de página para navegar entre los resultados. Clica en la dirección de la vivienda para ir al anuncio de idealista.</p>',
+        '<p style="color: #224094; font-size: 18px;">Mostrando hasta <strong>20 resultados por página</strong>, ordenados de mayor a menor rentabilidad bruta. Usa el selector de página para navegar entre los resultados. Haz click en la dirección de la vivienda para ir al anuncio de idealista.</p>',
         unsafe_allow_html=True
     )
 
@@ -551,7 +551,7 @@ elif st.session_state.page == "Resultados":
                         - **Habitaciones y baños**: {row['habitaciones']} y {row['banios']}. 
                         - **Estado del baño**: {row['puntuacion_banio']}
                         - **Estado de la cocina**: {row['puntuacion_cocina']}
-                        - **Alquiler predicho**: {row['alquiler_predicho']}
+                        - **Alquiler predicho**: {row['alquiler_predicho']}€
                         - **Cuota de la hipoteca**: {row['Cuota Mensual Hipoteca']}€
                         - **Período de recuperación (ROCE)**: {row['ROCE (Años)']} años
                         - **Contacto**: {row['anunciante']}, {row['contacto']}
@@ -637,7 +637,8 @@ elif st.session_state.page == "Mapa":
                 color="#3253aa"
             ),
             text=resultados_rentabilidad.apply(lambda row: (
-                f"<b>{row['direccion']}</b><br>"
+                f"<b><a href='https://www.idealista.com/inmueble/{row['codigo']}/' target='_blank' style='color:#3253aa;'>"
+                f"{row['direccion']} (ir a idealista)</a></b><br>"
                 f"Precio: {row['precio']}€<br>"
                 f"Tamaño: {row['tamanio']} m²<br>"
                 f"Habitaciones: {row['habitaciones']}<br>"
@@ -648,7 +649,6 @@ elif st.session_state.page == "Mapa":
             hoverinfo="text"
         ))
 
-        # 📌 Set Proper Layout (Fix Blank Space Issue)
         fig.update_layout(
             mapbox=dict(
                 style="open-street-map",
