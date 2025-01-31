@@ -26,6 +26,23 @@ st.config.set_option("theme.font", "sans serif")  # Default font
 st.markdown(
     """
     <style>
+    .block-container {
+        padding-top: 5rem;
+        padding-bottom: 0rem;
+        padding-left: 5rem;
+        padding-right: 5rem;
+    }
+    
+    /* Hide top padding in other elements */
+    .element-container {
+        margin-top: -0.5rem;
+    }
+    
+    /* Also hide padding in markdown elements */
+    .stMarkdown {
+        margin-top: 0.5rem;
+    }
+
     /* Style for input elements like selectbox, number input, slider, and radio buttons */
     .stSelectbox, .stNumberInput, .stSlider, .stRadio {
         background-color: white;
@@ -38,7 +55,7 @@ st.markdown(
     .stApp {
         background-color: #EFEFEF;
         border-radius: 15px;
-        padding: 0px;
+        padding: 20px;
     }
 
     .scrollable-container {
