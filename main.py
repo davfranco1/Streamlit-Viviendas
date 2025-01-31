@@ -113,15 +113,11 @@ st.markdown(
 
     /* Responsive adjustments */
     @media (max-width: 768px) {
-        .card {
-            flex-direction: column; /* Stack items vertically on small screens */
-            align-items: flex-start;
-        }
 
         .card img {
-            width: 80px; /* Slightly smaller images on mobile */
-            height: 80px;
-            max-width: 80px;
+            width: 100px; /* Slightly smaller images on mobile */
+            height: 100px;
+            max-width: 100px;
         }
     }
 
