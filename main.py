@@ -363,7 +363,7 @@ if st.session_state.page == "Datos de compra y financiación":
 
     # Add price reduction checkbox
     if "aplicar_reduccion" not in st.session_state:
-        st.session_state.aplicar_reduccion = False
+        st.session_state.aplicar_reduccion = True
     
     st.session_state.aplicar_reduccion = st.checkbox(
         "Aplicar una reducción del 10% a los precios de compra.",
