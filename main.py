@@ -74,7 +74,6 @@ st.markdown(
         background-color: #f9f9f9;
     }
 
-    /* Responsive Cards */
     .card {
         background-color: #ffffff;
         border: 1px solid #cccccc;
@@ -84,66 +83,38 @@ st.markdown(
         box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
         display: flex;
         align-items: center;
-        gap: 15px; /* Ensures spacing between image and text */
     }
 
-    /* Restrict image size while keeping it aligned */
     .card img {
-        width: 200px; /* Set a reasonable default width */
-        height: 200px;
-        max-width: 200px; /* Ensures it does not expand */
+        width: 150px;
+        height: 150px;
         object-fit: cover;
         border-radius: 10px;
         border: 1px solid #cccccc;
-        flex-shrink: 0; /* Prevents image from shrinking */
     }
 
-    /* Ensure text fills remaining space */
-    .card-details {
-        flex: 1; /* Allows text to take available space */
-        padding-right: 15px;
-    }
-
-    /* Title formatting */
-    .card-details h3 {
-        color: #007bff;
-        margin-bottom: 5px;
-        font-size: 1.2rem;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-
-        .card img {
-            width: 100px; /* Slightly smaller images on mobile */
-            height: 100px;
-            max-width: 100px;
-        }
-    }
-
-    /* Text details inside cards */
     .card-details {
         flex: 1;
         padding-right: 15px;
     }
 
-    /* Responsive Fonts */
     .card-details h3 {
         color: #007bff;
         margin-bottom: 5px;
         text-decoration: none;
-        font-size: 1.2rem; /* Scalable */
     }
 
-    /* Links Styling */
-    a {
-        color: #3253AA !important;
+    .card-details h3 a {
+        color: #007bff;
         text-decoration: none;
-        font-weight: bold;
     }
 
-    a:hover {
-        color: #1F3A82 !important;
+    .card-details h3 a:hover {
+        text-decoration: underline;
+    }
+
+    .card-details p {
+        margin: 5px 0;
     }
 
     /* Responsive Sidebar */
