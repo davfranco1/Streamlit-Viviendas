@@ -11,7 +11,9 @@ import src.soporte_rentabilidad as sr
 import src.soporte_mongo as sm
 
 # Set Streamlit page config
-st.set_page_config(page_title="Rentabilidad Inmobiliaria", layout="wide")
+st.set_page_config(page_title="Rentabilidad Inmobiliaria",
+                   page_icon="images/favicon.ico",
+                   layout="wide")
 
 st.config.set_option("theme.base", "light")
 st.config.set_option("theme.primaryColor", "#170058")
