@@ -362,6 +362,16 @@ if st.session_state.page == "Datos de compra y financiación":
         key="porcentaje_amortizacion"
     )
 
+    # Add price reduction checkbox
+    if "aplicar_reduccion" not in st.session_state:
+        st.session_state.aplicar_reduccion = False
+    
+    st.session_state.aplicar_reduccion = st.checkbox(
+        "Aplicar reducción del 10% a los precios de compra",
+        value=st.session_state.aplicar_reduccion,
+        key="checkbox_reduccion"
+    )
+
     if st.button("Ver resultados", on_click=go_to_results):
         pass
     
@@ -410,6 +420,12 @@ elif st.session_state.page == "Resultados":
     ].dropna(subset=["lat", "lon"])
 
     if not filtered_data.empty:
+
+        # Apply price reduction if checkbox is checked
+        if st.session_state.aplicar_reduccion:
+            filtered_data = filtered_data.copy()
+            filtered_data['precio'] = filtered_data['precio'] * 0.9
+
         # Calculate profitability
         resultados_rentabilidad = sr.calcular_rentabilidad_inmobiliaria_wrapper(
             filtered_data,
@@ -580,6 +596,12 @@ elif st.session_state.page == "Mapa":
     ].dropna(subset=["lat", "lon"])
 
     if not filtered_data.empty:
+        # Apply price reduction if checkbox is checked
+        if st.session_state.aplicar_reduccion:
+            filtered_data = filtered_data.copy()
+            filtered_data['precio'] = filtered_data['precio'] * 0.9
+
+
         # Calculate profitability
         resultados_rentabilidad = sr.calcular_rentabilidad_inmobiliaria_wrapper(
             filtered_data,
@@ -645,6 +667,11 @@ elif st.session_state.page == "Datos Completos":
     ]
 
     if not filtered_data.empty:
+        # Apply price reduction if checkbox is checked
+        if st.session_state.aplicar_reduccion:
+            filtered_data = filtered_data.copy()
+            filtered_data['precio'] = filtered_data['precio'] * 0.9
+
         # Run profitability calculations
         resultados_rentabilidad = sr.calcular_rentabilidad_inmobiliaria_wrapper(
             filtered_data,
