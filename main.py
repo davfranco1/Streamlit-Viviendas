@@ -26,24 +26,30 @@ st.config.set_option("theme.font", "sans serif")  # Default font
 st.markdown(
     """
     <style>
+    /* Responsive Container */
     .block-container {
-        padding-top: 3rem;
-        padding-bottom: 5rem;
-        padding-left: 5rem;
-        padding-right: 5rem;
+        padding: 3rem 10%; /* Use percentages for dynamic width */
+        max-width: 100%;
     }
-    
+
+    /* Responsive padding adjustments */
+    @media (max-width: 768px) {
+        .block-container {
+            padding: 2rem 5%;
+        }
+    }
+
     /* Hide top padding in other elements */
     .element-container {
         margin-top: -0.5rem;
     }
-    
-    /* Also hide padding in markdown elements */
+
+    /* Markdown elements spacing */
     .stMarkdown {
         margin-top: 0.5rem;
     }
 
-    /* Style for input elements like selectbox, number input, slider, and radio buttons */
+    /* Styling input elements */
     .stSelectbox, .stNumberInput, .stSlider, .stRadio {
         background-color: white;
         border: 2px solid #138cc6;
@@ -51,22 +57,24 @@ st.markdown(
         padding: 10px;
     }
 
-
     .stApp {
         background-color: #EFEFEF;
         border-radius: 15px;
         padding: 20px;
     }
 
+    /* Responsive scrollable container */
     .scrollable-container {
-        height: 500px;
-        overflow-y: scroll;
+        min-height: 300px;
+        max-height: 70vh; /* Makes it relative to the viewport height */
+        overflow-y: auto;
         padding: 10px;
         border: 1px solid #cccccc;
         border-radius: 10px;
         background-color: #f9f9f9;
     }
 
+    /* Responsive Cards */
     .card {
         background-color: #ffffff;
         border: 1px solid #cccccc;
@@ -76,70 +84,90 @@ st.markdown(
         box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
         display: flex;
         align-items: center;
+        gap: 15px; /* Ensures spacing between image and text */
     }
 
+    /* Restrict image size while keeping it aligned */
     .card img {
-        width: 150px;
-        height: 150px;
+        width: 200px; /* Set a reasonable default width */
+        height: 200px;
+        max-width: 200px; /* Ensures it does not expand */
         object-fit: cover;
         border-radius: 10px;
         border: 1px solid #cccccc;
+        flex-shrink: 0; /* Prevents image from shrinking */
     }
 
+    /* Ensure text fills remaining space */
+    .card-details {
+        flex: 1; /* Allows text to take available space */
+        padding-right: 15px;
+    }
+
+    /* Title formatting */
+    .card-details h3 {
+        color: #007bff;
+        margin-bottom: 5px;
+        font-size: 1.2rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .card {
+            flex-direction: column; /* Stack items vertically on small screens */
+            align-items: flex-start;
+        }
+
+        .card img {
+            width: 80px; /* Slightly smaller images on mobile */
+            height: 80px;
+            max-width: 80px;
+        }
+    }
+
+    /* Text details inside cards */
     .card-details {
         flex: 1;
         padding-right: 15px;
     }
 
+    /* Responsive Fonts */
     .card-details h3 {
         color: #007bff;
         margin-bottom: 5px;
         text-decoration: none;
+        font-size: 1.2rem; /* Scalable */
     }
 
-    .card-details h3 a {
-        color: #007bff;
+    /* Links Styling */
+    a {
+        color: #3253AA !important;
         text-decoration: none;
+        font-weight: bold;
     }
 
-    .card-details h3 a:hover {
-        text-decoration: underline;
+    a:hover {
+        color: #1F3A82 !important;
     }
 
-    .card-details p {
-        margin: 5px 0;
+    /* Responsive Sidebar */
+    [data-testid="stSidebar"] {
+        background: #4B5F6D !important;
+        padding: 15px !important;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2) !important;
+        color: white !important;
     }
+
+    @media (max-width: 768px) {
+        [data-testid="stSidebar"] {
+            padding: 10px !important;
+        }
+    }
+
     </style>
     """,
     unsafe_allow_html=True
 )
-
-
-st.markdown("""
-    <style>
-        [data-testid="stSidebar"] {
-            background: #4B5F6D !important; /* Sidebar background color */
-            padding: 20px !important; /* Internal spacing */
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2) !important; /* Sidebar shadow */
-            color: white !important; /* Text color */
-        }
-    </style>
-""", unsafe_allow_html=True)
-
-
-st.markdown("""
-    <style>
-        a {
-            color: #3253AA !important; /* Custom blue color */
-            text-decoration: none; /* Remove underline (optional) */
-            font-weight: bold; /* Make links bold (optional) */
-        }
-        a:hover {
-            color: #1F3A82 !important; /* Darker shade on hover */
-        }
-    </style>
-""", unsafe_allow_html=True)
-
 
 # Create MongoDB connection
 bd = sm.conectar_a_mongo('ProyectoRentabilidad')
@@ -259,7 +287,9 @@ for col in required_columns:
         st.error(f"Missing column: {col}. Please check your dataset.")
         st.stop()
 
+
 # Streamlit app title
+# Custom CSS to style the horizontal line
 st.markdown("""
     <style>
     .title-main {
@@ -272,21 +302,16 @@ st.markdown("""
         font-size: 20px;
         font-weight: bold;
     }
-    </style>
-    <div class="title-main">Calculadora de Rentabilidad Inmobiliaria</div>
-    <div class="title-sub">Zaragoza</div>
-    """, unsafe_allow_html=True)
-
-# Custom CSS to style the horizontal line
-st.markdown("""
-    <style>
         hr {
             border: 1px solid #0b5394 !important; /* Make the line bolder and blue */
             margin: 0px 0; /* Add spacing above and below */
             width: 100%; /* Ensure full width */
         }
     </style>
-""", unsafe_allow_html=True)
+    <div class="title-main">Calculadora de Rentabilidad Inmobiliaria</div>
+    <div class="title-sub">Zaragoza</div>
+    """, unsafe_allow_html=True)
+
 
 # Insert a bold, colored horizontal line
 st.markdown("<hr>", unsafe_allow_html=True)
@@ -304,6 +329,7 @@ st.markdown("""
         });
     </script>
 """, unsafe_allow_html=True)
+
 
 if st.session_state.page == "Datos de compra y financiación":
     st.markdown('<p style="color: #224094; font-size: 18px;">Introduce los datos correspondientes a la compra y la financiación, seguido del botón <strong>Ver resultados<strong>.</p>', unsafe_allow_html=True)
