@@ -591,7 +591,7 @@ elif st.session_state.page == "Mapa":
                 lat="lat",
                 lon="lon",
                 hover_name="direccion",
-                hover_data=["precio", "habitaciones", "tamanio", "Rentabilidad Bruta"],
+                hover_data=["precio", "tamanio", "habitaciones", "Rentabilidad Bruta", "alquiler_predicho", "Cuota Mensual Hipoteca"],
                 zoom=12,
                 height=600
             ).update_layout(mapbox_style="open-street-map"),
