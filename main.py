@@ -246,7 +246,7 @@ def go_to_results():
 
 # Center the image in the sidebar using HTML & CSS
 with st.sidebar:
-    st.image("images/logo_transparent.png")
+    st.image("images/logo_transparent-glow.png")
 
     # Navigation
     st.sidebar.radio(
@@ -268,9 +268,11 @@ for col in required_columns:
         st.stop()
 
 
-# Streamlit app title
-# Custom CSS to style the horizontal line
-st.markdown("""
+# Create layout with two columns
+col1, col2 = st.columns([3, 1])  # Left side (text) is wider than the right side (image)
+
+with col1:
+    st.markdown("""
     <style>
     .title-main {
         color: #0b5394;
@@ -282,15 +284,25 @@ st.markdown("""
         font-size: 20px;
         font-weight: bold;
     }
-        hr {
-            border: 1px solid #0b5394 !important; /* Make the line bolder and blue */
-            margin: 0px 0; /* Add spacing above and below */
-            width: 100%; /* Ensure full width */
-        }
+    hr {
+        border: 1px solid #0b5394 !important; /* Make the line bolder and blue */
+        margin: 0px 0; /* Add spacing above and below */
+        width: 100%; /* Ensure full width */
+    }
     </style>
     <div class="title-main">Calculadora de Rentabilidad Inmobiliaria</div>
     <div class="title-sub">Zaragoza</div>
     """, unsafe_allow_html=True)
+
+with col2:
+    st.markdown(
+        """
+        <div style="display: flex; justify-content: flex-end;">
+            <img src="images/zaragoza.png" width="100">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 # Insert a bold, colored horizontal line
