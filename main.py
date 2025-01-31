@@ -298,7 +298,7 @@ with col2:
     st.markdown(
         """
         <div style="display: flex; justify-content: flex-end;">
-            <img src="images/zaragoza.png" width="100">
+            <img src="https://raw.githubusercontent.com/davfranco1/Streamlit-Viviendas/refs/heads/main/images/zaragoza.png" width="100">
         </div>
         """,
         unsafe_allow_html=True
