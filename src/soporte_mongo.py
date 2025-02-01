@@ -16,9 +16,6 @@ mongo_uri = os.getenv("mongo_uri")
 if not mongo_uri:
     raise ValueError("mongo_uri no está definido en las variables de entorno")
 
-def mongo():
-    print(mongo_uri)
-
 
 # Conectar a MongoDB Atlas
 def conectar_a_mongo(nombre_bd: str):
