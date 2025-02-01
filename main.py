@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 import os
 import json
 import folium
-from streamlit_folium import folium_static
+from streamlit_folium import st_folium
 
 import sys
 sys.path.append("../src")
@@ -907,10 +907,18 @@ elif st.session_state.page == "Chatbot":
             render_image_carousel(urls_imagenes)
         
         with col2:
-            # Display location on a map
+
+        # Create a Folium map
             m = folium.Map(location=[property_data['lat'], property_data['lon']], zoom_start=15)
-            folium.Marker([property_data['lat'], property_data['lon']], popup=property_data['direccion']).add_to(m)
-            folium_static(m, height=300)
+
+            # Add a marker
+            folium.Marker(
+                [property_data['lat'], property_data['lon']], 
+                popup=property_data['direccion']
+            ).add_to(m)
+
+            # Display the map in Streamlit
+            st_folium(m, height=300)
         
         # Show profitability metrics
         st.markdown("### 📈 Rentabilidad")
