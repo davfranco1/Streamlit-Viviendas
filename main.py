@@ -920,7 +920,26 @@ elif st.session_state.page == "Chatbot":
 
             # Display the map in Streamlit
             st_folium(m, height=300)
+
+        # Show basic property info
+        st.markdown("### 🏠 Características del Inmueble")
+
+        col1, col2, col3 = st.columns(3)
+        col1.write(f"**Tamaño**: {property_data['tamanio']} m²")
+        col1.write(f"**Habitaciones**: {property_data['habitaciones']}")
+        col1.write(f"**Baños**: {property_data['banios']}")
+
+        col2.write(f"**Planta**: {property_data['planta']}")
+        col2.write(f"**Ascensor**: {'Sí' if property_data['ascensor'] else 'No'}")
+        col2.write(f"**Aire acondicionado**: {'Sí' if property_data['aire_acondicionado'] else 'No'}")
         
+        col3.write(f"**Patio**: {'Sí' if property_data['patio'] else 'No'}")
+        col3.write(f"**Terraza**: {'Sí' if property_data['terraza'] else 'No'}")
+        col3.write(f"**Trastero**: {'Sí' if property_data['trastero'] else 'No'}")
+
+        st.write(f"**Descripción**: {property_data['descripcion']}")
+        st.write(f"**Anunciante**: {property_data['anunciante']}. **Teléfono**: {property_data['contacto']}")
+
         # Show profitability metrics
         st.markdown("### 📈 Rentabilidad")
         col1, col2, col3 = st.columns(3)
@@ -942,25 +961,6 @@ elif st.session_state.page == "Chatbot":
         col10.metric("ROCE (Años)", f"{property_data['ROCE (Años)']} años")
         col11.metric("COCR (Años)", f"{property_data['COCR (Años)']} años")
         col12.metric("Alquiler Predicho", f"{property_data['alquiler_predicho']}€")
-        
-        # Show basic property info
-        st.markdown("### 🏠 Características del Inmueble")
-
-        col1, col2, col3 = st.columns(3)
-        col1.write(f"**Tamaño**: {property_data['tamanio']} m²")
-        col1.write(f"**Habitaciones**: {property_data['habitaciones']}")
-        col1.write(f"**Baños**: {property_data['banios']}")
-
-        col2.write(f"**Planta**: {property_data['planta']}")
-        col2.write(f"**Ascensor**: {'Sí' if property_data['ascensor'] else 'No'}")
-        col2.write(f"**Aire acondicionado**: {'Sí' if property_data['aire_acondicionado'] else 'No'}")
-        
-        col3.write(f"**Patio**: {'Sí' if property_data['patio'] else 'No'}")
-        col3.write(f"**Terraza**: {'Sí' if property_data['terraza'] else 'No'}")
-        col3.write(f"**Trastero**: {'Sí' if property_data['trastero'] else 'No'}")
-
-        st.write(f"**Descripción**: {property_data['descripcion']}")
-        st.write(f"**Anunciante**: {property_data['anunciante']}. **Teléfono**: {property_data['contacto']}")
 
     # Streamlit Layout
     st.markdown("### 🏡 Encuentra tu vivienda con nuestro chatbot (beta)")
