@@ -567,14 +567,14 @@ elif st.session_state.page == "Resultados":
                 with col1:
                     st.markdown(
                         f"""
-                        - **Precio**: {row['precio']}€
+                        - **Precio**: {row['precio']} €
                         - **Tamaño**: {row['tamanio']} m²
                         - **Planta**: {row['planta']}
                         - **Habitaciones**: {row['habitaciones']}
                         - **Baños**: {row['banios']}
                         - **Estado del baño**: {row['puntuacion_banio']}
                         - **Estado de la cocina**: {row['puntuacion_cocina']}
-                        - **Alquiler predicho**: {row['alquiler_predicho']}€
+                        - **Alquiler predicho**: {row['alquiler_predicho']} €
                         - **Contacto**: {row['anunciante']}, {row['contacto']}
                         """
                     )
@@ -595,18 +595,18 @@ elif st.session_state.page == "Resultados":
                 col1, col2, col3 = st.columns(3)
 
                 with col1:
-                    st.metric("Coste Total", f"€{row['Coste Total']:,.0f}")
+                    st.metric("Coste Total", f"{row['Coste Total']:,.0f}€")
                     st.metric("Rentabilidad Bruta", f"{row['Rentabilidad Bruta']}%")
-                    st.metric("Beneficio Antes de Impuestos", f"€{row['Beneficio Antes de Impuestos']:,.0f}")
+                    st.metric("Beneficio Antes de Impuestos", f"{row['Beneficio Antes de Impuestos']:,.0f}€")
                     st.metric("Rentabilidad Neta", f"{row['Rentabilidad Neta']}%")
-                    st.metric("Cuota Mensual Hipoteca", f"€{row['Cuota Mensual Hipoteca']:,.0f}")
+                    st.metric("Cuota Mensual Hipoteca", f"{row['Cuota Mensual Hipoteca']:,.0f}€")
 
                 with col2:
-                    st.metric("Cash Necesario Compra", f"€{row['Cash Necesario Compra']:,.0f}")
-                    st.metric("Cash Total Compra y Reforma", f"€{row['Cash Total Compra y Reforma']:,.0f}")
-                    st.metric("Beneficio Neto", f"€{row['Beneficio Neto']:,.0f}")
-                    st.metric("Cashflow Antes de Impuestos", f"€{row['Cashflow Antes de Impuestos']:,.0f}")
-                    st.metric("Cashflow Después de Impuestos", f"€{row['Cashflow Después de Impuestos']:,.0f}")
+                    st.metric("Cash Necesario Compra", f"{row['Cash Necesario Compra']:,.0f}€")
+                    st.metric("Cash Total Compra y Reforma", f"{row['Cash Total Compra y Reforma']:,.0f}€")
+                    st.metric("Beneficio Neto", f"{row['Beneficio Neto']:,.0f}€")
+                    st.metric("Cashflow Antes de Impuestos", f"{row['Cashflow Antes de Impuestos']:,.0f}€")
+                    st.metric("Cashflow Después de Impuestos", f"{row['Cashflow Después de Impuestos']:,.0f}€")
 
                 with col3:
                     st.metric("ROCE", f"{row['ROCE']}%")
@@ -890,7 +890,7 @@ elif st.session_state.page == "Chatbot":
     # Display Property Details
     def display_property_details(property_data):
         st.markdown(f"### 🏡 {property_data['tipo'].capitalize()} en {property_data['direccion']}")
-        st.markdown(f"🏷️ **Precio**: {property_data['precio']}€")
+        st.markdown(f"🏷️ **Precio**: {property_data['precio']} €")
         st.markdown(f"📍 **Ubicación**: {property_data['distrito']}")
         st.markdown(f"🔗 [Ver en Idealista](https://www.idealista.com/inmueble/{property_data['codigo']}/)")
                 
@@ -945,17 +945,17 @@ elif st.session_state.page == "Chatbot":
         col1, col2, col3 = st.columns(3)
         col1.metric("Rentabilidad Bruta", f"{property_data['Rentabilidad Bruta']}%")
         col2.metric("Rentabilidad Neta", f"{property_data['Rentabilidad Neta']}%")
-        col3.metric("Beneficio Neto", f"€{property_data['Beneficio Neto']}")
+        col3.metric("Beneficio Neto", f"{property_data['Beneficio Neto']}€")
         
         col4, col5, col6 = st.columns(3)
         col4.metric("ROCE", f"{property_data['ROCE']}%")
         col5.metric("Cash-on-Cash Return", f"{property_data['Cash-on-Cash Return']}%")
-        col6.metric("Cashflow Después de Impuestos", f"€{property_data['Cashflow Después de Impuestos']}")
+        col6.metric("Cashflow Después de Impuestos", f"{property_data['Cashflow Después de Impuestos']}€")
         
         col7, col8, col9 = st.columns(3)
-        col7.metric("Cuota Mensual Hipoteca", f"€{property_data['Cuota Mensual Hipoteca']}")
-        col8.metric("Cash Necesario Compra", f"€{property_data['Cash Necesario Compra']}")
-        col9.metric("Cash Total Compra y Reforma", f"€{property_data['Cash Total Compra y Reforma']}")
+        col7.metric("Cuota Mensual Hipoteca", f"{property_data['Cuota Mensual Hipoteca']}€")
+        col8.metric("Cash Necesario Compra", f"{property_data['Cash Necesario Compra']}€")
+        col9.metric("Cash Total Compra y Reforma", f"{property_data['Cash Total Compra y Reforma']}€")
         
         col10, col11, col12 = st.columns(3)
         col10.metric("ROCE (Años)", f"{property_data['ROCE (Años)']} años")
