@@ -258,10 +258,10 @@ with st.sidebar:
     # Navigation
     st.sidebar.radio(
         "Navegación",
-        ["Datos de compra y financiación", "Resultados", "Mapa", "Datos Completos", "Chatbot", "Información de Soporte"],
+        ["Datos de compra y financiación", "Resultados", "Mapa", "Chatbot", "Datos Completos", "Información de Soporte"],
         key="navigation",
         on_change=handle_nav_change,
-        index=["Datos de compra y financiación", "Resultados", "Mapa", "Datos Completos", "Chatbot", "Información de Soporte"].index(st.session_state.page)
+        index=["Datos de compra y financiación", "Resultados", "Mapa", "Chatbot", "Datos Completos", "Información de Soporte"].index(st.session_state.page)
     )
 
 
@@ -570,12 +570,11 @@ elif st.session_state.page == "Resultados":
                         - **Precio**: {row['precio']}€
                         - **Tamaño**: {row['tamanio']} m²
                         - **Planta**: {row['planta']}
-                        - **Habitaciones y baños**: {row['habitaciones']} y {row['banios']}. 
+                        - **Habitaciones**: {row['habitaciones']}
+                        - **Baños**: {row['banios']}
                         - **Estado del baño**: {row['puntuacion_banio']}
                         - **Estado de la cocina**: {row['puntuacion_cocina']}
                         - **Alquiler predicho**: {row['alquiler_predicho']}€
-                        - **Cuota de la hipoteca**: {row['Cuota Mensual Hipoteca']}€
-                        - **COCR**: {row['COCR (Años)']} años
                         - **Contacto**: {row['anunciante']}, {row['contacto']}
                         """
                     )
@@ -593,25 +592,27 @@ elif st.session_state.page == "Resultados":
                 # Add the profitability metrics table
                 st.markdown("**Métricas de rentabilidad**")
 
-                rentabilidad_df = pd.DataFrame([{
-                    "Coste Total": row["Coste Total"],
-                    "Rentabilidad Bruta": row["Rentabilidad Bruta"],
-                    "Beneficio Antes de Impuestos": row["Beneficio Antes de Impuestos"],
-                    "Rentabilidad Neta": row["Rentabilidad Neta"],
-                    "Cuota Mensual Hipoteca": row["Cuota Mensual Hipoteca"],
-                    "Cash Necesario Compra": row["Cash Necesario Compra"],
-                    "Cash Total Compra y Reforma": row["Cash Total Compra y Reforma"],
-                    "Beneficio Neto": row["Beneficio Neto"],
-                    "Cashflow Antes de Impuestos": row["Cashflow Antes de Impuestos"],
-                    "Cashflow Después de Impuestos": row["Cashflow Después de Impuestos"],
-                    "ROCE": row["ROCE"],
-                    "ROCE (Años)": row["ROCE (Años)"],
-                    "Cash-on-Cash Return": row["Cash-on-Cash Return"],
-                    "COCR (Años)": row["COCR (Años)"]
-                }])
+                col1, col2, col3 = st.columns(3)
 
-                st.dataframe(rentabilidad_df)
-                
+                with col1:
+                    st.metric("Coste Total", f"€{row['Coste Total']:,.0f}")
+                    st.metric("Rentabilidad Bruta", f"{row['Rentabilidad Bruta']}%")
+                    st.metric("Beneficio Antes de Impuestos", f"€{row['Beneficio Antes de Impuestos']:,.0f}")
+                    st.metric("Rentabilidad Neta", f"{row['Rentabilidad Neta']}%")
+                    st.metric("Cuota Mensual Hipoteca", f"€{row['Cuota Mensual Hipoteca']:,.0f}")
+
+                with col2:
+                    st.metric("Cash Necesario Compra", f"€{row['Cash Necesario Compra']:,.0f}")
+                    st.metric("Cash Total Compra y Reforma", f"€{row['Cash Total Compra y Reforma']:,.0f}")
+                    st.metric("Beneficio Neto", f"€{row['Beneficio Neto']:,.0f}")
+                    st.metric("Cashflow Antes de Impuestos", f"€{row['Cashflow Antes de Impuestos']:,.0f}")
+                    st.metric("Cashflow Después de Impuestos", f"€{row['Cashflow Después de Impuestos']:,.0f}")
+
+                with col3:
+                    st.metric("ROCE", f"{row['ROCE']}%")
+                    st.metric("ROCE (Años)", f"{row['ROCE (Años)']} años")
+                    st.metric("Cash-on-Cash Return", f"{row['Cash-on-Cash Return']}%")
+                    st.metric("COCR (Años)", f"{row['COCR (Años)']} años")           
 
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -963,7 +964,7 @@ elif st.session_state.page == "Chatbot":
 
     # Streamlit Layout
     st.markdown("### 🏡 Encuentra tu vivienda con nuestro chatbot (beta)")
-    st.write("Describe la vivienda con las características que estés buscando, y nuestro agente de inteligencia artificial encontrará la alternativa más indicada.")
+    st.write("Describe la vivienda con las características que estés buscando, y nuestro agente de inteligencia artificial encontrará la coincidencia más cercana.")
 
     user_query = st.text_input("📝 Ingresa tu búsqueda:", "", key="user_query", help="Ejemplo: Quiero un piso en Delicias con 2 habitaciones y ascensor")
     st.markdown("<style> div[data-testid='stTextInput'] input { font-size: 18px; font-weight: bold; padding: 10px; } </style>", unsafe_allow_html=True)
