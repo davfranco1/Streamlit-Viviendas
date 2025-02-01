@@ -453,6 +453,9 @@ elif st.session_state.page == "Resultados":
         (data["puntuacion_cocina"] >= estado_cocina)
     ].dropna(subset=["lat", "lon"])
 
+    # Show total number of results after filtering
+    st.write(f"**Total de resultados filtrados:** {len(filtered_data)}")
+
     if not filtered_data.empty:
 
         # Apply price reduction if checkbox is checked
@@ -565,13 +568,12 @@ elif st.session_state.page == "Resultados":
                         - **Estado de la cocina**: {row['puntuacion_cocina']}
                         - **Alquiler predicho**: {row['alquiler_predicho']}€
                         - **Cuota de la hipoteca**: {row['Cuota Mensual Hipoteca']}€
-                        - **Período de recuperación (ROCE)**: {row['ROCE (Años)']} años
+                        - **COCR**: {row['COCR (Años)']} años
                         - **Contacto**: {row['anunciante']}, {row['contacto']}
                         """
                     )
 
                 with col2:
-                    # Image carousel
                     if image_urls:
                         render_image_carousel(image_urls)
                 
@@ -581,6 +583,28 @@ elif st.session_state.page == "Resultados":
                         """
                     )
 
+                # Add the profitability metrics table
+                st.markdown("**Métricas de rentabilidad**")
+
+                rentabilidad_df = pd.DataFrame([{
+                    "Coste Total": row["Coste Total"],
+                    "Rentabilidad Bruta": row["Rentabilidad Bruta"],
+                    "Beneficio Antes de Impuestos": row["Beneficio Antes de Impuestos"],
+                    "Rentabilidad Neta": row["Rentabilidad Neta"],
+                    "Cuota Mensual Hipoteca": row["Cuota Mensual Hipoteca"],
+                    "Cash Necesario Compra": row["Cash Necesario Compra"],
+                    "Cash Total Compra y Reforma": row["Cash Total Compra y Reforma"],
+                    "Beneficio Neto": row["Beneficio Neto"],
+                    "Cashflow Antes de Impuestos": row["Cashflow Antes de Impuestos"],
+                    "Cashflow Después de Impuestos": row["Cashflow Después de Impuestos"],
+                    "ROCE": row["ROCE"],
+                    "ROCE (Años)": row["ROCE (Años)"],
+                    "Cash-on-Cash Return": row["Cash-on-Cash Return"],
+                    "COCR (Años)": row["COCR (Años)"]
+                }])
+
+                st.dataframe(rentabilidad_df)
+                
 
         st.markdown("</div>", unsafe_allow_html=True)
 
