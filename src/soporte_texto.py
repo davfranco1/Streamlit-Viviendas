@@ -165,6 +165,8 @@ def imprimir_metricas():
     st.write("- Tasa de Deducción por Larga Duración: 60%")
     st.write("- Tasa de Amortización: 3%")
 
+## Inputs usuario helpers
+
 entrada = "Se refiere a la cantidad de dinero que el comprador debe pagar por adelantado al adquirirla, expresado como un porcentaje del precio total del inmueble. Este pago inicial es la parte que no está financiada por la hipoteca. En España, la mayoría de los bancos financian hasta un 80% del valor de tasación o compra, por lo que el comprador debe aportar al menos un 20% de entrada."
 
 reformas = "El coste que estimas costará una reforma básica del tipo de piso que estás buscando. En 2024, una reforma de un baño cuesta entre 3.500 - 8.000 €, y la de cocina 5.000 - 15.000 €. Mejoras como la pintura interior cuestan entre 8 - 20 €/m², y entre 20 - 50 €/m² por un cambio del suelo. Cambiar las ventanas por aluminio o PVC implica entre 3.000 - 7.000 €. La electricidad y fontanería podrían oscilar entre 3.000 - 10.000 €."
