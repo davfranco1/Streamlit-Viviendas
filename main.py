@@ -331,7 +331,7 @@ st.markdown("""
 
 
 if st.session_state.page == "Datos de compra y financiación":
-    st.markdown('<p style="color: #224094; font-size: 18px;">Introduce los datos correspondientes a la compra y la financiación, seguido del botón <strong>Ver resultados<strong>. Puedes obtener más información deslizando sobre cada valor deslizando sobre la ❓</p>', unsafe_allow_html=True)
+    st.markdown('<p style="color: #224094; font-size: 18px;">Introduce los datos correspondientes a la compra y la financiación, seguido del botón <strong>Ver resultados</strong>. Puedes obtener más información deslizando sobre cada valor deslizando sobre la ❓</p>', unsafe_allow_html=True)
 
     # Create two columns
     col1, col2 = st.columns(2)
@@ -918,16 +918,18 @@ elif st.session_state.page == "Chatbot":
         
         with col2:
 
-        # Create a Folium map
+            # Create the map
             m = folium.Map(location=[property_data['lat'], property_data['lon']], zoom_start=15)
 
-            # Add a marker
-            folium.Marker(
-                [property_data['lat'], property_data['lon']], 
-                popup=property_data['direccion']
-            ).add_to(m)
+            # Ensure markers are added
+            marker = folium.Marker(
+                location=[property_data['lat'], property_data['lon']],
+                popup=property_data['direccion'],
+                icon=folium.Icon(color="blue", icon="info-sign")
+            )
+            marker.add_to(m)
 
-            # Display the map in Streamlit
+            # Display in Streamlit
             st_folium(m, height=300)
 
         # Show basic property info
