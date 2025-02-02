@@ -54,9 +54,9 @@ def generate_pdf(data):
     title_style = ParagraphStyle(
         'CustomTitle',
         parent=styles['Heading1'],
-        fontSize=20,
+        fontSize=18,
         textColor=PRIMARY_COLOR,
-        spaceAfter=15,
+        spaceAfter=10,
         alignment=1
     )
     
