@@ -154,7 +154,7 @@ def imprimir_metricas():
     
     st.markdown("### Valores Constantes en el Cálculo")
     st.write("""
-    ### Algunos valores utilizados en los cálculos tienen montos fijos:
+    Algunos valores utilizados en los cálculos tienen montos fijos:
 
     - **Impuesto de Basuras Ayuntamiento Zaragoza**: 283€
     - **Seguro de Hogar**: 176.29€. [Fuente](https://selectra.es/seguros/seguros-hogar/precios-seguros-hogar)
