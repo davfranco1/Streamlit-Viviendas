@@ -414,7 +414,7 @@ elif st.session_state.page == "Resultados":
                 st.download_button(
                 label="📄 Descargar informe en PDF",
                 data=pdf_buffer,
-                file_name=f"property_details_{row['direccion'].replace(' ', '_')}.pdf",  # Unique file name
+                file_name=f"detalles_vivienda_{row['direccion'].replace(' ', '_')}.pdf",  # Unique file name
                 mime="application/pdf",
                 key=f"download_pdf_{row['direccion']}"  # Unique key based on address
                 )        

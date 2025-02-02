@@ -33,7 +33,7 @@ def generate_pdf(data):
         'CustomSubtitle',
         parent=styles['Heading2'],
         fontSize=14,
-        spaceAfter=20
+        spaceAfter=10
     )
     
     # Add title and subtitle
@@ -88,7 +88,7 @@ def generate_pdf(data):
                 story.append(img)
                 story.append(Spacer(1, 20))
     except Exception as e:
-        print(f"Error loading image: {e}")
+        print(f"No se ha podido cargar la imagen: {e}")
     
     # Rentability Metrics Section
     story.append(Paragraph("Métricas de Rentabilidad", subtitle_style))
