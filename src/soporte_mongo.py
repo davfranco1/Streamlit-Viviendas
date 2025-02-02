@@ -32,63 +32,6 @@ def conectar_a_mongo(nombre_bd: str):
     return cliente[nombre_bd]
 
 
-# Función para subir un DataFrame a MongoDB
-def subir_dataframe_a_mongo(bd, df, nombre_coleccion):
-    """
-    Sube un DataFrame a una colección especificada de MongoDB.
-
-    Args:
-        bd (pymongo.database.Database): Objeto de la base de datos MongoDB.
-        df (pd.DataFrame): DataFrame a subir.
-        nombre_coleccion (str): Nombre de la colección en MongoDB donde se insertará el DataFrame.
-
-    Returns:
-        None
-    """
-    coleccion = bd[nombre_coleccion]
-    registros = df.to_dict(orient="records")
-    coleccion.insert_many(registros)
-    print(f"DataFrame subido a la colección: {nombre_coleccion}")
-
-
-# Función para subir un GeoDataFrame a MongoDB
-def subir_geodataframe_a_mongo(bd, gdf, nombre_coleccion):
-    """
-    Sube un GeoDataFrame a una colección especificada de MongoDB en formato GeoJSON.
-
-    Args:
-        bd (pymongo.database.Database): Objeto de la base de datos MongoDB.
-        gdf (geopandas.GeoDataFrame): GeoDataFrame a subir.
-        nombre_coleccion (str): Nombre de la colección en MongoDB donde se insertará el GeoDataFrame.
-
-    Returns:
-        None
-    """
-    coleccion = bd[nombre_coleccion]
-    registros_geojson = json.loads(gdf.to_json())['features']
-    coleccion.insert_many(registros_geojson)
-    print(f"GeoDataFrame subido a la colección: {nombre_coleccion}")
-
-
-# Función para eliminar una colección de MongoDB
-def eliminar_coleccion(db, collection_name):
-    """
-    Elimina una colección de una base de datos MongoDB.
-
-    Args:
-        db (pymongo.database.Database): Objeto de la base de datos MongoDB.
-        collection_name (str): Nombre de la colección a eliminar.
-
-    Returns:
-        str: Mensaje indicando si la colección fue eliminada o no existe.
-    """
-    if collection_name in db.list_collection_names():
-        db[collection_name].drop()
-        return f"La colección '{collection_name}' ha sido eliminada."
-    else:
-        return f"La colección '{collection_name}' no existe en la base de datos."
-    
-
 # Función para importar una colección de MongoDB a un DataFrame
 def importar_a_dataframe(bd, nombre_coleccion):
     """
@@ -118,8 +61,6 @@ def importar_a_dataframe(bd, nombre_coleccion):
         print(f"La colección '{nombre_coleccion}' está vacía o no existe.")
         return pd.DataFrame()
 
-
-from shapely.geometry import Point
 
 def importar_a_geodataframe(bd, nombre_coleccion):
     """

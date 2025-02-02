@@ -140,7 +140,7 @@ with col2:
     )
 
 # Insert a bold, colored horizontal line
-st.markdown("<hr><br>", unsafe_allow_html=True)
+st.markdown("<hr>", unsafe_allow_html=True)
 
 
 if st.session_state.page == "Datos de compra y financiación":
