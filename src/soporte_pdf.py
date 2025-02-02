@@ -15,7 +15,7 @@ def add_page_elements(canvas, doc):
     
     # Footer style
     footer_text = "Los resultados son estimaciones, y nunca deben considerarse consejos de inversión. Antes de invertir, asegúrese de consultar con un experto."
-    timestamp = f"||  Las Casas de David. Análisis inteligente para maximizar tu inversión.  || {datetime.now().strftime("Generado el %d/%m/%Y a las %H:%M")}"
+    timestamp = f"||  Las Casas de David. Análisis inteligente para maximizar tu inversión.  ||  {datetime.now().strftime("Generado el %d/%m/%Y a las %H:%M")}"
     
     # Set font for footer
     canvas.setFont('Helvetica', 8)
