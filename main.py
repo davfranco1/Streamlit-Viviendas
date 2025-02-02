@@ -242,8 +242,7 @@ if st.session_state.page == "Datos de compra y financiación":
         help="De media, en España, una vivienda suele venderse entre un 10 y 15% por debajo del precio publicado. Para que los cálculos de rentabilidad reflejen esta casuística, esta casilla se encuentra marcada por defecto."
     )
 
-    if st.button("Ver resultados"):
-        go_to_results()
+    st.button("Ver resultados", on_click=go_to_results)
     
 
 elif st.session_state.page == "Resultados":
