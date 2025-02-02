@@ -4,6 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import ast
 import math
+import time
 
 import sys
 sys.path.append("../src")
@@ -239,8 +240,13 @@ if st.session_state.page == "Datos de compra y financiación":
         help="De media, en España, una vivienda suele venderse entre un 10 y 15% por debajo del precio publicado. Para que los cálculos de rentabilidad reflejen esta casuística, esta casilla se encuentra marcada por defecto."
     )
 
-    if st.button("Ver resultados", on_click=go_to_results):
-        pass
+    def go_to_results():
+        with st.spinner("Cargando resultados..."):  # Display spinner for 2 seconds
+            time.sleep(2)
+        st.success("Resultados cargados!")  # Optional: Confirmation message
+
+    if st.button("Ver resultados"):
+        go_to_results()
     
 
 elif st.session_state.page == "Resultados":

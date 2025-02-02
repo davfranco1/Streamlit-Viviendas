@@ -71,7 +71,7 @@ def generate_pdf(data):
         story.append(Spacer(1, 20))
     
     # Property Title Section - Combined tipo and direccion
-    combined_title = f"{data['tipo'].capitalize()} en {data['direccion']}"
+    combined_title = f"Informe de {data['tipo'].capitalize()} en {data['direccion']}"
     story.append(Paragraph(combined_title, title_style))
     story.append(Spacer(1, 20))
     
@@ -87,7 +87,7 @@ def generate_pdf(data):
                 property_image.drawWidth = 3 * inch
                 property_image.drawHeight = 2.5 * inch
     except Exception as e:
-        print(f"Error loading image: {e}")
+        print(f"Error al cargar la imagen: {e}")
     
     # Key Highlights Box
     highlights = [
