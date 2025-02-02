@@ -1,71 +1,50 @@
 from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-from reportlab.lib.utils import ImageReader
 from reportlab.lib import colors
-from reportlab.platypus import Table, TableStyle
-from reportlab.platypus import Paragraph
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
 from io import BytesIO
 import requests
 
 def generate_pdf(data):
     buffer = BytesIO()
-    c = canvas.Canvas(buffer, pagesize=letter)
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=letter,
+        rightMargin=50,
+        leftMargin=50,
+        topMargin=50,
+        bottomMargin=50
+    )
     
-    # Define page dimensions
-    page_width, page_height = letter
-    margin_x = 50
-    y_position = page_height - 70  # Start position below the title
-
-    # Idealista Listing URL
-    idealista_url = f"https://www.idealista.com/inmueble/{data['codigo']}/"
-
-    def check_page_break(c, y_position, min_height_needed=100):
-        """Checks if there is enough space, otherwise creates a new page."""
-        if y_position < min_height_needed:
-            c.showPage()  # Create a new page
-            return page_height - 70  # Reset y_position to top of new page
-        return y_position
-
-    # Title Section
-    c.setFont("Helvetica-Bold", 18)
-    c.drawString(margin_x, y_position, "Las Casas de David")  
-    y_position -= 25
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(margin_x, y_position, f"{data['tipo'].capitalize()} en {data['direccion']}")
-    y_position -= 40  # Space before the image
-
-    # Load and Display Listing Image (Properly Sized & Positioned)
-    try:
-        if 'urls_imagenes' in data and data['urls_imagenes']:
-            image_url = data['urls_imagenes'][0]  # First image in the listing
-            response = requests.get(image_url, stream=True)
-            if response.status_code == 200:
-                image = ImageReader(BytesIO(response.content))
-                
-                # Adjust Image Size & Position
-                display_width = 180  # Smaller image width
-                display_height = 120  # Adjusted height
-
-                # Ensure enough space before placing the image
-                y_position = check_page_break(c, y_position, display_height + 30)
-                image_x = margin_x
-                image_y = y_position - display_height  # Position image
-                c.drawImage(image, image_x, image_y, width=display_width, height=display_height)
-                
-                y_position -= display_height + 40  # Extra spacing after the image
-    except Exception as e:
-        print(f"Error loading image: {e}")
-
-    # Property Details Title
-    y_position = check_page_break(c, y_position, 50)  # Ensure space for the title
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(margin_x, y_position, "Detalles del Inmueble")
-    y_position -= 30  # Space before the table
-
+    # Prepare the story (list of flowables)
+    story = []
     styles = getSampleStyleSheet()
-    description_text = Paragraph(data["descripcion"], styles["BodyText"])  # Wrap text properly
-
+    
+    # Create custom styles
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=18,
+        spaceAfter=30
+    )
+    
+    subtitle_style = ParagraphStyle(
+        'CustomSubtitle',
+        parent=styles['Heading2'],
+        fontSize=14,
+        spaceAfter=20
+    )
+    
+    # Add title and subtitle
+    story.append(Paragraph("Las Casas de David", title_style))
+    story.append(Paragraph(f"{data['tipo'].capitalize()} en {data['direccion']}", subtitle_style))
+    
+    # Property Details Section
+    story.append(Paragraph("Detalles del Inmueble", subtitle_style))
+    
+    # Create property details table
+    idealista_url = f"https://www.idealista.com/inmueble/{data['codigo']}/"
     details = [
         ["Precio:", f"{data['precio']:,.0f} €"],
         ["Tamaño:", f"{data['tamanio']} m²"],
@@ -77,37 +56,43 @@ def generate_pdf(data):
         ["Alquiler Predicho:", f"{data['alquiler_predicho']:,.0f} €"],
         ["Anunciante:", data['anunciante']],
         ["Teléfono:", data['contacto']],
-        ["Descripción:", description_text],  # Wrapped description
-        ["Idealista Link:", idealista_url]
+        ["Descripción:", Paragraph(data["descripcion"], styles["BodyText"])],
+        ["Idealista Link:", Paragraph(idealista_url, styles["BodyText"])]
     ]
-
-    # Ensure enough space before drawing the table
-    y_position = check_page_break(c, y_position, len(details) * 20 + 50)
-
-    table = Table(details, colWidths=[140, 350])
+    
+    # Create and style the table
+    table = Table(details, colWidths=[2*inch, 4*inch])
     table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+        ('BACKGROUND', (0, 0), (0, -1), colors.lightgrey),
         ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
         ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+        ('FONTNAME', (1, 0), (1, -1), 'Helvetica'),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
         ('TOPPADDING', (0, 0), (-1, -1), 6),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey)
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP')
     ]))
     
-    table.wrapOn(c, page_width, page_height)
-    table.drawOn(c, margin_x, y_position - len(details) * 20)
-    y_position -= len(details) * 20 + 50
-
-    # Move "Métricas de Rentabilidad" to a New Page
-    c.showPage()
-    y_position = page_height - 70  # Reset position for new page
-
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(margin_x, y_position, "Métricas de Rentabilidad")
-    y_position -= 30  # Space before the table
-
+    story.append(table)
+    story.append(Spacer(1, 20))
+    
+    # Add property image if available
+    try:
+        if 'urls_imagenes' in data and data['urls_imagenes']:
+            image_url = data['urls_imagenes'][0]
+            response = requests.get(image_url, stream=True)
+            if response.status_code == 200:
+                img_data = BytesIO(response.content)
+                img = Image(img_data, width=4*inch, height=3*inch)
+                story.append(img)
+                story.append(Spacer(1, 20))
+    except Exception as e:
+        print(f"Error loading image: {e}")
+    
+    # Rentability Metrics Section
+    story.append(Paragraph("Métricas de Rentabilidad", subtitle_style))
+    
     metrics = [
         ["Coste Total:", f"{data['Coste Total']:,.0f} €"],
         ["Rentabilidad Bruta:", f"{data['Rentabilidad Bruta']}%"],
@@ -124,23 +109,22 @@ def generate_pdf(data):
         ["Cash-on-Cash Return:", f"{data['Cash-on-Cash Return']}%"],
         ["COCR (Años):", f"{data['COCR (Años)']:,.0f} años"]
     ]
-
-    table_metrics = Table(metrics, colWidths=[180, 300])
-    table_metrics.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+    
+    metrics_table = Table(metrics, colWidths=[3*inch, 3*inch])
+    metrics_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (0, -1), colors.lightgrey),
         ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
         ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+        ('FONTNAME', (1, 0), (1, -1), 'Helvetica'),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
         ('TOPPADDING', (0, 0), (-1, -1), 6),
         ('GRID', (0, 0), (-1, -1), 0.5, colors.grey)
     ]))
-
-    table_metrics.wrapOn(c, page_width, page_height)
-    table_metrics.drawOn(c, margin_x, y_position - len(metrics) * 20)
-
-    # Save the PDF
-    c.save()
+    
+    story.append(metrics_table)
+    
+    # Build the PDF
+    doc.build(story)
     buffer.seek(0)
     return buffer
