@@ -260,7 +260,8 @@ elif st.session_state.page == "Resultados":
             "Precio (€)",
             int(data["precio"].min()),
             int(data["precio"].max()),
-            (int(data["precio"].min()), int(data["precio"].max()))
+            (int(data["precio"].min()), int(data["precio"].max())),
+            help="Filtro sobre el precio original, sin reducciones."
         )
         metros_min, metros_max = st.slider(
             "Metros cuadrados",
@@ -424,7 +425,8 @@ elif st.session_state.page == "Mapa":
             "Precio (€)",
             int(data["precio"].min()),
             int(data["precio"].max()),
-            (int(data["precio"].min()), int(data["precio"].max()))
+            (int(data["precio"].min()), int(data["precio"].max())),
+            help="Filtro sobre el precio original, sin reducciones."
         )
 
     with col2:
@@ -551,7 +553,8 @@ elif st.session_state.page == "Datos Completos":
             "Precio (€)",
             int(data["precio"].min()), int(data["precio"].max()),
             (int(data["precio"].min()), int(data["precio"].max())),
-            key="precio_filtro"
+            key="precio_filtro",
+            help="Filtro sobre el precio original, sin reducciones."
         )
 
     with col2:
