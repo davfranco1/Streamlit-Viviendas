@@ -445,7 +445,7 @@ if st.session_state.page == "Datos de compra y financiación":
 
 elif st.session_state.page == "Resultados":
     st.markdown(
-        '<p style="color: #224094; font-size: 18px;">Mostrando hasta <strong>20 resultados por página</strong>, ordenados de mayor a menor rentabilidad bruta. Usa el selector de página para navegar entre los resultados. Haz click en la dirección de la vivienda para ir al anuncio de idealista.</p>',
+        '<p style="color: #224094; font-size: 18px;">• Mostrando hasta <strong>20 resultados por página</strong>, ordenados de mayor a menor rentabilidad bruta. <br>• Haz click en la dirección de la vivienda para ir al anuncio de idealista.<br>• Usa el selector de página para navegar entre los resultados.</p>',
         unsafe_allow_html=True
     )
 
@@ -650,7 +650,6 @@ elif st.session_state.page == "Resultados":
 
 
 elif st.session_state.page == "Mapa":
-    st.markdown('<p style="color: #224094; font-size: 18px;">Configura tus filtros.</p>', unsafe_allow_html=True)
 
     selected_distritos = st.multiselect("Selecciona los distritos", options=data["distrito"].unique(), default=data["distrito"].unique())
 
@@ -739,8 +738,8 @@ elif st.session_state.page == "Mapa":
 
 
 elif st.session_state.page == "Datos Completos":
-    st.header("Datos completos con filtros")
-    st.markdown('<p style="color: #224094; font-size: 18px;">Los resultados se muestran en orden de Rentabilidad Bruta descendiente.</p>', unsafe_allow_html=True)
+    st.header("Datos completos")
+    st.markdown('<p style="color: #224094; font-size: 18px;">• Usa los filtros para configurar la búsqueda.<br>• Los resultados se muestran en orden de Rentabilidad Bruta descendiente.</p>', unsafe_allow_html=True)
 
 
     # Dropdown to select districts
@@ -992,7 +991,7 @@ elif st.session_state.page == "Chatbot":
 
     # Streamlit Layout
     st.markdown("### 🏡 Encuentra tu vivienda con nuestro housebot (beta)")
-    st.write("Describe la vivienda con las características que estés buscando, y nuestro agente de inteligencia artificial encontrará la coincidencia más cercana.")
+    st.write("• Describe la vivienda con las características que estés buscando, y nuestro agente de inteligencia artificial encontrará la coincidencia más cercana.")
 
     user_query = st.text_input("📝 *¿Qué estás buscando?*", "", key="user_query", help="Ejemplo: Quiero un piso en Delicias con 2 habitaciones y ascensor")
     st.markdown("<style> div[data-testid='stTextInput'] input { font-size: 18px; font-weight: bold; padding: 10px; } </style>", unsafe_allow_html=True)
