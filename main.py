@@ -331,7 +331,7 @@ st.markdown("""
 
 
 if st.session_state.page == "Datos de compra y financiación":
-    st.markdown('<p style="color: #224094; font-size: 18px;">Introduce los datos correspondientes a la compra y la financiación, seguido del botón <strong>Ver resultados<strong>.</p>', unsafe_allow_html=True)
+    st.markdown('<p style="color: #224094; font-size: 18px;">Introduce los datos correspondientes a la compra y la financiación, seguido del botón <strong>Ver resultados<strong>. Puedes obtener más información deslizando sobre cada valor deslizando sobre la ❓</p>', unsafe_allow_html=True)
 
     # Create two columns
     col1, col2 = st.columns(2)
@@ -975,7 +975,7 @@ elif st.session_state.page == "Chatbot":
     st.markdown("### 🏡 Encuentra tu vivienda con nuestro housebot (beta)")
     st.write("Describe la vivienda con las características que estés buscando, y nuestro agente de inteligencia artificial encontrará la coincidencia más cercana.")
 
-    user_query = st.text_input("📝 ¿Qué estás buscando?:", "", key="user_query", help="Ejemplo: Quiero un piso en Delicias con 2 habitaciones y ascensor")
+    user_query = st.text_input("📝 *¿Qué estás buscando?*", "", key="user_query", help="Ejemplo: Quiero un piso en Delicias con 2 habitaciones y ascensor")
     st.markdown("<style> div[data-testid='stTextInput'] input { font-size: 18px; font-weight: bold; padding: 10px; } </style>", unsafe_allow_html=True)
 
     if user_query:
