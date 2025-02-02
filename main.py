@@ -457,16 +457,16 @@ elif st.session_state.page == "Resultados":
         )
 
     with col3:
-        estado_bano = st.slider("Estado del baño (entre 1 y 5)", 1, 5, (1, 5), help="Siendo 1 muy malo y 5 perfecto estado.")
-        estado_cocina = st.slider("Estado de la cocina (entre 1 y 5)", 1, 5, (1, 5), help="Siendo 1 muy malo y 5 perfecto estado.")
+        estado_bano_min, estado_bano_max = st.slider("Estado del baño (entre 1 y 5)", 1, 5, (1, 5), help="Siendo 1 muy malo y 5 perfecto estado.")
+        estado_cocina_min, estado_cocina_max = st.slider("Estado de la cocina (entre 1 y 5)", 1, 5, (1, 5), help="Siendo 1 muy malo y 5 perfecto estado.")
 
     # Filter data
     filtered_data = data[
         (data["distrito"].isin(selected_distritos)) &
         (data["tamanio"].between(metros_min, metros_max)) &
         (data["precio"].between(precio_min, precio_max)) &
-        (data["puntuacion_banio"] >= estado_bano) &
-        (data["puntuacion_cocina"] >= estado_cocina)
+        (data["puntuacion_banio"].between(estado_bano_min, estado_bano_max)) &
+        (data["puntuacion_cocina"].between(estado_cocina_min, estado_cocina_max))
     ].dropna(subset=["lat", "lon"])
 
     # Show total number of results after filtering
