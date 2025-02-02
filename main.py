@@ -409,7 +409,7 @@ elif st.session_state.page == "Resultados":
                     st.metric("Cash-on-Cash Return", f"{row['Cash-on-Cash Return']}%")
                     st.metric("COCR (Años)", f"{row['COCR (Años)']:,.0f} años")           
 
-                                # Generate PDF and provide download button
+                # Generate PDF and provide download button
                 pdf_buffer = spdf.generate_pdf(row)
                 st.download_button(
                 label="📄 Descargar informe en PDF",
