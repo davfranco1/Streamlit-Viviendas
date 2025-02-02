@@ -13,4 +13,3 @@ streamlit-folium>=0.12
 python-dotenv>=1.0.1
 reportlab
 requests
-bytesio

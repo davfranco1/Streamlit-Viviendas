@@ -35,7 +35,7 @@ def generate_pdf(data):
     c.drawString(margin_x, y_position, f"{data['tipo'].capitalize()} en {data['direccion']}")
     y_position -= 40  # Space before the image
 
-    # Load and Display Listing Image (Properly Sized)
+    # Load and Display Listing Image (Properly Sized & Positioned)
     try:
         if 'urls_imagenes' in data and data['urls_imagenes']:
             image_url = data['urls_imagenes'][0]  # First image in the listing
@@ -44,27 +44,27 @@ def generate_pdf(data):
                 image = ImageReader(BytesIO(response.content))
                 
                 # Adjust Image Size & Position
-                display_width = 200  # Smaller image width
+                display_width = 180  # Smaller image width
                 display_height = 120  # Adjusted height
-                
-                # Check if image fits, else create new page
-                y_position = check_page_break(c, y_position, display_height + 20)
 
+                # Ensure enough space before placing the image
+                y_position = check_page_break(c, y_position, display_height + 30)
                 image_x = margin_x
                 image_y = y_position - display_height  # Position image
                 c.drawImage(image, image_x, image_y, width=display_width, height=display_height)
                 
-                y_position -= display_height + 30  # Adjust position after image
+                y_position -= display_height + 40  # Extra spacing after the image
     except Exception as e:
         print(f"Error loading image: {e}")
 
-    # Property Details Section
+    # Property Details Title
+    y_position = check_page_break(c, y_position, 50)  # Ensure space for the title
     c.setFont("Helvetica-Bold", 14)
     c.drawString(margin_x, y_position, "Detalles del Inmueble")
-    y_position -= 20
+    y_position -= 30  # Space before the table
 
     styles = getSampleStyleSheet()
-    description_text = Paragraph(data["descripcion"], styles["BodyText"])  # Wrap text in paragraph
+    description_text = Paragraph(data["descripcion"], styles["BodyText"])  # Wrap text properly
 
     details = [
         ["Precio:", f"{data['precio']:,.0f} €"],
@@ -77,11 +77,11 @@ def generate_pdf(data):
         ["Alquiler Predicho:", f"{data['alquiler_predicho']:,.0f} €"],
         ["Anunciante:", data['anunciante']],
         ["Teléfono:", data['contacto']],
-        ["Descripción:", description_text],  # Wrap text properly
+        ["Descripción:", description_text],  # Wrapped description
         ["Idealista Link:", idealista_url]
     ]
 
-    # Check for page break before drawing table
+    # Ensure enough space before drawing the table
     y_position = check_page_break(c, y_position, len(details) * 20 + 50)
 
     table = Table(details, colWidths=[140, 350])
@@ -106,7 +106,7 @@ def generate_pdf(data):
 
     c.setFont("Helvetica-Bold", 14)
     c.drawString(margin_x, y_position, "Métricas de Rentabilidad")
-    y_position -= 20
+    y_position -= 30  # Space before the table
 
     metrics = [
         ["Coste Total:", f"{data['Coste Total']:,.0f} €"],
