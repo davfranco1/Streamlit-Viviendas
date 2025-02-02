@@ -354,7 +354,7 @@ elif st.session_state.page == "Resultados":
 
             # Expandable details with carousel and bullets
             with st.expander(f"Más detalles: {row.get('direccion', 'Sin dirección')}"):
-                col1, col2 = st.columns([1, 2])
+                col1, col2 = st.columns([1, 1])
 
                 with col1:
                     st.markdown(
