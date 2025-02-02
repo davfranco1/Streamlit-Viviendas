@@ -153,17 +153,20 @@ def imprimir_metricas():
     """)
     
     st.markdown("### Valores Constantes en el Cálculo")
-    st.write("Algunos valores utilizados en los cálculos tienen montos fijos:")
-    st.write("- Impuesto de Basuras Ayuntamiento Zaragoza: 283€")
-    st.write("- Seguro de Hogar: 176.29€. Fuente: https://selectra.es/seguros/seguros-hogar/precios-seguros-hogar")
-    st.write("- Seguro de Impago: 4% del ingreso anual")
-    st.write("- Mantenimiento y Comunidad: 10% del ingreso anual. Fuente: https://www.donpiso.com/blog/mantener-piso-vacio-cuesta-2-300-euros-al-ano/")
-    st.write("- Periodos Vacíos: 5% del ingreso anual")
-    st.write("- IBI Ayuntamiento Zaragoza: 0.4047% del precio de compra")
-    st.write("- Coste Notario: 2% del precio de compra")
-    st.write("- ITP Zaragoza: 8% del precio de compra")
-    st.write("- Tasa de Deducción por Larga Duración: 60%")
-    st.write("- Tasa de Amortización: 3%")
+    st.write("""
+    ### Algunos valores utilizados en los cálculos tienen montos fijos:
+
+    - **Impuesto de Basuras Ayuntamiento Zaragoza**: 283€
+    - **Seguro de Hogar**: 176.29€. [Fuente](https://selectra.es/seguros/seguros-hogar/precios-seguros-hogar)
+    - **Seguro de Impago**: 4% del ingreso anual
+    - **Mantenimiento y Comunidad**: 10% del ingreso anual. [Fuente](https://www.donpiso.com/blog/mantener-piso-vacio-cuesta-2-300-euros-al-ano/)
+    - **Periodos Vacíos**: 5% del ingreso anual
+    - **IBI Ayuntamiento Zaragoza**: 0.4047% del precio de compra
+    - **Coste Notario**: 2% del precio de compra
+    - **ITP Zaragoza**: 8% del precio de compra
+    - **Tasa de Deducción por Larga Duración**: 60%
+    - **Tasa de Amortización**: 3%
+    """)
 
 ## Inputs usuario helpers
 
