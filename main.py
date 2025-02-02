@@ -239,7 +239,7 @@ if "inputs" not in st.session_state:
         "comision_agencia": 3.0,
         "anios": 30,
         "tin": 3.0,
-        "seguro_vida": 0,
+        "seguro_vida": 250,
         "tipo_irpf": 17.0,
         "porcentaje_amortizacion": 40.0,
     }
@@ -344,14 +344,16 @@ if st.session_state.page == "Datos de compra y financiación":
         max_value=100.0, 
         step=0.1, 
         value=st.session_state.inputs["porcentaje_entrada"],
-        key="porcentaje_entrada"
+        key="porcentaje_entrada",
+        help="Se refiere a la cantidad de dinero que el comprador debe pagar por adelantado al adquirirla, expresado como un porcentaje del precio total del inmueble. Este pago inicial es la parte que no está financiada por la hipoteca. En España, la mayoría de los bancos financian hasta un 80% del valor de tasación o compra, por lo que el comprador debe aportar al menos un 20% de entrada."
     )
     st.session_state.inputs["coste_reformas"] = col1.number_input(
         "Coste de reformas (€)", 
         min_value=0, 
         step=1000, 
         value=st.session_state.inputs["coste_reformas"],
-        key="coste_reformas"
+        key="coste_reformas",
+        help="El coste que estimas costará una reforma básica del tipo de piso que estás buscando. En 2024, una reforma de un baño cuesta entre 3.500 - 8.000 €, y la de cocina 5.000 - 15.000 €. Mejoras como la pintura interior cuestan entre 8 - 20 €/m², y entre 20 - 50 €/m² por un cambio del suelo. Cambiar las ventanas por aluminio o PVC implica entre 3.000 - 7.000 €. La electricidad y fontanería podrían oscilar entre 3.000 - 10.000 €."
     )
     st.session_state.inputs["comision_agencia"] = col1.number_input(
         "Comisión de agencia (%)", 
@@ -359,14 +361,16 @@ if st.session_state.page == "Datos de compra y financiación":
         max_value=100.0, 
         step=0.1, 
         value=st.session_state.inputs["comision_agencia"],
-        key="comision_agencia"
+        key="comision_agencia",
+        help="Es el pago que se realiza a una inmobiliaria o agente intermediario por gestionar la venta o alquiler de un inmueble. Oscila entre 3 y 5%, más IVA.  En España, la comisión suele pagarla el vendedor."
     )
     st.session_state.inputs["seguro_vida"] = col1.number_input(
         "Seguro de vida (€)", 
         min_value=0, 
         step=50, 
         value=st.session_state.inputs["seguro_vida"],
-        key="seguro_vida"
+        key="seguro_vida",
+        help="Es un seguro que cubre el pago del préstamo en caso de fallecimiento o invalidez del titular. Es opcional, pero los bancos suelen obligar indirectamente a contratarlo para conceder mejores condiciones en la hipoteca. Su precio varía con la edad. Entre 150 y 250 € para edades de 30 a 40 años. Entre 250 y 400 € para edades de 40 a 50 años. Entre 400 - 700 € cuando el tomador tiene entre 50 y 60 años."
     )
 
     # Loan inputs
@@ -376,7 +380,8 @@ if st.session_state.page == "Datos de compra y financiación":
         min_value=1, 
         step=1, 
         value=st.session_state.inputs["anios"],
-        key="anios"
+        key="anios",
+        help="Es el número de años durante los cuales se paga la deuda. En préstamos hipotecarios y personales, los plazos varían según el tipo de financiación. En España, el plazo típico de una hipoteca es entre 20 y 30 años. Un plazo más corto implica pagar menos intereses, pero la cuota sube. Una cuota baja implica un plazo más largo, pagando más intereses."
     )
     st.session_state.inputs["tin"] = col2.number_input(
         "Tasa de interés nominal (TIN %) ", 
@@ -384,7 +389,8 @@ if st.session_state.page == "Datos de compra y financiación":
         max_value=100.0, 
         step=0.1, 
         value=st.session_state.inputs["tin"],
-        key="tin"
+        key="tin",
+        help="La TIN (Tasa de Interés Nominal) es el porcentaje de interés que un banco aplica a un préstamo o hipoteca, sin incluir otros gastos o comisiones. Es el tipo de interés puro, pero no refleja el costo real del préstamo. Para comparar préstamos, usa siempre la TAE, ya que la TIN no incluye comisiones ni costes ocultos."
     )
     st.session_state.inputs["tipo_irpf"] = col2.number_input(
         "Tipo de IRPF (%)", 
@@ -392,7 +398,8 @@ if st.session_state.page == "Datos de compra y financiación":
         max_value=100.0, 
         step=0.1, 
         value=st.session_state.inputs["tipo_irpf"],
-        key="tipo_irpf"
+        key="tipo_irpf",
+        help="Se refiere al porcentaje del Impuesto sobre la Renta de las Personas Físicas (IRPF) que se aplica a los ingresos de un contribuyente en España. Tiene un componente estatal y uno autonómico. Consulta tu declaración de la renta. Al alquilar un piso para vivienda habitual se puede deducir hasta un 60% de los ingresos netos."
     )
     st.session_state.inputs["porcentaje_amortizacion"] = col2.number_input(
         "Porcentaje de amortización (%)", 
@@ -400,7 +407,8 @@ if st.session_state.page == "Datos de compra y financiación":
         max_value=100.0, 
         step=0.1, 
         value=st.session_state.inputs["porcentaje_amortizacion"],
-        key="porcentaje_amortizacion"
+        key="porcentaje_amortizacion",
+        help="Se refiere a la parte del préstamo que se paga cada año en relación con el capital total. En cada cuota que pagas en un préstamo, una parte va a amortizar la deuda (reducir el capital pendiente) y otra parte se destina a pagar intereses. En la mayoría de los préstamos (especialmente en hipotecas con sistema de amortización francés, que es el más común), al principio se pagan más intereses y menos capital. A medida que avanzan los años, el porcentaje de amortización aumenta. Al inicio, el porcentaje de amortización es bajo, pero al final del préstamo, casi todo lo que pagas va a reducir la deuda."
     )
 
     # Add price reduction checkbox
@@ -410,7 +418,8 @@ if st.session_state.page == "Datos de compra y financiación":
     st.session_state.aplicar_reduccion = st.checkbox(
         "Aplicar una reducción del 10% a los precios de compra.",
         value=st.session_state.aplicar_reduccion,
-        key="checkbox_reduccion"
+        key="checkbox_reduccion",
+        help="De media, en España, una vivienda suele venderse entre un 10 y 15% por debajo del precio publicado. Para que los cálculos de rentabilidad reflejen esta casuística, esta casilla se encuentra marcada por defecto."
     )
 
     if st.button("Ver resultados", on_click=go_to_results):
@@ -448,8 +457,8 @@ elif st.session_state.page == "Resultados":
         )
 
     with col3:
-        estado_bano = st.slider("Estado del baño (1-5)", 1, 5)
-        estado_cocina = st.slider("Estado de la cocina (1-5)", 1, 5)
+        estado_bano = st.slider("Estado del baño (entre 1 y 5)", 1, 5, (1-5), help="Siendo 1 muy malo y 5 perfecto estado.")
+        estado_cocina = st.slider("Estado de la cocina (entre 1 y 5)", 1, 5, (1-5), help="Siendo 1 muy malo y 5 perfecto estado.")
 
     # Filter data
     filtered_data = data[
@@ -547,8 +556,8 @@ elif st.session_state.page == "Resultados":
                     <div class="card-details">
                         <h3><a href="{idealista_url}" target="_blank" class="custom-title">{row.get('tipo', 'Sin tipo')} en {row.get('direccion', 'Sin dirección')}</a></h3>
                         <p><strong>Distrito:</strong> {row['distrito']}</p>
-                        <p><strong>Precio:</strong> {row['precio']}€</p>
-                        <p><strong>Tamaño:</strong> {row['tamanio']} m²</p>
+                        <p><strong>Precio:</strong> {row['precio']:,.0f} €</p>
+                        <p><strong>Tamaño:</strong> {row['tamanio']:,.0f} m²</p>
                         <p><strong>Habitaciones:</strong> {row['habitaciones']}</p>
                         <p><strong>Rentabilidad Bruta:</strong> {rentabilidad_bruta}</p>
                     </div>
@@ -567,14 +576,14 @@ elif st.session_state.page == "Resultados":
                 with col1:
                     st.markdown(
                         f"""
-                        - **Precio**: {row['precio']} €
-                        - **Tamaño**: {row['tamanio']} m²
+                        - **Precio**: {row['precio']:,.0f} €
+                        - **Tamaño**: {row['tamanio']:,.0f} m²
                         - **Planta**: {row['planta']}
                         - **Habitaciones**: {row['habitaciones']}
                         - **Baños**: {row['banios']}
                         - **Estado del baño**: {row['puntuacion_banio']}
                         - **Estado de la cocina**: {row['puntuacion_cocina']}
-                        - **Alquiler predicho**: {row['alquiler_predicho']} €
+                        - **Alquiler predicho**: {row['alquiler_predicho']:,.0f} €
                         - **Contacto**: {row['anunciante']}, {row['contacto']}
                         """
                     )
@@ -595,24 +604,24 @@ elif st.session_state.page == "Resultados":
                 col1, col2, col3 = st.columns(3)
 
                 with col1:
-                    st.metric("Coste Total", f"{row['Coste Total']:,.0f}€")
+                    st.metric("Coste Total", f"{row['Coste Total']:,.0f} €")
                     st.metric("Rentabilidad Bruta", f"{row['Rentabilidad Bruta']}%")
-                    st.metric("Beneficio Antes de Impuestos", f"{row['Beneficio Antes de Impuestos']:,.0f}€")
+                    st.metric("Beneficio Antes de Impuestos", f"{row['Beneficio Antes de Impuestos']:,.0f} €")
                     st.metric("Rentabilidad Neta", f"{row['Rentabilidad Neta']}%")
-                    st.metric("Cuota Mensual Hipoteca", f"{row['Cuota Mensual Hipoteca']:,.0f}€")
+                    st.metric("Cuota Mensual Hipoteca", f"{row['Cuota Mensual Hipoteca']:,.0f} €")
 
                 with col2:
-                    st.metric("Cash Necesario Compra", f"{row['Cash Necesario Compra']:,.0f}€")
-                    st.metric("Cash Total Compra y Reforma", f"{row['Cash Total Compra y Reforma']:,.0f}€")
-                    st.metric("Beneficio Neto", f"{row['Beneficio Neto']:,.0f}€")
-                    st.metric("Cashflow Antes de Impuestos", f"{row['Cashflow Antes de Impuestos']:,.0f}€")
-                    st.metric("Cashflow Después de Impuestos", f"{row['Cashflow Después de Impuestos']:,.0f}€")
+                    st.metric("Cash Necesario Compra", f"{row['Cash Necesario Compra']:,.0f} €")
+                    st.metric("Cash Total Compra y Reforma", f"{row['Cash Total Compra y Reforma']:,.0f} €")
+                    st.metric("Beneficio Neto", f"{row['Beneficio Neto']:,.0f} €")
+                    st.metric("Cashflow Antes de Impuestos", f"{row['Cashflow Antes de Impuestos']:,.0f} €")
+                    st.metric("Cashflow Después de Impuestos", f"{row['Cashflow Después de Impuestos']:,.0f} €")
 
                 with col3:
                     st.metric("ROCE", f"{row['ROCE']}%")
-                    st.metric("ROCE (Años)", f"{row['ROCE (Años)']} años")
+                    st.metric("ROCE (Años)", f"{row['ROCE (Años)']:,.0f} años")
                     st.metric("Cash-on-Cash Return", f"{row['Cash-on-Cash Return']}%")
-                    st.metric("COCR (Años)", f"{row['COCR (Años)']} años")           
+                    st.metric("COCR (Años)", f"{row['COCR (Años)']:,.0f} años")           
 
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -683,12 +692,12 @@ elif st.session_state.page == "Mapa":
             text=resultados_rentabilidad.apply(lambda row: (
                 f"<b><a href='https://www.idealista.com/inmueble/{row['codigo']}/' target='_blank' style='color:#3253aa;'>"
                 f"{row['direccion']} (ir a idealista)</a></b><br>"
-                f"Precio: {row['precio']}€<br>"
+                f"Precio: {row['precio']:,.0f} €<br>"
                 f"Tamaño: {row['tamanio']} m²<br>"
                 f"Habitaciones: {row['habitaciones']}<br>"
                 f"Rentabilidad Bruta: {row['Rentabilidad Bruta']:.2f}%<br>"
-                f"Alquiler Predicho: {row['alquiler_predicho']}€<br>"
-                f"Cuota Mensual Hipoteca: {row['Cuota Mensual Hipoteca']}€"
+                f"Alquiler Predicho: {row['alquiler_predicho']:,.0f}€<br>"
+                f"Cuota Mensual Hipoteca: {row['Cuota Mensual Hipoteca']:,.0f} €"
             ), axis=1),
             hoverinfo="text"
         ))
@@ -890,7 +899,7 @@ elif st.session_state.page == "Chatbot":
     # Display Property Details
     def display_property_details(property_data):
         st.markdown(f"### 🏡 {property_data['tipo'].capitalize()} en {property_data['direccion']}")
-        st.markdown(f"🏷️ **Precio**: {property_data['precio']} €")
+        st.markdown(f"🏷️ **Precio**: {property_data['precio']:,.0f} €")
         st.markdown(f"📍 **Ubicación**: {property_data['distrito']}")
         st.markdown(f"🔗 [Ver en Idealista](https://www.idealista.com/inmueble/{property_data['codigo']}/)")
                 
@@ -925,7 +934,7 @@ elif st.session_state.page == "Chatbot":
         st.markdown("### 🏠 Características del Inmueble")
 
         col1, col2, col3 = st.columns(3)
-        col1.write(f"**Tamaño**: {property_data['tamanio']} m²")
+        col1.write(f"**Tamaño**: {property_data['tamanio']:,.0f} m²")
         col1.write(f"**Habitaciones**: {property_data['habitaciones']}")
         col1.write(f"**Baños**: {property_data['banios']}")
 
@@ -945,28 +954,28 @@ elif st.session_state.page == "Chatbot":
         col1, col2, col3 = st.columns(3)
         col1.metric("Rentabilidad Bruta", f"{property_data['Rentabilidad Bruta']}%")
         col2.metric("Rentabilidad Neta", f"{property_data['Rentabilidad Neta']}%")
-        col3.metric("Beneficio Neto", f"{property_data['Beneficio Neto']}€")
+        col3.metric("Beneficio Neto", f"{property_data['Beneficio Neto']:,.0f} €")
         
         col4, col5, col6 = st.columns(3)
-        col4.metric("ROCE", f"{property_data['ROCE']}%")
+        col4.metric("ROCE", f"{property_data['ROCE']} %")
         col5.metric("Cash-on-Cash Return", f"{property_data['Cash-on-Cash Return']}%")
-        col6.metric("Cashflow Después de Impuestos", f"{property_data['Cashflow Después de Impuestos']}€")
+        col6.metric("Cashflow Después de Impuestos", f"{property_data['Cashflow Después de Impuestos']:,.0f} €")
         
         col7, col8, col9 = st.columns(3)
-        col7.metric("Cuota Mensual Hipoteca", f"{property_data['Cuota Mensual Hipoteca']}€")
-        col8.metric("Cash Necesario Compra", f"{property_data['Cash Necesario Compra']}€")
-        col9.metric("Cash Total Compra y Reforma", f"{property_data['Cash Total Compra y Reforma']}€")
+        col7.metric("Cuota Mensual Hipoteca", f"{property_data['Cuota Mensual Hipoteca']:,.0f} €")
+        col8.metric("Cash Necesario Compra", f"{property_data['Cash Necesario Compra']:,.0f} €")
+        col9.metric("Cash Total Compra y Reforma", f"{property_data['Cash Total Compra y Reforma']:,.0f} €")
         
         col10, col11, col12 = st.columns(3)
-        col10.metric("ROCE (Años)", f"{property_data['ROCE (Años)']} años")
-        col11.metric("COCR (Años)", f"{property_data['COCR (Años)']} años")
-        col12.metric("Alquiler Predicho", f"{property_data['alquiler_predicho']}€")
+        col10.metric("ROCE (Años)", f"{property_data['ROCE (Años)']:,.0f} años")
+        col11.metric("COCR (Años)", f"{property_data['COCR (Años)']:,.0f} años")
+        col12.metric("Alquiler Predicho", f"{property_data['alquiler_predicho']:,.0f} €")
 
     # Streamlit Layout
-    st.markdown("### 🏡 Encuentra tu vivienda con nuestro chatbot (beta)")
+    st.markdown("### 🏡 Encuentra tu vivienda con nuestro housebot (beta)")
     st.write("Describe la vivienda con las características que estés buscando, y nuestro agente de inteligencia artificial encontrará la coincidencia más cercana.")
 
-    user_query = st.text_input("📝 Ingresa tu búsqueda:", "", key="user_query", help="Ejemplo: Quiero un piso en Delicias con 2 habitaciones y ascensor")
+    user_query = st.text_input("📝 ¿Qué estás buscando?:", "", key="user_query", help="Ejemplo: Quiero un piso en Delicias con 2 habitaciones y ascensor")
     st.markdown("<style> div[data-testid='stTextInput'] input { font-size: 18px; font-weight: bold; padding: 10px; } </style>", unsafe_allow_html=True)
 
     if user_query:
