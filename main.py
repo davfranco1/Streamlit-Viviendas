@@ -457,8 +457,8 @@ elif st.session_state.page == "Resultados":
         )
 
     with col3:
-        estado_bano = st.slider("Estado del baño (entre 1 y 5)", 1, 5, (1-5), help="Siendo 1 muy malo y 5 perfecto estado.")
-        estado_cocina = st.slider("Estado de la cocina (entre 1 y 5)", 1, 5, (1-5), help="Siendo 1 muy malo y 5 perfecto estado.")
+        estado_bano = st.slider("Estado del baño (entre 1 y 5)", 1, 5, (1, 5), help="Siendo 1 muy malo y 5 perfecto estado.")
+        estado_cocina = st.slider("Estado de la cocina (entre 1 y 5)", 1, 5, (1, 5), help="Siendo 1 muy malo y 5 perfecto estado.")
 
     # Filter data
     filtered_data = data[
