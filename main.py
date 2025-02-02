@@ -86,10 +86,10 @@ with st.sidebar:
     # Navigation
     st.sidebar.radio(
         "Navegación",
-        ["Datos de compra y financiación", "Resultados", "Mapa", "Chatbot", "Datos Completos", "Información de Soporte"],
+        ["Datos de compra y financiación", "Resultados", "Mapa", "Housebot", "Datos Completos", "Información de Soporte"],
         key="navigation",
         on_change=handle_nav_change,
-        index=["Datos de compra y financiación", "Resultados", "Mapa", "Chatbot", "Datos Completos", "Información de Soporte"].index(st.session_state.page)
+        index=["Datos de compra y financiación", "Resultados", "Mapa", "Housebot", "Datos Completos", "Información de Soporte"].index(st.session_state.page)
     )
 
     st.markdown(
@@ -504,7 +504,7 @@ elif st.session_state.page == "Mapa":
         st.write("No hay datos para mostrar en el mapa.")
 
 
-elif st.session_state.page == "Chatbot":
+elif st.session_state.page == "Housebot":
 
     if st.session_state.aplicar_reduccion:
         filtered_data = data.copy()
