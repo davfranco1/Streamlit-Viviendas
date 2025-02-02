@@ -264,6 +264,23 @@ with st.sidebar:
         index=["Datos de compra y financiación", "Resultados", "Mapa", "Chatbot", "Datos Completos", "Información de Soporte"].index(st.session_state.page)
     )
 
+    st.markdown(
+    """
+    <style>
+    .centered-text {
+        text-align: center;
+        font-family: 'Georgia', sans-serif;
+        font-size: 16px;
+        font-weight: normal;
+        font-style: italic;
+        color: #ADB9DE; /* Change color if needed */
+    }
+    </style>
+    <p class="centered-text">Análisis inteligente para maximizar tu inversión.</p>
+    """,
+    unsafe_allow_html=True
+    )
+
 
 data = load_data()
 
@@ -365,12 +382,12 @@ if st.session_state.page == "Datos de compra y financiación":
         help="Es el pago que se realiza a una inmobiliaria o agente intermediario por gestionar la venta o alquiler de un inmueble. Oscila entre 3 y 5%, más IVA.  En España, la comisión suele pagarla el vendedor."
     )
     st.session_state.inputs["seguro_vida"] = col1.number_input(
-        "Seguro de vida (€)", 
+        "Seguro de vida anual (€)", 
         min_value=0, 
         step=50, 
         value=st.session_state.inputs["seguro_vida"],
         key="seguro_vida",
-        help="Es un seguro que cubre el pago del préstamo en caso de fallecimiento o invalidez del titular. Es opcional, pero los bancos suelen obligar indirectamente a contratarlo para conceder mejores condiciones en la hipoteca. Su precio varía con la edad. Entre 150 y 250 € para edades de 30 a 40 años. Entre 250 y 400 € para edades de 40 a 50 años. Entre 400 - 700 € cuando el tomador tiene entre 50 y 60 años."
+        help="Es un seguro que cubre el pago del préstamo en caso de fallecimiento o invalidez del titular. Es opcional, pero los bancos suelen obligar indirectamente a contratarlo para conceder mejores condiciones en la hipoteca. Su precio anual varía con la edad. Entre 150 y 250 € para edades de 30 a 40 años. Entre 250 y 400 € para edades de 40 a 50 años. Entre 400 - 700 € cuando el tomador tiene entre 50 y 60 años."
     )
 
     # Loan inputs
@@ -696,7 +713,7 @@ elif st.session_state.page == "Mapa":
                 f"Tamaño: {row['tamanio']} m²<br>"
                 f"Habitaciones: {row['habitaciones']}<br>"
                 f"Rentabilidad Bruta: {row['Rentabilidad Bruta']:.2f}%<br>"
-                f"Alquiler Predicho: {row['alquiler_predicho']:,.0f}€<br>"
+                f"Alquiler Predicho: {row['alquiler_predicho']:,.0f} €<br>"
                 f"Cuota Mensual Hipoteca: {row['Cuota Mensual Hipoteca']:,.0f} €"
             ), axis=1),
             hoverinfo="text"
