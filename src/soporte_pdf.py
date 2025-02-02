@@ -54,7 +54,7 @@ def generate_pdf(data):
     title_style = ParagraphStyle(
         'CustomTitle',
         parent=styles['Heading1'],
-        fontSize=22,
+        fontSize=20,
         textColor=PRIMARY_COLOR,
         spaceAfter=15,
         alignment=1
@@ -71,7 +71,7 @@ def generate_pdf(data):
         story.append(Spacer(1, 20))
     
     # Property Title Section - Combined tipo and direccion
-    combined_title = f"Informe de {data['tipo'].capitalize()} en {data['direccion']}"
+    combined_title = f"Informe de {data['tipo']} en {data['direccion']}"
     story.append(Paragraph(combined_title, title_style))
     story.append(Spacer(1, 20))
     
