@@ -367,7 +367,8 @@ elif st.session_state.page == "Resultados":
                         - **Estado del baño**: {row['puntuacion_banio']}
                         - **Estado de la cocina**: {row['puntuacion_cocina']}
                         - **Alquiler predicho**: {row['alquiler_predicho']:,.0f} €
-                        - **Contacto**: {row['anunciante']}, {row['contacto']}
+                        - **Anunciante**: {row['anunciante']}
+                        - **Teléfono**: {row['contacto']}
                         """
                     )
 
@@ -477,7 +478,7 @@ elif st.session_state.page == "Mapa":
                 f"{row['direccion']} (ir a idealista)</a></b><br>"
                 f"Precio: {row['precio']:,.0f} €<br>"
                 f"Tamaño: {row['tamanio']} m²<br>"
-                f"Habitaciones: {row['habitaciones']}<br>"
+                f"Habitaciones y baños: {row['habitaciones']} y {row['banios']}<br>"
                 f"Rentabilidad Bruta: {row['Rentabilidad Bruta']:.2f}%<br>"
                 f"Alquiler Predicho: {row['alquiler_predicho']:,.0f} €<br>"
                 f"Cuota Mensual Hipoteca: {row['Cuota Mensual Hipoteca']:,.0f} €"
