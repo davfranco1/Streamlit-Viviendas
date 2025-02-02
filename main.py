@@ -13,6 +13,8 @@ import src.soporte_mongo as sm
 import src.soporte_texto as stxt
 import src.soporte_chatbot as sc
 import src.soporte_styles as ss
+import src.soporte_pdf as spdf
+
 
 # Set Streamlit page config
 st.set_page_config(page_title="Rentabilidad Inmobiliaria",
@@ -406,6 +408,16 @@ elif st.session_state.page == "Resultados":
                     st.metric("ROCE (Años)", f"{row['ROCE (Años)']:,.0f} años")
                     st.metric("Cash-on-Cash Return", f"{row['Cash-on-Cash Return']}%")
                     st.metric("COCR (Años)", f"{row['COCR (Años)']:,.0f} años")           
+
+                                # Generate PDF and provide download button
+                pdf_buffer = spdf.generate_pdf(row)
+                st.download_button(
+                label="📄 Descargar informe en PDF",
+                data=pdf_buffer,
+                file_name=f"property_details_{row['direccion'].replace(' ', '_')}.pdf",  # Unique file name
+                mime="application/pdf",
+                key=f"download_pdf_{row['direccion']}"  # Unique key based on address
+                )        
 
         st.markdown("</div>", unsafe_allow_html=True)
 
