@@ -144,7 +144,7 @@ st.markdown("<hr>", unsafe_allow_html=True)
 
 
 if st.session_state.page == "Datos de compra y financiación":
-    st.markdown('<p style="color: #224094; font-size: 18px;">• Introduce los datos correspondientes a la compra y la financiación, seguido del botón <strong>Ver resultados</strong>. <br>• Puedes obtener más información deslizando sobre cada valor deslizando sobre la ❓</p>', unsafe_allow_html=True)
+    st.markdown('<p style="color: #224094; font-size: 18px;">• Introduce los datos correspondientes a la compra y la financiación, seguido del botón <strong>Ver resultados</strong>. <br>• Puedes obtener más información deslizando sobre cada valor deslizando sobre la ❓<br>• Los resultados de esta calculadora son estimaciones, y nunca deben tomarse como consejo de inversión. Antes de invertir, asegúrese de consultar con un experto.</p>', unsafe_allow_html=True)
 
     # Create two columns
     col1, col2 = st.columns(2)
