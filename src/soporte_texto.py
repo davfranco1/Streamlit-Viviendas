@@ -164,3 +164,19 @@ def imprimir_metricas():
     st.write("- ITP Zaragoza: 8% del precio de compra")
     st.write("- Tasa de Deducción por Larga Duración: 60%")
     st.write("- Tasa de Amortización: 3%")
+
+entrada = "Se refiere a la cantidad de dinero que el comprador debe pagar por adelantado al adquirirla, expresado como un porcentaje del precio total del inmueble. Este pago inicial es la parte que no está financiada por la hipoteca. En España, la mayoría de los bancos financian hasta un 80% del valor de tasación o compra, por lo que el comprador debe aportar al menos un 20% de entrada."
+
+reformas = "El coste que estimas costará una reforma básica del tipo de piso que estás buscando. En 2024, una reforma de un baño cuesta entre 3.500 - 8.000 €, y la de cocina 5.000 - 15.000 €. Mejoras como la pintura interior cuestan entre 8 - 20 €/m², y entre 20 - 50 €/m² por un cambio del suelo. Cambiar las ventanas por aluminio o PVC implica entre 3.000 - 7.000 €. La electricidad y fontanería podrían oscilar entre 3.000 - 10.000 €."
+
+agencia = "Es el pago que se realiza a una inmobiliaria o agente intermediario por gestionar la venta o alquiler de un inmueble. Oscila entre 3 y 5%, más IVA.  En España, la comisión suele pagarla el vendedor."
+
+segurovida = "Es un seguro que cubre el pago del préstamo en caso de fallecimiento o invalidez del titular. Es opcional, pero los bancos suelen obligar indirectamente a contratarlo para conceder mejores condiciones en la hipoteca. Su precio anual varía con la edad. Entre 150 y 250 € para edades de 30 a 40 años. Entre 250 y 400 € para edades de 40 a 50 años. Entre 400 - 700 € cuando el tomador tiene entre 50 y 60 años."
+
+plazo = "Es el número de años durante los cuales se paga la deuda. En préstamos hipotecarios y personales, los plazos varían según el tipo de financiación. En España, el plazo típico de una hipoteca es entre 20 y 30 años. Un plazo más corto implica pagar menos intereses, pero la cuota sube. Una cuota baja implica un plazo más largo, pagando más intereses."
+
+tin = "La TIN (Tasa de Interés Nominal) es el porcentaje de interés que un banco aplica a un préstamo o hipoteca, sin incluir otros gastos o comisiones. Es el tipo de interés puro, pero no refleja el costo real del préstamo. Para comparar préstamos, usa siempre la TAE, ya que la TIN no incluye comisiones ni costes ocultos."
+
+irpf = "Se refiere al porcentaje del Impuesto sobre la Renta de las Personas Físicas (IRPF) que se aplica a los ingresos de un contribuyente en España. Tiene un componente estatal y uno autonómico. Consulta tu declaración de la renta. Al alquilar un piso para vivienda habitual se puede deducir hasta un 60% de los ingresos netos."
+
+amortizacion = "Se refiere a la parte del préstamo que se paga cada año en relación con el capital total. En cada cuota que pagas en un préstamo, una parte va a amortizar la deuda (reducir el capital pendiente) y otra parte se destina a pagar intereses. En la mayoría de los préstamos (especialmente en hipotecas con sistema de amortización francés, que es el más común), al principio se pagan más intereses y menos capital. A medida que avanzan los años, el porcentaje de amortización aumenta. Al inicio, el porcentaje de amortización es bajo, pero al final del préstamo, casi todo lo que pagas va a reducir la deuda."

@@ -4,12 +4,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 import ast
 import math
-import openai
-from dotenv import load_dotenv
-import os
-import json
-import folium
-from streamlit_folium import st_folium
 
 import sys
 sys.path.append("../src")
@@ -17,6 +11,8 @@ sys.path.append("../src")
 import src.soporte_rentabilidad as sr
 import src.soporte_mongo as sm
 import src.soporte_texto as stxt
+import src.soporte_chatbot as sc
+import src.soporte_styles as ss
 
 # Set Streamlit page config
 st.set_page_config(page_title="Rentabilidad Inmobiliaria",
@@ -31,130 +27,7 @@ st.config.set_option("theme.textColor", "#00185E")  # text
 st.config.set_option("theme.font", "sans serif")  # Default font
 
 # Add custom styles
-st.markdown(
-    """
-    <style>
-    .block-container {
-        padding-top: 5rem;
-        padding-bottom: 5rem;
-        padding-left: 5rem;
-        padding-right: 5rem;
-    }
-    
-    /* Make padding responsive on mobile */
-    @media (max-width: 768px) {
-        .block-container {
-            padding-left: 1rem;
-            padding-right: 1rem;
-        }
-    }
-
-    /* Hide top padding in other elements */
-    .element-container {
-        margin-top: -0.5rem;
-    }
-
-    /* Markdown elements spacing */
-    .stMarkdown {
-        margin-top: 0.5rem;
-    }
-
-    /* Styling input elements */
-    .stTextInput, .stSelectbox, .stNumberInput, .stSlider, .stRadio {
-        background-color: white;
-        border: 2px solid #138cc6;
-        border-radius: 10px;
-        padding: 10px;
-    }
-
-    .stApp {
-        background-color: #EFEFEF;
-        border-radius: 15px;
-        padding: 20px;
-    }
-
-    /* Responsive scrollable container */
-    .scrollable-container {
-        min-height: 300px;
-        max-height: 70vh; /* Makes it relative to the viewport height */
-        overflow-y: auto;
-        padding: 10px;
-        border: 1px solid #cccccc;
-        border-radius: 10px;
-        background-color: #f9f9f9;
-    }
-
-    .card {
-        background-color: #ffffff;
-        border: 1px solid #cccccc;
-        border-radius: 10px;
-        padding: 15px;
-        margin-bottom: 10px;
-        box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-        display: flex;
-        align-items: center;
-    }
-
-    .card img {
-        width: 150px;
-        height: 150px;
-        object-fit: cover;
-        border-radius: 10px;
-        border: 1px solid #cccccc;
-    }
-
-    .card-details {
-        flex: 1;
-        padding-right: 15px;
-    }
-
-    .card-details h3 {
-        color: #007bff;
-        margin-bottom: 5px;
-        text-decoration: none;
-    }
-
-    .card-details h3 a {
-        color: #007bff;
-        text-decoration: none;
-    }
-
-    .card-details h3 a:hover {
-        text-decoration: underline;
-    }
-
-    .card-details p {
-        margin: 5px 0;
-    }
-
-    /* Responsive Sidebar */
-    [data-testid="stSidebar"] {
-        background: #4B5F6D !important;
-        padding: 15px !important;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2) !important;
-        color: white !important;
-    }
-
-    @media (max-width: 768px) {
-        [data-testid="stSidebar"] {
-            padding: 10px !important;
-        }
-    }
-
-    .custom-title {
-    text-transform: capitalize;
-    color: #3253AA !important;  /* Ensure color applies */
-    font-weight: bold;
-    text-decoration: none;  /* Remove underline */
-    }
-    .custom-title:hover {
-        text-decoration: underline; /* Add underline on hover */
-    }
-
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+st.markdown(ss.styles, unsafe_allow_html=True)
 
 # Create MongoDB connection
 bd = sm.conectar_a_mongo('ProyectoRentabilidad')
@@ -182,51 +55,6 @@ def load_data():
     except Exception as e:
         st.error(f"Error loading data: {e}")
         return pd.DataFrame()
-
-
-def render_image_carousel(image_urls):
-    # Carousel HTML
-    carousel_html = f"""
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
-    
-    <style>
-        .carousel {{
-            max-width: 90%;
-            margin: auto;
-            height: 290px; /* Set desired height */
-        }}
-        .carousel img {{
-            width: 100%;
-            height: 290px; /* Set desired height */
-            border-radius: 10px;
-            object-fit: cover;
-        }}
-        .slick-prev:before, .slick-next:before {{
-            color: #3253AA;
-            font-size: 24px;
-        }}
-    </style>
-
-    <div class="carousel">
-        {"".join([f'<div><img src="{url}" alt="carousel-image"></div>' for url in image_urls])}
-    </div>
-
-    <script>
-    $(document).ready(function() {{
-        $('.carousel').slick({{
-            infinite: true,
-            slidesToShow: 1,
-            slidesToScroll: 1,
-            arrows: true,
-            dots: false
-        }});
-    }});
-    </script>
-    """
-    st.components.v1.html(carousel_html, height=300)
 
 
 if 'page' not in st.session_state:
@@ -273,7 +101,7 @@ with st.sidebar:
         font-size: 16px;
         font-weight: normal;
         font-style: italic;
-        color: #ADB9DE; /* Change color if needed */
+        color: #cfe2f3; /* Change color if needed */
     }
     </style>
     <p class="centered-text">Análisis inteligente para maximizar tu inversión.</p>
@@ -297,23 +125,6 @@ col1, col2 = st.columns([3, 1])  # Left side (text) is wider than the right side
 
 with col1:
     st.markdown("""
-    <style>
-    .title-main {
-        color: #0b5394;
-        font-size: 36px;
-        font-weight: bold;
-    }
-    .title-sub {
-        color: #0b5394;
-        font-size: 20px;
-        font-weight: bold;
-    }
-    hr {
-        border: 1px solid #0b5394 !important; /* Make the line bolder and blue */
-        margin: 0px 0; /* Add spacing above and below */
-        width: 100%; /* Ensure full width */
-    }
-    </style>
     <div class="title-main">Calculadora de Rentabilidad Inmobiliaria</div>
     <div class="title-sub">Zaragoza</div>
     """, unsafe_allow_html=True)
@@ -328,23 +139,8 @@ with col2:
         unsafe_allow_html=True
     )
 
-
 # Insert a bold, colored horizontal line
-st.markdown("<hr>", unsafe_allow_html=True)
-
-
-# Inject JavaScript to remove the number input spinner buttons
-st.markdown("""
-    <script>
-        // Wait until the page fully loads
-        document.addEventListener("DOMContentLoaded", function() {
-            let inputs = document.querySelectorAll('input[type=number]');
-            inputs.forEach(input => {
-                input.style.cssText = 'appearance: textfield; -moz-appearance: textfield;';
-            });
-        });
-    </script>
-""", unsafe_allow_html=True)
+st.markdown("<hr><br>", unsafe_allow_html=True)
 
 
 if st.session_state.page == "Datos de compra y financiación":
@@ -362,7 +158,7 @@ if st.session_state.page == "Datos de compra y financiación":
         step=0.1, 
         value=st.session_state.inputs["porcentaje_entrada"],
         key="porcentaje_entrada",
-        help="Se refiere a la cantidad de dinero que el comprador debe pagar por adelantado al adquirirla, expresado como un porcentaje del precio total del inmueble. Este pago inicial es la parte que no está financiada por la hipoteca. En España, la mayoría de los bancos financian hasta un 80% del valor de tasación o compra, por lo que el comprador debe aportar al menos un 20% de entrada."
+        help= stxt.entrada
     )
     st.session_state.inputs["coste_reformas"] = col1.number_input(
         "Coste de reformas (€)", 
@@ -370,7 +166,7 @@ if st.session_state.page == "Datos de compra y financiación":
         step=1000, 
         value=st.session_state.inputs["coste_reformas"],
         key="coste_reformas",
-        help="El coste que estimas costará una reforma básica del tipo de piso que estás buscando. En 2024, una reforma de un baño cuesta entre 3.500 - 8.000 €, y la de cocina 5.000 - 15.000 €. Mejoras como la pintura interior cuestan entre 8 - 20 €/m², y entre 20 - 50 €/m² por un cambio del suelo. Cambiar las ventanas por aluminio o PVC implica entre 3.000 - 7.000 €. La electricidad y fontanería podrían oscilar entre 3.000 - 10.000 €."
+        help= stxt.reformas
     )
     st.session_state.inputs["comision_agencia"] = col1.number_input(
         "Comisión de agencia (%)", 
@@ -379,7 +175,7 @@ if st.session_state.page == "Datos de compra y financiación":
         step=0.1, 
         value=st.session_state.inputs["comision_agencia"],
         key="comision_agencia",
-        help="Es el pago que se realiza a una inmobiliaria o agente intermediario por gestionar la venta o alquiler de un inmueble. Oscila entre 3 y 5%, más IVA.  En España, la comisión suele pagarla el vendedor."
+        help= stxt.agencia
     )
     st.session_state.inputs["seguro_vida"] = col1.number_input(
         "Seguro de vida anual (€)", 
@@ -387,7 +183,7 @@ if st.session_state.page == "Datos de compra y financiación":
         step=50, 
         value=st.session_state.inputs["seguro_vida"],
         key="seguro_vida",
-        help="Es un seguro que cubre el pago del préstamo en caso de fallecimiento o invalidez del titular. Es opcional, pero los bancos suelen obligar indirectamente a contratarlo para conceder mejores condiciones en la hipoteca. Su precio anual varía con la edad. Entre 150 y 250 € para edades de 30 a 40 años. Entre 250 y 400 € para edades de 40 a 50 años. Entre 400 - 700 € cuando el tomador tiene entre 50 y 60 años."
+        help= stxt.segurovida
     )
 
     # Loan inputs
@@ -398,7 +194,7 @@ if st.session_state.page == "Datos de compra y financiación":
         step=1, 
         value=st.session_state.inputs["anios"],
         key="anios",
-        help="Es el número de años durante los cuales se paga la deuda. En préstamos hipotecarios y personales, los plazos varían según el tipo de financiación. En España, el plazo típico de una hipoteca es entre 20 y 30 años. Un plazo más corto implica pagar menos intereses, pero la cuota sube. Una cuota baja implica un plazo más largo, pagando más intereses."
+        help= stxt.plazo
     )
     st.session_state.inputs["tin"] = col2.number_input(
         "Tasa de interés nominal (TIN %) ", 
@@ -407,7 +203,7 @@ if st.session_state.page == "Datos de compra y financiación":
         step=0.1, 
         value=st.session_state.inputs["tin"],
         key="tin",
-        help="La TIN (Tasa de Interés Nominal) es el porcentaje de interés que un banco aplica a un préstamo o hipoteca, sin incluir otros gastos o comisiones. Es el tipo de interés puro, pero no refleja el costo real del préstamo. Para comparar préstamos, usa siempre la TAE, ya que la TIN no incluye comisiones ni costes ocultos."
+        help= stxt.tin
     )
     st.session_state.inputs["tipo_irpf"] = col2.number_input(
         "Tipo de IRPF (%)", 
@@ -416,7 +212,7 @@ if st.session_state.page == "Datos de compra y financiación":
         step=0.1, 
         value=st.session_state.inputs["tipo_irpf"],
         key="tipo_irpf",
-        help="Se refiere al porcentaje del Impuesto sobre la Renta de las Personas Físicas (IRPF) que se aplica a los ingresos de un contribuyente en España. Tiene un componente estatal y uno autonómico. Consulta tu declaración de la renta. Al alquilar un piso para vivienda habitual se puede deducir hasta un 60% de los ingresos netos."
+        help= stxt.irpf
     )
     st.session_state.inputs["porcentaje_amortizacion"] = col2.number_input(
         "Porcentaje de amortización (%)", 
@@ -425,10 +221,10 @@ if st.session_state.page == "Datos de compra y financiación":
         step=0.1, 
         value=st.session_state.inputs["porcentaje_amortizacion"],
         key="porcentaje_amortizacion",
-        help="Se refiere a la parte del préstamo que se paga cada año en relación con el capital total. En cada cuota que pagas en un préstamo, una parte va a amortizar la deuda (reducir el capital pendiente) y otra parte se destina a pagar intereses. En la mayoría de los préstamos (especialmente en hipotecas con sistema de amortización francés, que es el más común), al principio se pagan más intereses y menos capital. A medida que avanzan los años, el porcentaje de amortización aumenta. Al inicio, el porcentaje de amortización es bajo, pero al final del préstamo, casi todo lo que pagas va a reducir la deuda."
+        help= stxt.amortizacion
     )
 
-    # Add price reduction checkbox
+    # Price reduction checkbox
     if "aplicar_reduccion" not in st.session_state:
         st.session_state.aplicar_reduccion = True
     
@@ -507,40 +303,7 @@ elif st.session_state.page == "Resultados":
         total_pages = math.ceil(len(filtered_data) / results_per_page)
 
         # Apply custom styles using Streamlit's internal container system
-        st.markdown(
-            """
-            <style>
-                /* Ensure only this specific selectbox is targeted */
-                div[data-testid="stSelectbox"] {
-                    max-width: 100px !important;  /* Reduce width */
-                }
-
-                /* Remove background, border, and shadow */
-                div[data-testid="stSelectbox"] > div {
-                    background-color: transparent !important;  /* Make background invisible */
-                    border: none !important;  /* No borders */
-                    box-shadow: none !important;  /* No shadow */
-                    padding: 2px 5px !important;  /* Adjust padding */
-                }
-
-                /* Keep text readable */
-                div[data-testid="stSelectbox"] > div span {
-                    color: black !important;  /* Ensure text is visible */
-                    font-size: 14px !important;
-                }
-
-                /* Remove hover and focus effects */
-                div[data-testid="stSelectbox"] > div:hover,
-                div[data-testid="stSelectbox"] > div:focus {
-                    background-color: transparent !important;
-                    border: none !important;
-                    outline: none !important;
-                    box-shadow: none !important;
-                }
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
+        st.markdown(ss.card_styles, unsafe_allow_html=True)
 
         # Place pagination selector inside a Streamlit container to ensure the styling applies correctly
         with st.container():
@@ -607,7 +370,7 @@ elif st.session_state.page == "Resultados":
 
                 with col2:
                     if image_urls:
-                        render_image_carousel(image_urls)
+                        sc.render_image_carousel(image_urls)
                 
                 st.markdown(
                         f"""
@@ -737,6 +500,35 @@ elif st.session_state.page == "Mapa":
         st.write("No hay datos para mostrar en el mapa.")
 
 
+elif st.session_state.page == "Chatbot":
+
+    if st.session_state.aplicar_reduccion:
+        filtered_data = data.copy()
+        filtered_data['precio'] = filtered_data['precio'] * 0.9
+
+    # Run profitability calculations
+    df = sr.calcular_rentabilidad_inmobiliaria_wrapper(
+        filtered_data,
+        **st.session_state.inputs
+    )
+
+    # Streamlit Layout
+    st.markdown("### 🏡 Encuentra tu vivienda con nuestro housebot (beta)")
+    st.write("• Describe la vivienda con las características que estés buscando, y nuestro agente de inteligencia artificial encontrará la coincidencia más cercana.")
+
+    user_query = st.text_input("📝 *¿Qué estás buscando?*", "", key="user_query", help="Ejemplo: Quiero un piso en Delicias con 2 habitaciones y ascensor")
+    st.markdown("<style> div[data-testid='stTextInput'] input { font-size: 18px; font-weight: bold; padding: 10px; } </style>", unsafe_allow_html=True)
+
+    if user_query:
+        chat_response = sc.chatbot_query(df, user_query)
+        best_property = sc.find_best_match(df, chat_response)
+
+        if isinstance(best_property, str):
+            st.write(best_property)
+        else:
+            sc.display_property_details(best_property)
+
+
 elif st.session_state.page == "Datos Completos":
     st.header("Datos completos")
     st.markdown('<p style="color: #224094; font-size: 18px;">• Usa los filtros para configurar la búsqueda.<br>• Los resultados se muestran en orden de Rentabilidad Bruta descendiente.</p>', unsafe_allow_html=True)
@@ -813,197 +605,6 @@ elif st.session_state.page == "Datos Completos":
 
     else:
         st.write("No hay datos que coincidan con los filtros.")
-
-
-elif st.session_state.page == "Chatbot":
-
-    load_dotenv()
-
-    OPENAI = os.getenv("OPENAI")
-    if not OPENAI:
-        raise ValueError("OPENAI no está definido en las variables de entorno")
-    client = openai.OpenAI(api_key=OPENAI) 
-
-    if st.session_state.aplicar_reduccion:
-        filtered_data = data.copy()
-        filtered_data['precio'] = filtered_data['precio'] * 0.9
-
-    # Run profitability calculations
-    df = sr.calcular_rentabilidad_inmobiliaria_wrapper(
-        filtered_data,
-        **st.session_state.inputs
-    )
-
-    # Chatbot Functionality (Updated API with structured JSON response)
-    def chatbot_query(user_input):
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "Eres un asistente inmobiliario. Extrae información relevante de la consulta del usuario y devuélvela "
-                        "como un JSON con claves exactas que coincidan con las columnas del dataset de propiedades, excluyendo 'urls_imagenes', 'url_cocina', y 'url_banio'. "
-                        "El dataset de propiedades contiene las siguientes columnas:\n"
-                        "- tipo (Ej: 'piso', 'ático')\n"
-                        "- direccion (Ej: 'Calle de Terminillo, 5')\n"
-                        "- distrito (Ej: 'Delicias')\n"
-                        "- precio (Ej: 150000)\n"
-                        "- tamanio (Ej: 80)  # En m²\n"
-                        "- habitaciones (Ej: 3)\n"
-                        "- banios (Ej: 2)\n"
-                        "- ascensor (Ej: True o False)\n"
-                        "- terraza (Ej: True o False)\n"
-                        "- Rentabilidad Bruta (Ej: 5.4)  # En porcentaje\n"
-                        "Si el usuario menciona valores numéricos con comparaciones (ejemplo: 'menos de 50 metros cuadrados'), usa claves como 'tamanio_max': 50. "
-                        "Si el usuario menciona valores mínimos (ejemplo: 'más de 2 baños'), usa claves como 'banios_min': 2. "
-                        "Si el usuario menciona una calle o dirección específica, usa la clave 'direccion'. "
-                        "Ejemplo de respuesta JSON válida:\n"
-                        "{ \"tipo\": \"piso\", \"direccion\": \"Calle de Terminillo\", \"tamanio_max\": 50, \"banios_min\": 2 }"
-                    )
-                },
-                {"role": "user", "content": user_input}
-            ]
-        )
-
-        try:
-            structured_response = json.loads(response.choices[0].message.content)
-
-            # Filtrar solo columnas válidas
-            valid_fields = [col for col in df.columns if col not in ["urls_imagenes", "url_cocina", "url_banio"]]
-            structured_response = {k: v for k, v in structured_response.items() if k in valid_fields}
-
-            if not structured_response:
-                structured_response = {"tipo": "piso"}  # Default a "piso"
-
-        except json.JSONDecodeError:
-            structured_response = {"tipo": "piso"}  # Fallback case
-
-        return structured_response
-
-    # Property Search Based on Chatbot Output (Optimized for Best Match)
-    def find_best_match(criteria):
-        filtered_df = df.copy()
-
-        for key, value in criteria.items():
-            if key in filtered_df.columns and key not in ["urls_imagenes", "url_cocina", "url_banio"]:
-                if isinstance(value, (int, float)):
-                    # Handle comparisons (e.g., tamanio_max, banios_min)
-                    if "max" in key:
-                        column_name = key.replace("_max", "")
-                        if column_name in filtered_df.columns:
-                            filtered_df = filtered_df[filtered_df[column_name] <= value]
-                    elif "min" in key:
-                        column_name = key.replace("_min", "")
-                        if column_name in filtered_df.columns:
-                            filtered_df = filtered_df[filtered_df[column_name] >= value]
-                    else:
-                        filtered_df = filtered_df[filtered_df[key] == value]
-
-                elif isinstance(value, str):
-                    # Allow partial matches for text fields, especially for addresses
-                    filtered_df = filtered_df[filtered_df[key].astype(str).str.contains(value, case=False, na=False)]
-
-        # If multiple results, prioritize by price and rentability
-        if not filtered_df.empty:
-            filtered_df = filtered_df.sort_values(by=["Rentabilidad Bruta", "precio"], ascending=[False, True])
-            return filtered_df.iloc[0]  # Return the best match
-
-        return "No se han encontrado viviendas con ese criterio."
-
-
-    # Display Property Details
-    def display_property_details(property_data):
-        st.markdown(f"### 🏡 {property_data['tipo'].capitalize()} en {property_data['direccion']}")
-        st.markdown(f"🏷️ **Precio**: {property_data['precio']:,.0f} €")
-        st.markdown(f"📍 **Ubicación**: {property_data['distrito']}")
-        st.markdown(f"🔗 [Ver en Idealista](https://www.idealista.com/inmueble/{property_data['codigo']}/)")
-                
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            # Ensure urls_imagenes is properly converted to a list
-            if isinstance(property_data['urls_imagenes'], str):
-                urls_imagenes = ast.literal_eval(property_data['urls_imagenes'])  # Safer than eval()
-            elif isinstance(property_data['urls_imagenes'], list):
-                urls_imagenes = property_data['urls_imagenes']
-            else:
-                urls_imagenes = []
-            
-            render_image_carousel(urls_imagenes)
-        
-        with col2:
-
-            # Create the map
-            m = folium.Map(location=[property_data['lat'], property_data['lon']], zoom_start=15)
-
-            # Ensure markers are added
-            marker = folium.Marker(
-                location=[property_data['lat'], property_data['lon']],
-                popup=property_data['direccion'],
-                icon=folium.Icon(color="blue", icon="info-sign")
-            )
-            marker.add_to(m)
-
-            # Display in Streamlit
-            st_folium(m, height=300)
-
-        # Show basic property info
-        st.markdown("### 🏠 Características del Inmueble")
-
-        col1, col2, col3 = st.columns(3)
-        col1.write(f"**Tamaño**: {property_data['tamanio']:,.0f} m²")
-        col1.write(f"**Habitaciones**: {property_data['habitaciones']}")
-        col1.write(f"**Baños**: {property_data['banios']}")
-
-        col2.write(f"**Planta**: {property_data['planta']}")
-        col2.write(f"**Ascensor**: {'Sí' if property_data['ascensor'] else 'No'}")
-        col2.write(f"**Aire acondicionado**: {'Sí' if property_data['aire_acondicionado'] else 'No'}")
-        
-        col3.write(f"**Patio**: {'Sí' if property_data['patio'] else 'No'}")
-        col3.write(f"**Terraza**: {'Sí' if property_data['terraza'] else 'No'}")
-        col3.write(f"**Trastero**: {'Sí' if property_data['trastero'] else 'No'}")
-
-        st.write(f"**Descripción**: {property_data['descripcion']}")
-        st.write(f"**Anunciante**: {property_data['anunciante']}. **Teléfono**: {property_data['contacto']}")
-
-        # Show profitability metrics
-        st.markdown("### 📈 Rentabilidad")
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Rentabilidad Bruta", f"{property_data['Rentabilidad Bruta']}%")
-        col2.metric("Rentabilidad Neta", f"{property_data['Rentabilidad Neta']}%")
-        col3.metric("Beneficio Neto", f"{property_data['Beneficio Neto']:,.0f} €")
-        
-        col4, col5, col6 = st.columns(3)
-        col4.metric("ROCE", f"{property_data['ROCE']} %")
-        col5.metric("Cash-on-Cash Return", f"{property_data['Cash-on-Cash Return']}%")
-        col6.metric("Cashflow Después de Impuestos", f"{property_data['Cashflow Después de Impuestos']:,.0f} €")
-        
-        col7, col8, col9 = st.columns(3)
-        col7.metric("Cuota Mensual Hipoteca", f"{property_data['Cuota Mensual Hipoteca']:,.0f} €")
-        col8.metric("Cash Necesario Compra", f"{property_data['Cash Necesario Compra']:,.0f} €")
-        col9.metric("Cash Total Compra y Reforma", f"{property_data['Cash Total Compra y Reforma']:,.0f} €")
-        
-        col10, col11, col12 = st.columns(3)
-        col10.metric("ROCE (Años)", f"{property_data['ROCE (Años)']:,.0f} años")
-        col11.metric("COCR (Años)", f"{property_data['COCR (Años)']:,.0f} años")
-        col12.metric("Alquiler Predicho", f"{property_data['alquiler_predicho']:,.0f} €")
-
-    # Streamlit Layout
-    st.markdown("### 🏡 Encuentra tu vivienda con nuestro housebot (beta)")
-    st.write("• Describe la vivienda con las características que estés buscando, y nuestro agente de inteligencia artificial encontrará la coincidencia más cercana.")
-
-    user_query = st.text_input("📝 *¿Qué estás buscando?*", "", key="user_query", help="Ejemplo: Quiero un piso en Delicias con 2 habitaciones y ascensor")
-    st.markdown("<style> div[data-testid='stTextInput'] input { font-size: 18px; font-weight: bold; padding: 10px; } </style>", unsafe_allow_html=True)
-
-    if user_query:
-        chat_response = chatbot_query(user_query)
-        best_property = find_best_match(chat_response)
-
-        if isinstance(best_property, str):
-            st.write(best_property)
-        else:
-            display_property_details(best_property)
 
 
 elif st.session_state.page == "Información de Soporte":
