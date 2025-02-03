@@ -312,8 +312,8 @@ if st.session_state.page == "Datos de compra y financiación":
             background-color: #170058 !important;
             color: white !important;
             border-radius: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 15px 30px;
+            font-size: 18px;
             font-weight: bold;
             border: none;
             cursor: pointer;
@@ -336,7 +336,7 @@ if st.session_state.page == "Datos de compra y financiación":
 
 elif st.session_state.page == "Resultados":
     st.markdown(
-        '<p style="color: #224094; font-size: 18px;">• Mostrando hasta <strong>20 resultados por página</strong>, ordenados de mayor a menor rentabilidad bruta. <br>• Haz click en la dirección de la vivienda para ir al anuncio de idealista.<br>• Usa el selector de página para navegar entre los resultados.</p>',
+        '<p style="color: #224094; font-size: 18px;">• Mostrando hasta <strong>20 resultados por página</strong>, ordenados de mayor a menor rentabilidad bruta.</p>',
         unsafe_allow_html=True
     )
 
