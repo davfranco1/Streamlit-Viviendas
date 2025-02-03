@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 import ast
 import math
 import time
+from datetime import datetime
 
 import sys
 sys.path.append("../src")
@@ -411,16 +412,28 @@ elif st.session_state.page == "Resultados":
                     st.metric("ROCE (Años)", f"{row['ROCE (Años)']:,.0f} años")
                     st.metric("Cash-on-Cash Return", f"{row['Cash-on-Cash Return']}%")
                     st.metric("COCR (Años)", f"{row['COCR (Años)']:,.0f} años")           
+                
+                st.markdown("  \n")
 
-                # Generate PDF and provide download button
-                pdf_buffer = spdf.generate_pdf(row)
-                st.download_button(
-                label="📄 Descargar informe en PDF",
-                data=pdf_buffer,
-                file_name=f"detalles_vivienda_{row['direccion'].replace(' ', '_')}.pdf",  # Unique file name
-                mime="application/pdf",
-                key=f"download_pdf_{row['direccion']}"  # Unique key based on address
-                )        
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    # Generate PDF and provide download button
+                    pdf_buffer = spdf.generate_pdf(row)
+                    st.download_button(
+                    label="📄 Descargar informe en PDF",
+                    data=pdf_buffer,
+                    file_name=f"detalles_vivienda_{row['direccion'].replace(' ', '_')}.pdf",  # Unique file name
+                    mime="application/pdf",
+                    key=f"download_pdf_{row['direccion']}"  # Unique key based on address
+                    )
+                    
+                with col2:
+                    st.link_button("🔗 Ver en Idealista", url=idealista_url)
+
+                with col3:
+                    current_time = datetime.now().strftime("%d %b, %Y | %H:%M")
+                    st.markdown(f"📅 Fecha consulta: {current_time}")
+                
 
         st.markdown("</div>", unsafe_allow_html=True)
 
