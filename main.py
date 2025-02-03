@@ -131,9 +131,10 @@ col1, col2 = st.columns([3, 1])  # Left side (text) is wider than the right side
 
 with col1:
     st.markdown("""
-    <div class="title-main">Calculadora de Rentabilidad Inmobiliaria</div>
-    <div class="title-sub">Zaragoza</div>
+    <div class="title-main">Calculadora de Rentabilidad Inmobiliaria / ZGZ</div>
     """, unsafe_allow_html=True)
+
+#<div class="title-sub">Zaragoza</div>
 
 with col2:
     st.markdown(
