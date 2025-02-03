@@ -426,13 +426,13 @@ elif st.session_state.page == "Resultados":
                     mime="application/pdf",
                     key=f"download_pdf_{row['direccion']}"  # Unique key based on address
                     )
-                    
+
                 with col2:
                     st.link_button("🔗 Ver en Idealista", url=idealista_url)
 
                 with col3:
                     current_time = datetime.now().strftime("%d %b, %Y | %H:%M")
-                    st.markdown(f"📅 Fecha consulta: {current_time}")
+                    st.write(f'<span style="color: grey;">📅 Fecha consulta: {current_time}</span>', unsafe_allow_html=True)
                 
 
         st.markdown("</div>", unsafe_allow_html=True)
