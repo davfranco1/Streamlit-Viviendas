@@ -232,16 +232,36 @@ if st.session_state.page == "Datos de compra y financiación":
         help= stxt.amortizacion
     )
 
-    # Price reduction checkbox
-    if "aplicar_reduccion" not in st.session_state:
-        st.session_state.aplicar_reduccion = True
+
+
+    col1, col2 = st.columns(2)
+    with col1:
+        # Price reduction checkbox
+        if "aplicar_reduccion" not in st.session_state:
+            st.session_state.aplicar_reduccion = True
+
+        # Checkbox to enable/disable price reduction
+        st.session_state.aplicar_reduccion = st.checkbox(
+            "Aplicar una reducción a los precios de compra.",
+            value=st.session_state.get("aplicar_reduccion", True),
+            key="checkbox_reduccion",
+            help="De media, en España, una vivienda suele venderse entre un 10 y 15% por debajo del precio publicado. Para que los cálculos de rentabilidad reflejen esta casuística, esta casilla se encuentra marcada por defecto."
+        )
     
-    st.session_state.aplicar_reduccion = st.checkbox(
-        "Aplicar una reducción del 10% a los precios de compra.",
-        value=st.session_state.aplicar_reduccion,
-        key="checkbox_reduccion",
-        help="De media, en España, una vivienda suele venderse entre un 10 y 15% por debajo del precio publicado. Para que los cálculos de rentabilidad reflejen esta casuística, esta casilla se encuentra marcada por defecto."
-    )
+    with col2:
+        # Slider to select the reduction percentage (visible only if checkbox is checked)
+        if st.session_state.aplicar_reduccion:
+            st.session_state.reduccion_porcentaje = st.slider(
+                "Seleccione el porcentaje de reducción:",
+                min_value=5, max_value=20, value=10, step=1,
+                key="slider_reduccion",
+                help="Selecciona el porcentaje de reducción a aplicar al precio de compra."
+            )
+        else:
+            st.session_state.reduccion_porcentaje = 0  # No reduction if checkbox is unchecked
+        
+        # Display the selected reduction percentage
+        st.write(f"Se aplicará una reducción del {st.session_state.reduccion_porcentaje}% al precio de compra.")
 
     if st.button("Ver resultados", on_click=go_to_results):
         pass
@@ -298,8 +318,8 @@ elif st.session_state.page == "Resultados":
 
         # Apply price reduction if checkbox is checked
         if st.session_state.aplicar_reduccion:
-            filtered_data = filtered_data.copy()
-            filtered_data['precio'] = filtered_data['precio'] * 0.9
+            filtered_data = filtered_data.copy()  # Ensure we're not modifying the original data
+            filtered_data['precio'] = filtered_data['precio'] * (1 - st.session_state.reduccion_porcentaje / 100)
 
         # Calculate profitability
         resultados_rentabilidad = sr.calcular_rentabilidad_inmobiliaria_wrapper(
@@ -478,8 +498,8 @@ elif st.session_state.page == "Mapa":
     if not filtered_data.empty:
         # Apply price reduction if checkbox is checked
         if st.session_state.aplicar_reduccion:
-            filtered_data = filtered_data.copy()
-            filtered_data['precio'] = filtered_data['precio'] * 0.9
+            filtered_data = filtered_data.copy()  # Ensure we're not modifying the original data
+            filtered_data['precio'] = filtered_data['precio'] * (1 - st.session_state.reduccion_porcentaje / 100)
 
 
         # Calculate profitability
@@ -537,7 +557,7 @@ elif st.session_state.page == "Housebot":
 
     if st.session_state.aplicar_reduccion:
         filtered_data = data.copy()
-        filtered_data['precio'] = filtered_data['precio'] * 0.9
+        filtered_data['precio'] = filtered_data['precio'] * (1 - st.session_state.reduccion_porcentaje / 100)
 
     # Run profitability calculations
     df = sr.calcular_rentabilidad_inmobiliaria_wrapper(
@@ -608,7 +628,7 @@ elif st.session_state.page == "Datos Completos":
         # Apply price reduction if checkbox is checked
         if st.session_state.aplicar_reduccion:
             filtered_data = filtered_data.copy()
-            filtered_data['precio'] = filtered_data['precio'] * 0.9
+            filtered_data['precio'] = filtered_data['precio'] * (1 - st.session_state.reduccion_porcentaje / 100)
 
         # Run profitability calculations
         resultados_rentabilidad = sr.calcular_rentabilidad_inmobiliaria_wrapper(
