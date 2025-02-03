@@ -127,7 +127,7 @@ for col in required_columns:
 
 
 # Create layout with two columns
-col1, col2 = st.columns([4, 1])  # Left side (text) is wider than the right side (image)
+col1, col2 = st.columns([5, 1])  # Left side (text) is wider than the right side (image)
 
 with col1:
     st.markdown("""
@@ -149,9 +149,25 @@ with col2:
 # Insert a bold, colored horizontal line
 st.markdown("<hr>", unsafe_allow_html=True)
 
+def update_input(key):
+    st.session_state.inputs[key] = st.session_state[f"{key}_input"]
+
+
+@st.cache_data(ttl=3600)  # Cache for 1 hour
+def process_housebot_data(_data, aplicar_reduccion, reduccion_porcentaje, inputs):
+    if aplicar_reduccion:
+        filtered_data = _data.copy()
+        filtered_data['precio'] = filtered_data['precio'] * (1 - reduccion_porcentaje / 100)
+    else:
+        filtered_data = _data.copy()
+    
+    return sr.calcular_rentabilidad_inmobiliaria_wrapper(
+        filtered_data,
+        **inputs
+    )
 
 if st.session_state.page == "Datos de compra y financiación":
-    st.markdown("""<p style="color: #224094; font-size: 18px;">• Introduce los datos correspondientes a la compra y la financiación, seguido del botón <strong>Ver resultados</strong>. <br>• Puedes conocer la descripción de cada parámetro deslizando sobre la ❓</p>
+    st.markdown("""<p style="color: #224094; font-size: 18px;">• Puedes conocer la descripción de cada parámetro deslizando sobre la ❓</p>
     <p style="color: #224094; font-size: 14px;">‣ Los resultados son estimaciones, y nunca deben considerarse consejos de inversión. Antes de invertir, asegúrese de <strong>consultar con un experto</strong>.</p>""",
       unsafe_allow_html=True)
 
@@ -160,21 +176,27 @@ if st.session_state.page == "Datos de compra y financiación":
 
     # General inputs
     col1.write("**Datos generales**")
+
+    # Example implementation
     st.session_state.inputs["porcentaje_entrada"] = col1.number_input(
         "Porcentaje de entrada (%)", 
         min_value=0.0, 
         max_value=100.0, 
         step=0.1, 
         value=st.session_state.inputs["porcentaje_entrada"],
-        key="porcentaje_entrada",
-        help= stxt.entrada
+        key=f"porcentaje_entrada_input",
+        on_change=update_input,
+        args=("porcentaje_entrada",),
+        help=stxt.entrada
     )
     st.session_state.inputs["coste_reformas"] = col1.number_input(
         "Coste de reformas (€)", 
         min_value=0, 
-        step=1000, 
+        max_value=100000,
         value=st.session_state.inputs["coste_reformas"],
-        key="coste_reformas",
+        key=f"coste_reformas_input",
+        on_change=update_input,
+        args=("coste_reformas",),
         help= stxt.reformas
     )
     st.session_state.inputs["comision_agencia"] = col1.number_input(
@@ -183,15 +205,19 @@ if st.session_state.page == "Datos de compra y financiación":
         max_value=100.0, 
         step=0.1, 
         value=st.session_state.inputs["comision_agencia"],
-        key="comision_agencia",
+        key=f"comision_agencia_input",
+        on_change=update_input,
+        args=("comision_agencia",),
         help= stxt.agencia
     )
     st.session_state.inputs["seguro_vida"] = col1.number_input(
         "Seguro de vida anual (€)", 
         min_value=0, 
-        step=50, 
+        max_value=1000, 
         value=st.session_state.inputs["seguro_vida"],
-        key="seguro_vida",
+        key=f"seguro_vida_input",
+        on_change=update_input,
+        args=("seguro_vida",),
         help= stxt.segurovida
     )
 
@@ -199,10 +225,13 @@ if st.session_state.page == "Datos de compra y financiación":
     col2.write("**Datos de financiación**")
     st.session_state.inputs["anios"] = col2.number_input(
         "Años del préstamo", 
-        min_value=1, 
+        min_value=1,
+        max_value=40,
         step=1, 
         value=st.session_state.inputs["anios"],
-        key="anios",
+        key=f"anios_input",
+        on_change=update_input,
+        args=("anios",),
         help= stxt.plazo
     )
     st.session_state.inputs["tin"] = col2.number_input(
@@ -211,7 +240,9 @@ if st.session_state.page == "Datos de compra y financiación":
         max_value=100.0, 
         step=0.1, 
         value=st.session_state.inputs["tin"],
-        key="tin",
+        key=f"tin_input",
+        on_change=update_input,
+        args=("tin",),
         help= stxt.tin
     )
     st.session_state.inputs["tipo_irpf"] = col2.number_input(
@@ -220,7 +251,9 @@ if st.session_state.page == "Datos de compra y financiación":
         max_value=100.0, 
         step=0.1, 
         value=st.session_state.inputs["tipo_irpf"],
-        key="tipo_irpf",
+        key=f"tipo_irpf_input",
+        on_change=update_input,
+        args=("tipo_irpf",),
         help= stxt.irpf
     )
     st.session_state.inputs["porcentaje_amortizacion"] = col2.number_input(
@@ -229,26 +262,32 @@ if st.session_state.page == "Datos de compra y financiación":
         max_value=100.0, 
         step=0.1, 
         value=st.session_state.inputs["porcentaje_amortizacion"],
-        key="porcentaje_amortizacion",
+        key=f"porcentaje_amortizacion_input",
+        on_change=update_input,
+        args=("porcentaje_amortizacion",),
         help= stxt.amortizacion
     )
 
-
+    def update_reduction_checkbox():
+        st.session_state.aplicar_reduccion = st.session_state.checkbox_reduccion
+        if not st.session_state.aplicar_reduccion:
+            st.session_state.reduccion_porcentaje = 0
 
     col1, col2 = st.columns(2)
     with col1:
-        # Price reduction checkbox
+        # Initialize if not exists
         if "aplicar_reduccion" not in st.session_state:
             st.session_state.aplicar_reduccion = True
-
-        # Checkbox to enable/disable price reduction
-        st.session_state.aplicar_reduccion = st.checkbox(
+        
+        # Checkbox with on_change callback
+        st.checkbox(
             "Aplicar una reducción a los precios de compra.",
-            value=st.session_state.get("aplicar_reduccion", True),
+            value=st.session_state.aplicar_reduccion,
             key="checkbox_reduccion",
+            on_change=update_reduction_checkbox,
             help="De media, en España, una vivienda suele venderse entre un 10 y 15% por debajo del precio publicado. Para que los cálculos de rentabilidad reflejen esta casuística, esta casilla se encuentra marcada por defecto."
         )
-    
+
     with col2:
         # Slider to select the reduction percentage (visible only if checkbox is checked)
         if st.session_state.aplicar_reduccion:
@@ -260,12 +299,39 @@ if st.session_state.page == "Datos de compra y financiación":
             )
         else:
             st.session_state.reduccion_porcentaje = 0  # No reduction if checkbox is unchecked
-        
-        # Display the selected reduction percentage
-        st.write(f"Se aplicará una reducción del {st.session_state.reduccion_porcentaje}% al precio de compra.")
 
-    if st.button("Ver resultados", on_click=go_to_results):
-        pass
+    # Display the selected reduction percentage
+    st.write(f"Se aplicará una reducción del {st.session_state.reduccion_porcentaje}% al precio de compra.")
+
+
+    # Centering the button using Markdown with CSS
+    st.markdown(
+        """
+        <style>
+        div.stButton > button {
+            background-color: #170058 !important;
+            color: white !important;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+        div.stButton > button:hover {
+            background-color: #2a007a !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Create a centered container for the button
+    col1, col2, col3 = st.columns([1, 1, 1])  # Adjust column sizes for centering
+
+    with col2:
+        if st.button("Ver resultados", on_click=go_to_results):
+            pass
     
 
 elif st.session_state.page == "Resultados":
@@ -555,38 +621,52 @@ elif st.session_state.page == "Mapa":
 
 
 elif st.session_state.page == "Housebot":
-
-    if st.session_state.aplicar_reduccion:
-        filtered_data = data.copy()
-        filtered_data['precio'] = filtered_data['precio'] * (1 - st.session_state.reduccion_porcentaje / 100)
-
-    # Run profitability calculations
-    df = sr.calcular_rentabilidad_inmobiliaria_wrapper(
-        filtered_data,
-        **st.session_state.inputs
-    )
+    # Initialize state variables if not exist
+    if 'housebot_df' not in st.session_state:
+        st.session_state.housebot_df = process_housebot_data(
+            data, 
+            st.session_state.aplicar_reduccion, 
+            st.session_state.reduccion_porcentaje, 
+            st.session_state.inputs
+        )
+    
+    # Initialize query result state
+    if 'query_result' not in st.session_state:
+        st.session_state.query_result = None
 
     # Streamlit Layout
     st.markdown("### 🏡 Encuentra tu vivienda con nuestro housebot (beta)")
     st.write("• Describe la vivienda con las características que estés buscando, y nuestro agente de inteligencia artificial encontrará la coincidencia más cercana.")
-
+    
     user_query = st.text_input("📝 *¿Qué estás buscando?*", "", key="user_query", help="Ejemplo: Quiero un piso en Delicias con 2 habitaciones y ascensor")
     st.markdown("<style> div[data-testid='stTextInput'] input { font-size: 18px; font-weight: bold; padding: 10px; } </style>", unsafe_allow_html=True)
-
+    
     if user_query:
-        chat_response = sc.chatbot_query(df, user_query)
-        best_property = sc.find_best_match(df, chat_response)
-
-        if isinstance(best_property, str):
-            st.write(best_property)
+        # Only process if query has changed
+        if st.session_state.query_result is None or user_query != st.session_state.last_query:
+            st.session_state.last_query = user_query
+            chat_response = sc.chatbot_query(st.session_state.housebot_df, user_query)
+            best_property = sc.find_best_match(st.session_state.housebot_df, chat_response)
+            
+            if isinstance(best_property, str):
+                st.session_state.query_result = best_property
+            else:
+                st.session_state.query_result = best_property
+        
+        # Display the result
+        if isinstance(st.session_state.query_result, str):
+            st.write(st.session_state.query_result)
         else:
-            sc.display_property_details(best_property)
+            sc.display_property_details(st.session_state.query_result)
 
 
 elif st.session_state.page == "Datos Completos":
     st.header("Datos completos")
-    st.markdown('<p style="color: #224094; font-size: 18px;">• Usa los filtros para configurar la búsqueda.<br>• Los resultados se muestran en orden de Rentabilidad Bruta descendiente.</p>', unsafe_allow_html=True)
-
+    st.markdown(
+        '<p style="color: #224094; font-size: 18px;">• Usa los filtros para configurar la búsqueda.<br>'
+        '• Los resultados se muestran en orden de Rentabilidad Bruta descendiente.</p>',
+        unsafe_allow_html=True
+    )
 
     # Dropdown to select districts
     selected_distritos = st.multiselect(
@@ -629,7 +709,7 @@ elif st.session_state.page == "Datos Completos":
         # Apply price reduction if checkbox is checked
         if st.session_state.aplicar_reduccion:
             filtered_data = filtered_data.copy()
-            filtered_data['precio'] = filtered_data['precio'] * (1 - st.session_state.reduccion_porcentaje / 100)
+            filtered_data["precio"] = filtered_data["precio"] * (1 - st.session_state.reduccion_porcentaje / 100)
 
         # Run profitability calculations
         resultados_rentabilidad = sr.calcular_rentabilidad_inmobiliaria_wrapper(
@@ -643,11 +723,17 @@ elif st.session_state.page == "Datos Completos":
         # Filter available columns after calculations
         available_columns = [col for col in resultados_rentabilidad.columns if col not in exclude_columns]
 
+        # Default columns to show
+        default_columns = ["distrito", "direccion", "tipo", "precio", "tamanio", "habitaciones", "banios", "Rentabilidad Bruta"]
+        
+        # Ensure only existing columns are selected
+        default_columns = [col for col in default_columns if col in available_columns]
+
         # Column selection for display
         selected_columns = st.multiselect(
-            "Selecciona columnas a mostrar",
+            "Añade o elimina las columnas a mostrar. Puedes escribir el nombre o utilizar el desplegable.",
             options=available_columns,
-            default=available_columns,  # Show all allowed columns by default
+            default=default_columns,  # Show only key columns by default
             key="columnas_filtro"
         )
 
