@@ -36,7 +36,7 @@ def render_image_carousel(image_urls):
             object-fit: cover;
         }}
         .slick-prev:before, .slick-next:before {{
-            color: #3253AA;
+            color: #00185E;
             font-size: 24px;
         }}
     </style>

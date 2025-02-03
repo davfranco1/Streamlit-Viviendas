@@ -60,7 +60,7 @@ styles="""
     /* Styling input elements */
     .stTextInput, .stSelectbox, .stNumberInput, .stSlider, .stRadio {
         background-color: white;
-        border: 2px solid #138cc6;
+        border: 2px solid #00185E;
         border-radius: 10px;
         padding: 10px;
     }
