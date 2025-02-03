@@ -60,12 +60,17 @@ def render_image_carousel(image_urls):
     st.components.v1.html(carousel_html, height=300)
 
 
-# Chatbot Functionality (Updated API with structured JSON response)
-import json
-from openai import OpenAI
+# Define valid columns (to ensure GPT only outputs correct field names)
+VALID_COLUMNS = [
+    "codigo", "precio", "precio_por_zona", "tipo", "exterior", "planta", "ascensor", "tamanio", "habitaciones", "banios",
+    "aire_acondicionado", "trastero", "terraza", "patio", "direccion", "distrito", "alquiler_predicho", 
+    "puntuacion_cocina", "puntuacion_banio", "mts_cocina", "mts_banio", "Coste Total", "Rentabilidad Bruta",
+    "Beneficio Antes de Impuestos", "Rentabilidad Neta", "Cuota Mensual Hipoteca", "Cash Necesario Compra", 
+    "Cash Total Compra y Reforma", "Beneficio Neto", "Cashflow Antes de Impuestos", "Cashflow Después de Impuestos",
+    "ROCE", "ROCE (Años)", "Cash-on-Cash Return", "COCR (Años)"
+]
 
-client = OpenAI()
-
+# Chatbot Query Function
 def chatbot_query(df, user_input):
     response = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -74,31 +79,27 @@ def chatbot_query(df, user_input):
             {
                 "role": "system",
                 "content": (
-                    "Eres un asistente inmobiliario. Extrae información relevante de la consulta del usuario y devuélvela "
-                    "como un JSON con claves que coincidan exactamente con las columnas del dataset de propiedades, excluyendo 'descripcion', 'contacto'.\n"
-                    "El dataset de propiedades contiene las siguientes columnas relevantes:\n"
-                    "- 'tipo' (Ej: 'piso', 'ático')\n"
-                    "- 'direccion' (Ej: 'Calle de Terminillo, 5')\n"
-                    "- 'distrito' (Ej: 'Delicias')\n"
-                    "- 'precio' (Ej: 150000)\n"
-                    "- 'tamanio' (Ej: 80) # En m²\n"
-                    "- 'habitaciones' (Ej: 3)\n"
-                    "- 'banios' (Ej: 2)\n"
-                    "- 'ascensor' (Ej: True o False)\n"
-                    "- 'terraza' (Ej: True o False)\n"
-                    "- 'aire_acondicionado' (Ej: True o False)\n"
-                    "- 'planta' (Ej: 5)  # Número de piso en el edificio\n"
-                    "- 'Rentabilidad Bruta' (Ej: 5.4)  # En porcentaje\n"
-                    "Si el usuario menciona valores numéricos con comparaciones:\n"
-                    "- 'menos de 100 metros cuadrados' → usa 'tamanio': 100 y filtra en tu código (df[df['tamanio'] <= 100])\n"
-                    "- 'más de 2 baños' → usa 'banios': 2 y filtra (df[df['banios'] >= 2])\n"
-                    "- 'piso de 3 habitaciones' → usa 'habitaciones': 3\n"
-                    "- 'precio inferior a 100,000' → usa 'precio': 100000 y filtra (df[df['precio'] <= 100000])\n"
-                    "- 'busco un piso en la planta 5' → usa 'planta': 5\n"
-                    "- 'ático sin terraza' → usa 'terraza': False\n"
-                    "- 'piso con aire acondicionado' → usa 'aire_acondicionado': True\n"
-                    "Responde **únicamente** con un JSON válido. Ejemplo:\n"
-                    "{ \"tipo\": \"piso\", \"tamanio\": 100, \"banios\": 2, \"aire_acondicionado\": True, \"planta\": 5, \"precio\": 100000 }"
+                    "Eres un asistente inmobiliario especializado en interpretar consultas de búsqueda de propiedades. "
+                    "Tu tarea es extraer la información relevante del usuario y devolverla como un objeto JSON con claves "
+                    "que coincidan exactamente con las siguientes columnas:\n\n"
+                    f"{', '.join(VALID_COLUMNS)}\n\n"
+                    "### Reglas de extracción de información:\n"
+                    "1. **Valores exactos:**\n"
+                    "   - 'piso de 3 habitaciones' → { 'habitaciones': 3 }\n"
+                    "   - 'busco un piso en la planta 5' → { 'planta': 5 }\n"
+                    "   - 'ático sin terraza' → { 'terraza': False }\n"
+                    "   - 'piso con aire acondicionado' → { 'aire_acondicionado': True }\n\n"
+                    "2. **Rangos numéricos y comparaciones:**\n"
+                    "   - 'menos de 100 metros cuadrados' → { 'tamanio_max': 100 }\n"
+                    "   - 'más de 2 baños' → { 'banios_min': 2 }\n"
+                    "   - 'precio inferior a 100,000' → { 'precio_max': 100000 }\n"
+                    "   - 'precio superior a 200,000' → { 'precio_min': 200000 }\n"
+                    "   - 'rango de precios entre 150,000 y 250,000' → { 'precio_min': 150000, 'precio_max': 250000 }\n\n"
+                    "3. **Preferencias Booleanas:**\n"
+                    "   - 'quiero un piso exterior' → { 'exterior': True }\n"
+                    "   - 'busco un bajo con patio' → { 'planta': 0, 'patio': True }\n\n"
+                    "Si el usuario menciona varias características, agrégalas al JSON. "
+                    "Si la información es ambigua, ignórala en la respuesta."
                 )
             },
             {"role": "user", "content": user_input}
@@ -106,12 +107,12 @@ def chatbot_query(df, user_input):
     )
 
     try:
-        structured_response = response.choices[0].message.content  # Direct JSON object response
+        structured_response = json.loads(response.choices[0].message.content)  # Parse JSON response
 
-        # Filtrar solo columnas válidas
-        valid_fields = [col for col in df.columns if col not in ["descripcion", "contacto"]]
-        structured_response = {k: v for k, v in structured_response.items() if k in valid_fields}
+        # ✅ Filtrar solo columnas válidas
+        structured_response = {k: v for k, v in structured_response.items() if k in VALID_COLUMNS}
 
+        # ✅ Establecer un valor por defecto si no se extrae información
         if not structured_response:
             structured_response = {"tipo": "piso"}  # Default fallback
 
@@ -121,38 +122,52 @@ def chatbot_query(df, user_input):
     return structured_response
 
 
-# Property Search Based on Chatbot Output (Optimized for Best Match)
+# Property Search Function (Returns the **Best Single Match**)
 def find_best_match(df, criteria):
     filtered_df = df.copy()
 
     for key, value in criteria.items():
-        if key in filtered_df.columns and key not in ["urls_imagenes", "url_cocina", "url_banio"]:
+        if key in filtered_df.columns and key not in ["contacto"]:
             
             if isinstance(value, (int, float)):
-                # Handle numeric filters based on query intent
-                if key == "tamanio":
+                # ✅ Handle numeric filters properly (now supports more/less than)
+                if key == "tamanio_max":
                     filtered_df = filtered_df[filtered_df["tamanio"] <= value]  # Less than or equal
-                elif key == "precio":
-                    filtered_df = filtered_df[filtered_df["precio"] <= value]  # Less than or equal
-                elif key == "banios":
-                    filtered_df = filtered_df[filtered_df["banios"] >= value]  # More than or equal
-                elif key == "habitaciones":
-                    filtered_df = filtered_df[filtered_df["habitaciones"] >= value]  # More than or equal
+                elif key == "tamanio_min":
+                    filtered_df = filtered_df[filtered_df["tamanio"] >= value]  # More than or equal
+                elif key == "precio_max":
+                    filtered_df = filtered_df[filtered_df["precio"] <= value]
+                elif key == "precio_min":
+                    filtered_df = filtered_df[filtered_df["precio"] >= value]
+                elif key == "banios_max":
+                    filtered_df = filtered_df[filtered_df["banios"] <= value]  # Now supports "less than X"
+                elif key == "banios_min":
+                    filtered_df = filtered_df[filtered_df["banios"] >= value]  # Now supports "more than X"
+                elif key == "habitaciones_max":
+                    filtered_df = filtered_df[filtered_df["habitaciones"] <= value]
+                elif key == "habitaciones_min":
+                    filtered_df = filtered_df[filtered_df["habitaciones"] >= value]
+                elif key == "planta":
+                    filtered_df = filtered_df[filtered_df["planta"] == value]  # Exact match for floor number
                 else:
                     filtered_df = filtered_df[filtered_df[key] == value]  # Exact match for other numbers
 
             elif isinstance(value, bool):
-                # Handle True/False filters (e.g., aire_acondicionado, terraza)
+                # ✅ Handle True/False filters (e.g., aire_acondicionado, terraza)
                 filtered_df = filtered_df[filtered_df[key] == value]
 
             elif isinstance(value, str):
-                # Allow partial matches for text fields, especially for addresses
-                filtered_df = filtered_df[filtered_df[key].astype(str).str.contains(value, case=False, na=False)]
+                # ✅ Search for keywords in BOTH structured fields and `descripcion`
+                filtered_df = filtered_df[
+                    filtered_df[key].astype(str).str.contains(value, case=False, na=False)
+                    | filtered_df["descripcion"].astype(str).str.contains(value, case=False, na=False)
+                ]
 
-    # If multiple results, prioritize by Rentabilidad Bruta and precio
+    # ✅ If multiple results, prioritize by Rentabilidad Bruta & Precio
     if not filtered_df.empty:
         filtered_df = filtered_df.sort_values(by=["Rentabilidad Bruta", "precio"], ascending=[False, True])
-        return filtered_df.iloc[0]  # Return the best match
+        best_match = filtered_df.iloc[0].to_dict()  # Return as dictionary
+        return best_match
 
     return "No se han encontrado viviendas con ese criterio."
 
