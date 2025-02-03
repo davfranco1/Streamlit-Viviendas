@@ -479,7 +479,7 @@ elif st.session_state.page == "Mapa":
         fig = go.Figure()
 
         # Add Property Locations
-        fig.add_trace(go.scattermap(
+        fig.add_trace(go.Scattermapbox(
             lat=resultados_rentabilidad["lat"],
             lon=resultados_rentabilidad["lon"],
             mode="markers",
