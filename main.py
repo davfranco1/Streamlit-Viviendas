@@ -310,7 +310,7 @@ if st.session_state.page == "Datos de compra y financiación":
             background-color: #170058 !important;
             color: white !important;
             border-radius: 10px;
-            padding: 15px 30px;
+            padding: 15px 40px;
             font-size: 18px;
             font-weight: bold;
             border: none;
@@ -325,7 +325,7 @@ if st.session_state.page == "Datos de compra y financiación":
     )
 
     # Create a centered container for the button
-    col1, col2, col3 = st.columns([2, 1, 1])  # Adjust column sizes for centering
+    col1, col2, col3 = st.columns([1, 1, 1])  # Adjust column sizes for centering
 
     with col2:
         if st.button("Ver resultados", on_click=go_to_results):
