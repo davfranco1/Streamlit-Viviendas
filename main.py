@@ -299,11 +299,8 @@ if st.session_state.page == "Datos de compra y financiación":
         else:
             st.session_state.reduccion_porcentaje = 0  # No reduction if checkbox is unchecked
 
-    # Display the selected reduction percentage
-    st.write(f"Se aplicará una reducción del {st.session_state.reduccion_porcentaje}% al precio de compra.")
-
-    st.markdown("""<p style="color: #224094; font-size: 14px;">‣ Los resultados son estimaciones, y nunca deben considerarse consejos de inversión. Antes de invertir, asegúrese de <strong>consultar con un experto</strong>.</p>""",
-    unsafe_allow_html=True)
+        # Display the selected reduction percentage
+        st.write(f"Se aplicará una reducción del {st.session_state.reduccion_porcentaje}% al precio de compra.")
 
     # Centering the button using Markdown with CSS
     st.markdown(
@@ -333,6 +330,9 @@ if st.session_state.page == "Datos de compra y financiación":
     with col2:
         if st.button("Ver resultados", on_click=go_to_results):
             pass
+    
+    st.markdown("""<p style="color: #224094; font-size: 14px;">‣ Los resultados son estimaciones, y nunca deben considerarse consejos de inversión. Antes de invertir, asegúrese de <strong>consultar con un experto</strong>.</p>""",
+    unsafe_allow_html=True)
     
 
 elif st.session_state.page == "Resultados":
