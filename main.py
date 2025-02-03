@@ -325,7 +325,7 @@ if st.session_state.page == "Datos de compra y financiación":
     )
 
     # Create a centered container for the button
-    col1, col2, col3 = st.columns([1, 2, 1])  # Adjust column sizes for centering
+    col1, col2, col3 = st.columns([2, 1, 1])  # Adjust column sizes for centering
 
     with col2:
         if st.button("Ver resultados", on_click=go_to_results):
