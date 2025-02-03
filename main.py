@@ -167,8 +167,7 @@ def process_housebot_data(_data, aplicar_reduccion, reduccion_porcentaje, inputs
     )
 
 if st.session_state.page == "Datos de compra y financiación":
-    st.markdown("""<p style="color: #224094; font-size: 18px;">• Puedes conocer la descripción de cada parámetro deslizando sobre la ❓</p>
-    <p style="color: #224094; font-size: 14px;">‣ Los resultados son estimaciones, y nunca deben considerarse consejos de inversión. Antes de invertir, asegúrese de <strong>consultar con un experto</strong>.</p>""",
+    st.markdown("""<p style="color: #224094; font-size: 18px;">• Puedes conocer la descripción de cada parámetro deslizando sobre la ❓</p>""",
       unsafe_allow_html=True)
 
     # Create two columns
@@ -303,6 +302,8 @@ if st.session_state.page == "Datos de compra y financiación":
     # Display the selected reduction percentage
     st.write(f"Se aplicará una reducción del {st.session_state.reduccion_porcentaje}% al precio de compra.")
 
+    st.markdown("""<p style="color: #224094; font-size: 14px;">‣ Los resultados son estimaciones, y nunca deben considerarse consejos de inversión. Antes de invertir, asegúrese de <strong>consultar con un experto</strong>.</p>""",
+    unsafe_allow_html=True)
 
     # Centering the button using Markdown with CSS
     st.markdown(
