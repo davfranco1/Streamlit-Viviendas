@@ -302,10 +302,15 @@ if st.session_state.page == "Datos de compra y financiación":
         # Display the selected reduction percentage
         st.write(f"Se aplicará una reducción del {st.session_state.reduccion_porcentaje}% al precio de compra.")
 
-    # Centering the button using Markdown with CSS
     st.markdown(
         """
         <style>
+        /* Center the button */
+        .center-container {
+            display: flex;
+            justify-content: center;
+        }
+
         div.stButton > button {
             background-color: #170058 !important;
             color: white !important;
@@ -316,6 +321,7 @@ if st.session_state.page == "Datos de compra y financiación":
             border: none;
             cursor: pointer;
         }
+        
         div.stButton > button:hover {
             background-color: #2a007a !important;
         }
@@ -324,12 +330,11 @@ if st.session_state.page == "Datos de compra y financiación":
         unsafe_allow_html=True
     )
 
-    # Create a centered container for the button
-    col1, col2, col3 = st.columns([1, 1, 1])  # Adjust column sizes for centering
-
-    with col2:
-        if st.button("Ver resultados", on_click=go_to_results):
-            pass
+    # Wrap the button inside the centering container
+    st.markdown('<div class="center-container">', unsafe_allow_html=True)
+    if st.button("Ver resultados", on_click=go_to_results):
+        pass
+    st.markdown("</div>", unsafe_allow_html=True)
     
     st.markdown("""<p style="color: #224094; font-size: 14px;">‣ Los resultados son estimaciones, y nunca deben considerarse consejos de inversión. Antes de invertir, asegúrese de <strong>consultar con un experto</strong>.</p>""",
     unsafe_allow_html=True)
