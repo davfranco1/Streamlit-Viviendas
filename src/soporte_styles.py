@@ -1,4 +1,3 @@
-
 styles="""
     <style>
     .block-container {
@@ -41,6 +40,21 @@ styles="""
         border: 1px solid #0b5394 !important; /* Make the line bolder and blue */
         margin: 0px 0; /* Add spacing above and below */
         width: 100%; /* Ensure full width */
+    }
+
+        [data-testid="stBaseButton-headerNoPadding"] {
+        position: relative;
+        width: auto !important;
+        padding-right: 60px !important;
+    }
+    
+    [data-testid="stBaseButton-headerNoPadding"]::after {
+        content: "Menu";
+        position: absolute;
+        top: 50%;
+        left: 24px;
+        transform: translateY(-50%);
+        white-space: nowrap;
     }
 
     /* Styling input elements */
