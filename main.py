@@ -127,7 +127,7 @@ for col in required_columns:
 
 
 # Create layout with two columns
-col1, col2 = st.columns([3, 1])  # Left side (text) is wider than the right side (image)
+col1, col2 = st.columns([4, 1])  # Left side (text) is wider than the right side (image)
 
 with col1:
     st.markdown("""
