@@ -4,6 +4,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 import ast
 import math
+import folium
+from streamlit_folium import st_folium
 import time
 from datetime import datetime
 
@@ -455,38 +457,60 @@ elif st.session_state.page == "Resultados":
 
             # Expandable details with carousel and bullets
             with st.expander(f"Más detalles: {row.get('direccion', 'Sin dirección')}"):
-                col1, col2 = st.columns([1, 1])
+                tab1, tab2, tab3, tab4 = st.tabs(["Información General", "Descripción", "Mapa", "Métricas de rentabilidad"])
 
-                with col1:
-                    st.markdown(
-                        f"""
-                        - **Precio**: {row['precio']:,.0f} €
-                        - **Tamaño**: {row['tamanio']:,.0f} m²
-                        - **Planta**: {row['planta']}
-                        - **Habitaciones**: {row['habitaciones']}
-                        - **Baños**: {row['banios']}
-                        - **Estado del baño**: {row['puntuacion_banio']}
-                        - **Estado de la cocina**: {row['puntuacion_cocina']}
-                        - **Alquiler predicho**: {row['alquiler_predicho']:,.0f} €
-                        - **Anunciante**: {row['anunciante']}
-                        - **Teléfono**: {row['contacto']}
-                        """
-                    )
+                with tab1:
+                    col1, col2 = st.columns([1, 1])
 
-                with col2:
-                    if image_urls:
-                        sc.render_image_carousel(image_urls)
+                    with col1:
+                        st.markdown(
+                            f"""
+                            - **Precio**: {row['precio']:,.0f} €
+                            - **Tamaño**: {row['tamanio']:,.0f} m²
+                            - **Planta**: {row['planta']}
+                            - **Habitaciones**: {row['habitaciones']}
+                            - **Baños**: {row['banios']}
+                            - **Estado del baño**: {row['puntuacion_banio']}
+                            - **Estado de la cocina**: {row['puntuacion_cocina']}
+                            - **Alquiler predicho**: {row['alquiler_predicho']:,.0f} €
+                            - **Anunciante**: {row['anunciante']}
+                            - **Teléfono**: {row['contacto']}
+                            """
+                        )
+
+                    with col2:
+                        if image_urls:
+                            sc.render_image_carousel(image_urls)
                 
-                st.markdown(
-                        f"""
-                        - **Descripción**: {row['descripcion']}
-                        """
-                    )
 
-                # Add the profitability metrics table
-                with st.expander("Métricas de rentabilidad", expanded=True):
+                with tab2:
+                    st.markdown(
+                            f"""
+                            - **Descripción**: {row['descripcion']}
+                            """
+                        )
+
+                with tab3:
+                    # Create the map
+                    m = folium.Map(location=[row['lat'], row['lon']], zoom_start=15)
+
+                    # Ensure markers are added
+                    marker = folium.Marker(
+                        location=[row['lat'], row['lon']],
+                        popup=row['direccion'].title(),
+                        icon=folium.Icon(color="blue", icon="info-sign")
+                    )
+                    marker.add_to(m)
+
+                    # Display in Streamlit
+                    st_folium(m, height=300)
+
+                with tab4:
+                    # Add the profitability metrics table
+                    st.markdown("**Métricas de rentabilidad**")
+
                     col1, col2, col3 = st.columns(3)
-                    
+
                     with col1:
                         st.metric("Coste Total", f"{row['Coste Total']:,.0f} €")
                         st.metric("Rentabilidad Bruta", f"{row['Rentabilidad Bruta']}%")
@@ -505,8 +529,8 @@ elif st.session_state.page == "Resultados":
                         st.metric("ROCE", f"{row['ROCE']}%")
                         st.metric("ROCE (Años)", f"{row['ROCE (Años)']:,.0f} años")
                         st.metric("Cash-on-Cash Return", f"{row['Cash-on-Cash Return']}%")
-                        st.metric("COCR (Años)", f"{row['COCR (Años)']:,.0f} años")          
-                
+                        st.metric("COCR (Años)", f"{row['COCR (Años)']:,.0f} años")           
+                    
                 st.markdown("  \n")
 
                 col1, col2, col3 = st.columns(3)

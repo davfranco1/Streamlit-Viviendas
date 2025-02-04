@@ -199,7 +199,7 @@ def display_property_details(property_data):
         # Ensure markers are added
         marker = folium.Marker(
             location=[property_data['lat'], property_data['lon']],
-            popup=property_data['direccion'],
+            popup=property_data['direccion'].title(),
             icon=folium.Icon(color="blue", icon="info-sign")
         )
         marker.add_to(m)
