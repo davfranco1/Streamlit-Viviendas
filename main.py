@@ -19,7 +19,7 @@ import src.soporte_pdf as spdf
 
 
 # Set Streamlit page config
-st.set_page_config(page_title="Rentabilidad Inmobiliaria",
+st.set_page_config(page_title="Las Casas de David: Calculadora de Rentabilidad Inmobiliaria",
                    page_icon="images/favicon.ico",
                    layout="wide")
 
@@ -79,10 +79,16 @@ if "inputs" not in st.session_state:
 def handle_nav_change():
     st.session_state.page = st.session_state.navigation
 
+# In your callback
 def go_to_results():
-    with st.spinner("Cargando resultados..."):  # Display spinner for 2 seconds
-        time.sleep(2)
+    st.session_state.loading = True
     st.session_state.page = "Resultados"
+
+# In your main UI code where you render the pages
+if st.session_state.get("loading", False):
+    with st.spinner("Cargando resultados..."):
+        time.sleep(2)  # Your delay
+        st.session_state.loading = False
 
 
 # Center the image in the sidebar using HTML & CSS
@@ -291,7 +297,7 @@ if st.session_state.page == "Datos de compra y financiación":
         # Slider to select the reduction percentage (visible only if checkbox is checked)
         if st.session_state.aplicar_reduccion:
             st.session_state.reduccion_porcentaje = st.slider(
-                "Seleccione el porcentaje de reducción:",
+                "Selecciona el porcentaje de reducción:",
                 min_value=5, max_value=20, value=10, step=1,
                 key="slider_reduccion",
                 help="Selecciona el porcentaje de reducción a aplicar al precio de compra."
@@ -332,7 +338,7 @@ if st.session_state.page == "Datos de compra y financiación":
         if st.button("Ver resultados", on_click=go_to_results):
             pass
     
-    st.markdown("""<p style="color: #224094; font-size: 14px;">‣ Los resultados son estimaciones, y nunca deben considerarse consejos de inversión. Antes de invertir, asegúrese de <strong>consultar con un experto</strong>.</p>""",
+    st.markdown("""<p style="color: #808080; font-size: 14px;">‣ Los resultados son estimaciones, y nunca deben considerarse consejos de inversión. Antes de invertir, asegúrese de <strong>consultar con un experto</strong>.</p>""",
     unsafe_allow_html=True)
     
 
@@ -592,7 +598,7 @@ elif st.session_state.page == "Mapa":
             ),
             text=resultados_rentabilidad.apply(lambda row: (
                 f"<b><a href='https://www.idealista.com/inmueble/{row['codigo']}/' target='_blank' style='color:#3253aa;'>"
-                f"{row['direccion']} (ir a idealista)</a></b><br>"
+                f"{row['tipo'].capitalize()} en {row['direccion']} (ver en idealista)</a></b><br>"
                 f"Precio: {row['precio']:,.0f} €<br>"
                 f"Tamaño: {row['tamanio']} m²<br>"
                 f"Habitaciones y baños: {row['habitaciones']} y {row['banios']}<br>"
@@ -646,15 +652,16 @@ elif st.session_state.page == "Housebot":
     if user_query:
         # Only process if query has changed
         if st.session_state.query_result is None or user_query != st.session_state.last_query:
-            st.session_state.last_query = user_query
-            chat_response = sc.chatbot_query(st.session_state.housebot_df, user_query)
-            best_property = sc.find_best_match(st.session_state.housebot_df, chat_response)
-            
-            if isinstance(best_property, str):
-                st.session_state.query_result = best_property
-            else:
-                st.session_state.query_result = best_property
-        
+            with st.spinner('🔍 Buscando la vivienda que mejor se ajuste a tu búsqueda...'):
+                st.session_state.last_query = user_query
+                chat_response = sc.chatbot_query(st.session_state.housebot_df, user_query)
+                best_property = sc.find_best_match(st.session_state.housebot_df, chat_response)
+                
+                if isinstance(best_property, str):
+                    st.session_state.query_result = best_property
+                else:
+                    st.session_state.query_result = best_property
+
         # Display the result
         if isinstance(st.session_state.query_result, str):
             st.write(st.session_state.query_result)

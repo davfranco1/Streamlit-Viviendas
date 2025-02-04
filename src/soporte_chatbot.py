@@ -177,7 +177,6 @@ def display_property_details(property_data):
     st.markdown(f"### 🏡 {property_data['tipo'].capitalize()} en {property_data['direccion']}")
     st.markdown(f"🏷️ **Precio**: {property_data['precio']:,.0f} €")
     st.markdown(f"📍 **Ubicación**: {property_data['distrito']}")
-    st.markdown(f"🔗 [Ver en Idealista](https://www.idealista.com/inmueble/{property_data['codigo']}/)")
             
     col1, col2 = st.columns(2)
     
@@ -226,7 +225,9 @@ def display_property_details(property_data):
 
     st.write(f"**Descripción**: {property_data['descripcion']}")
     st.write(f"**Anunciante**: {property_data['anunciante']}. **Teléfono**: {property_data['contacto']}")
-
+    st.markdown(f"🔗 [Ver en Idealista](https://www.idealista.com/inmueble/{property_data['codigo']}/)")
+    st.markdown("  /n")
+    
     # Show profitability metrics
     st.markdown("### 📈 Rentabilidad")
     col1, col2, col3 = st.columns(3)
