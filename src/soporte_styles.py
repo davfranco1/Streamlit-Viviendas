@@ -20,6 +20,15 @@ styles="""
         margin-top: -0.5rem;
     }
 
+
+    /* Ocultamos el header por defecto de Streamlit para que no compita con nuestro topbar */
+    header[data-testid="stHeader"] {
+        display: none;
+    }
+    /* Ocultamos el pie de página por defecto (opcional) */
+    footer {visibility: hidden;
+    }
+
     /* Markdown elements spacing */
     .stMarkdown {
         margin-top: 0.5rem;

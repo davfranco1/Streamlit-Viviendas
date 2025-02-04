@@ -4,7 +4,7 @@
 
 Este repositorio contiene una aplicación desarrollada en **Streamlit** para el análisis y visualización de datos relacionados con la compra y alquiler de viviendas en Zaragoza. La aplicación permite explorar diferentes métricas y realizar comparaciones basadas en datos del usuario y el mercado, facilitando la toma de decisiones en el sector inmobiliario.
 
-Corresponde al *front end* del proyecto principal, disponible en [este repositorio](https://github.com/davfranco1/Proyecto-Rentabilidad-Viviendas).
+Corresponde al *frontend* del proyecto principal, disponible en [este repositorio](https://github.com/davfranco1/Proyecto-Rentabilidad-Viviendas).
 
 ## 🏡 Características
 
