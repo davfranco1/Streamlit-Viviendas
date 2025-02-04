@@ -226,7 +226,7 @@ def display_property_details(property_data):
     st.write(f"**Descripción**: {property_data['descripcion']}")
     st.write(f"**Anunciante**: {property_data['anunciante']}. **Teléfono**: {property_data['contacto']}")
     st.markdown(f"🔗 [Ver en Idealista](https://www.idealista.com/inmueble/{property_data['codigo']}/)")
-    st.markdown("  /n")
+    st.write("")
     
     # Show profitability metrics
     st.markdown("### 📈 Rentabilidad")
