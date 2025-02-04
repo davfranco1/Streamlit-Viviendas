@@ -484,29 +484,28 @@ elif st.session_state.page == "Resultados":
                     )
 
                 # Add the profitability metrics table
-                st.markdown("**Métricas de rentabilidad**")
+                with st.expander("Métricas de rentabilidad", expanded=True):
+                    col1, col2, col3 = st.columns(3)
+                    
+                    with col1:
+                        st.metric("Coste Total", f"{row['Coste Total']:,.0f} €")
+                        st.metric("Rentabilidad Bruta", f"{row['Rentabilidad Bruta']}%")
+                        st.metric("Beneficio Antes de Impuestos", f"{row['Beneficio Antes de Impuestos']:,.0f} €")
+                        st.metric("Rentabilidad Neta", f"{row['Rentabilidad Neta']}%")
+                        st.metric("Cuota Mensual Hipoteca", f"{row['Cuota Mensual Hipoteca']:,.0f} €")
 
-                col1, col2, col3 = st.columns(3)
+                    with col2:
+                        st.metric("Cash Necesario Compra", f"{row['Cash Necesario Compra']:,.0f} €")
+                        st.metric("Cash Total Compra y Reforma", f"{row['Cash Total Compra y Reforma']:,.0f} €")
+                        st.metric("Beneficio Neto", f"{row['Beneficio Neto']:,.0f} €")
+                        st.metric("Cashflow Antes de Impuestos", f"{row['Cashflow Antes de Impuestos']:,.0f} €")
+                        st.metric("Cashflow Después de Impuestos", f"{row['Cashflow Después de Impuestos']:,.0f} €")
 
-                with col1:
-                    st.metric("Coste Total", f"{row['Coste Total']:,.0f} €")
-                    st.metric("Rentabilidad Bruta", f"{row['Rentabilidad Bruta']}%")
-                    st.metric("Beneficio Antes de Impuestos", f"{row['Beneficio Antes de Impuestos']:,.0f} €")
-                    st.metric("Rentabilidad Neta", f"{row['Rentabilidad Neta']}%")
-                    st.metric("Cuota Mensual Hipoteca", f"{row['Cuota Mensual Hipoteca']:,.0f} €")
-
-                with col2:
-                    st.metric("Cash Necesario Compra", f"{row['Cash Necesario Compra']:,.0f} €")
-                    st.metric("Cash Total Compra y Reforma", f"{row['Cash Total Compra y Reforma']:,.0f} €")
-                    st.metric("Beneficio Neto", f"{row['Beneficio Neto']:,.0f} €")
-                    st.metric("Cashflow Antes de Impuestos", f"{row['Cashflow Antes de Impuestos']:,.0f} €")
-                    st.metric("Cashflow Después de Impuestos", f"{row['Cashflow Después de Impuestos']:,.0f} €")
-
-                with col3:
-                    st.metric("ROCE", f"{row['ROCE']}%")
-                    st.metric("ROCE (Años)", f"{row['ROCE (Años)']:,.0f} años")
-                    st.metric("Cash-on-Cash Return", f"{row['Cash-on-Cash Return']}%")
-                    st.metric("COCR (Años)", f"{row['COCR (Años)']:,.0f} años")           
+                    with col3:
+                        st.metric("ROCE", f"{row['ROCE']}%")
+                        st.metric("ROCE (Años)", f"{row['ROCE (Años)']:,.0f} años")
+                        st.metric("Cash-on-Cash Return", f"{row['Cash-on-Cash Return']}%")
+                        st.metric("COCR (Años)", f"{row['COCR (Años)']:,.0f} años")          
                 
                 st.markdown("  \n")
 
