@@ -47,7 +47,7 @@ styles="""
 
     hr {
         border: 1px solid #0b5394 !important; /* Make the line bolder and blue */
-        margin: 0px 0; /* Add spacing above and below */
+        margin: 0px 0px; /* Add spacing above and below */
         width: 100%; /* Ensure full width */
     }
 
