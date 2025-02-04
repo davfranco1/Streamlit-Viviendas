@@ -66,6 +66,10 @@ Para ejecutar la aplicación localmente, sigue los siguientes pasos:
    streamlit run main.py
    ```
 
+Para ejecutar la aplicación será necesario:
+- Crear una cuenta en [Mongo Atlas](https://www.mongodb.com/lp/cloud/atlas/try4-reg), una base de datos y obtener la 'MONGO_URI'.
+- Obtener una API Key para [OpenAI](https://platform.openai.com/docs/overview), para utilizar el chatbot.
+
 
 ## 📋 Requerimientos
 
