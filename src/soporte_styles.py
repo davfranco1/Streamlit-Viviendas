@@ -1,7 +1,7 @@
 styles="""
     <style>
     .block-container {
-        padding-top: 1rem;
+        padding-top: 1.5rem;
         padding-bottom: 5rem;
         padding-left: 5rem;
         padding-right: 5rem;
@@ -31,7 +31,7 @@ styles="""
 
     /* Markdown elements spacing */
     .stMarkdown {
-        margin-top: 0.5rem;
+        margin-top: 0rem;
     }
 
     .title-main {
