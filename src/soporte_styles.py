@@ -31,7 +31,7 @@ styles="""
 
     /* Markdown elements spacing */
     .stMarkdown {
-        margin-top: 0rem;
+        margin-top: 0.5rem;
     }
 
     .title-main {

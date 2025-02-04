@@ -308,7 +308,9 @@ if st.session_state.page == "Datos de compra y financiación":
             st.session_state.reduccion_porcentaje = 0  # No reduction if checkbox is unchecked
 
         # Display the selected reduction percentage
-        st.write(f"Se aplicará una reducción del {st.session_state.reduccion_porcentaje}% al precio de compra.")
+        if st.session_state.reduccion_porcentaje != 0:
+            st.write(f"Se aplicará una reducción del {st.session_state.reduccion_porcentaje}% al precio de compra.")
+        
 
     # Custom styling for the button
     st.markdown(
