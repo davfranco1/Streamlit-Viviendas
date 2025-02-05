@@ -45,6 +45,26 @@ styles="""
         font-weight: bold;
     }
 
+    .preset-button {
+        display: inline-block;
+        margin: 10px;
+        padding: 10px 20px;
+        background-color: #170058;
+        color: white;
+        border-radius: 5px;
+        text-align: center;
+        cursor: pointer;
+    }
+    .preset-button:hover {
+        background-color: #2a007a;
+    }
+    .preset-container {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
     hr {
         border: 1px solid #0b5394 !important; /* Make the line bolder and blue */
         margin: 0px 0px; /* Add spacing above and below */

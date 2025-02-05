@@ -185,3 +185,38 @@ tin = "La TIN (Tasa de Interés Nominal) es el porcentaje de interés que un ban
 irpf = "Se refiere al porcentaje del Impuesto sobre la Renta de las Personas Físicas (IRPF) que se aplica a los ingresos de un contribuyente en España. Tiene un componente estatal y uno autonómico. Consulta tu declaración de la renta. Al alquilar un piso para vivienda habitual se puede deducir hasta un 60% de los ingresos netos."
 
 amortizacion = "Se refiere a la parte del préstamo que se paga cada año en relación con el capital total. En cada cuota que pagas en un préstamo, una parte va a amortizar la deuda (reducir el capital pendiente) y otra parte se destina a pagar intereses. En la mayoría de los préstamos (especialmente en hipotecas con sistema de amortización francés, que es el más común), al principio se pagan más intereses y menos capital. A medida que avanzan los años, el porcentaje de amortización aumenta. Al inicio, el porcentaje de amortización es bajo, pero al final del préstamo, casi todo lo que pagas va a reducir la deuda."
+
+
+
+PRESETS = {
+    "primera_vivienda": {
+        "porcentaje_entrada": 20.0,  # Porcentaje estándar de entrada
+        "coste_reformas": 5000,  # Coste estimado para reformas
+        "comision_agencia": 3.0,  # Comisión típica de agencia inmobiliaria
+        "anios": 30,  # Plazo estándar de hipoteca
+        "tin": 3.0,  # Tipo de Interés Nominal promedio
+        "seguro_vida": 250,  # Coste anual estimado del seguro de vida
+        "tipo_irpf": 17.0,  # Tipo impositivo del IRPF
+        "porcentaje_amortizacion": 0.0,  # No se considera amortización anticipada
+    },
+    "segunda_vivienda": {
+        "porcentaje_entrada": 30.0,  # Mayor entrada requerida para segunda vivienda
+        "coste_reformas": 3000,  # Coste estimado para reformas menores
+        "comision_agencia": 3.0,  # Comisión típica de agencia inmobiliaria
+        "anios": 25,  # Plazo de hipoteca más corto
+        "tin": 3.5,  # Tipo de Interés Nominal ligeramente superior
+        "seguro_vida": 250,  # Coste anual estimado del seguro de vida
+        "tipo_irpf": 19.0,  # Tipo impositivo del IRPF
+        "porcentaje_amortizacion": 0.0,  # No se considera amortización anticipada
+    },
+    "inversion": {
+        "porcentaje_entrada": 40.0,  # Entrada más alta requerida para inversiones
+        "coste_reformas": 10000,  # Coste estimado para reformas significativas
+        "comision_agencia": 3.0,  # Comisión típica de agencia inmobiliaria
+        "anios": 20,  # Plazo de hipoteca más corto
+        "tin": 4.0,  # Tipo de Interés Nominal más alto debido al mayor riesgo
+        "seguro_vida": 250,  # Coste anual estimado del seguro de vida
+        "tipo_irpf": 25.0,  # Tipo impositivo del IRPF
+        "porcentaje_amortizacion": 40.0,  # Porcentaje de amortización anticipada considerado
+    }
+}
