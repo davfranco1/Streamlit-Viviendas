@@ -278,30 +278,38 @@ def render_datos_compra_financiacion(data):
     
     # Reduction options
     col1, col2 = st.columns(2)
+
     with col1:
-        st.session_state.reduccion_porcentaje = st.slider(
-            "Selecciona el porcentaje de reducción:",
-            min_value=5, max_value=20, 
-            value=st.session_state.get('reduccion_porcentaje', 10),  # Use get() to provide a default
-            step=1,
-            key="slider_reduccion",
-            help="Selecciona el porcentaje de reducción a aplicar al precio de compra."
+        # Initialize if not exists
+        if "aplicar_reduccion" not in st.session_state:
+            st.session_state.aplicar_reduccion = True
+        
+        # Checkbox with on_change callback
+        st.checkbox(
+            "Aplicar una reducción a los precios de compra.",
+            value=st.session_state.aplicar_reduccion,
+            key="checkbox_reduccion",
+            on_change=update_reduction_checkbox,
+            help="De media, en España, una vivienda suele venderse entre un 10 y 15% por debajo del precio publicado. Para que los cálculos de rentabilidad reflejen esta casuística, esta casilla se encuentra marcada por defecto."
         )
+
     with col2:
+        # Slider to select the reduction percentage (visible only if checkbox is checked)
         if st.session_state.aplicar_reduccion:
-            if "slider_reduccion" not in st.session_state:
-                st.session_state["slider_reduccion"] = 10
+            # Default to 10 when checkbox is checked
             st.session_state.reduccion_porcentaje = st.slider(
                 "Selecciona el porcentaje de reducción:",
-                min_value=5,
-                max_value=20,
-                value=st.session_state["slider_reduccion"],
+                min_value=5, 
+                max_value=20, 
+                value=10,  # Always default to 10 when checkbox is checked 
                 step=1,
                 key="slider_reduccion",
                 help="Selecciona el porcentaje de reducción a aplicar al precio de compra."
             )
         else:
-            st.session_state.reduccion_porcentaje = 0
+            st.session_state.reduccion_porcentaje = 0  # No reduction if checkbox is unchecked
+
+        # Display the selected reduction percentage
         if st.session_state.reduccion_porcentaje != 0:
             st.write(f"Se aplicará una reducción del {st.session_state.reduccion_porcentaje}% al precio de compra.")
     
