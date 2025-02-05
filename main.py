@@ -153,7 +153,6 @@ def render_header():
     st.markdown("<hr>", unsafe_allow_html=True)
 
 def render_datos_compra_financiacion(data):
-    st.write("\n.\n")
     st.radio(
         "Selecciona el tipo de inversión que vas a realizar para aplicar los valores predefinidos. Modifícalos para adaptarse a tus condiciones personales.",
         options=["primera_vivienda", "segunda_vivienda", "inversion"],
