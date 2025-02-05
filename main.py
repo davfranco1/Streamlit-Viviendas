@@ -335,7 +335,8 @@ def render_datos_compra_financiacion(data):
         """
         <p style="color: #808080; font-size: 14px;">
         ‣ Los resultados son estimaciones, y nunca deben considerarse consejos de inversión.
-        Antes de invertir, asegúrese de <strong>consultar con un experto</strong>.
+        Antes de invertir, asegúrese de <strong>consultar con un experto.</strong><br>
+        ‣ Esta herramienta <strong>no muestra</strong> viviendas que requieran una reforma integral o casas de campo.
         </p>
         """,
         unsafe_allow_html=True
@@ -343,7 +344,7 @@ def render_datos_compra_financiacion(data):
 
 def render_resultados(data):
     st.markdown(
-        '<p style="color: #224094; font-size: 18px;">• Mostrando hasta <strong>20 resultados por página</strong>, ordenados de mayor a menor rentabilidad bruta.</p>',
+        '<p style="color: #224094; font-size: 18px;">• Mostrando hasta <strong>20 resultados por página</strong>, ordenados de mayor a menor rentabilidad bruta.<br>• No se muestran propiedades que requieran de una reforma integral o casas de campo.</p>',
         unsafe_allow_html=True
     )
     col1, col2, col3 = st.columns(3)

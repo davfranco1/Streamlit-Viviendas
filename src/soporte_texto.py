@@ -170,15 +170,15 @@ def imprimir_metricas():
 
 ## Inputs usuario helpers
 
-entrada = "Se refiere a la cantidad de dinero que el comprador debe pagar por adelantado al adquirirla, expresado como un porcentaje del precio total del inmueble. Este pago inicial es la parte que no está financiada por la hipoteca. En España, la mayoría de los bancos financian hasta un 80% del valor de tasación o compra, por lo que el comprador debe aportar al menos un 20% de entrada."
+entrada = "En España, la mayoría de los bancos financian hasta un 80% del valor de tasación o compra, por lo que el comprador debe aportar al menos un 20% de entrada. En el caso de las primeras viviendas y personas jóvenes, las Comunidades pueden avalar al tomador para obtener una financiación del 100%."
 
-reformas = "El coste que estimas costará una reforma básica del tipo de piso que estás buscando. En 2024, una reforma de un baño cuesta entre 3.500 - 8.000 €, y la de cocina 5.000 - 15.000 €. Mejoras como la pintura interior cuestan entre 8 - 20 €/m², y entre 20 - 50 €/m² por un cambio del suelo. Cambiar las ventanas por aluminio o PVC implica entre 3.000 - 7.000 €. La electricidad y fontanería podrían oscilar entre 3.000 - 10.000 €."
+reformas = "En 2024, una reforma de un baño cuesta entre 3.500 - 8.000 €, y la de cocina 5.000 - 15.000 €. Mejoras como la pintura interior cuestan entre 8 - 20 €/m², y entre 20 - 50 €/m² por un cambio del suelo. Cambiar las ventanas por aluminio o PVC implica entre 3.000 - 7.000 €. La electricidad y fontanería podrían oscilar entre 3.000 - 10.000 €."
 
 agencia = "Es el pago que se realiza a una inmobiliaria o agente intermediario por gestionar la venta o alquiler de un inmueble. Oscila entre 3 y 5%, más IVA.  En España, la comisión suele pagarla el vendedor."
 
 segurovida = "Es un seguro que cubre el pago del préstamo en caso de fallecimiento o invalidez del titular. Es opcional, pero los bancos suelen obligar indirectamente a contratarlo para conceder mejores condiciones en la hipoteca. Su precio anual varía con la edad. Entre 150 y 250 € para edades de 30 a 40 años. Entre 250 y 400 € para edades de 40 a 50 años. Entre 400 - 700 € cuando el tomador tiene entre 50 y 60 años."
 
-plazo = "Es el número de años durante los cuales se paga la deuda. En préstamos hipotecarios y personales, los plazos varían según el tipo de financiación. En España, el plazo típico de una hipoteca es entre 20 y 30 años. Un plazo más corto implica pagar menos intereses, pero la cuota sube. Una cuota baja implica un plazo más largo, pagando más intereses."
+plazo = "En España, el plazo típico de una hipoteca es entre 20 y 30 años. Un plazo más corto implica pagar menos intereses, pero la cuota sube. Una cuota baja implica un plazo más largo, pagando más intereses. El Banco de España recomienda que, el pago de la última cuota sea antes de que el titular cumpla los 75 años."
 
 tin = "La TIN (Tasa de Interés Nominal) es el porcentaje de interés que un banco aplica a un préstamo o hipoteca, sin incluir otros gastos o comisiones. Es el tipo de interés puro, pero no refleja el costo real del préstamo. Para comparar préstamos, usa siempre la TAE, ya que la TIN no incluye comisiones ni costes ocultos."
 
@@ -192,27 +192,27 @@ PRESETS = {
     "primera_vivienda": {
         "porcentaje_entrada": 20.0,  # Porcentaje estándar de entrada
         "coste_reformas": 5000,  # Coste estimado para reformas
-        "comision_agencia": 3.0,  # Comisión típica de agencia inmobiliaria
+        "comision_agencia": 4.0,  # Comisión típica de agencia inmobiliaria
         "anios": 30,  # Plazo estándar de hipoteca
         "tin": 3.0,  # Tipo de Interés Nominal promedio
         "seguro_vida": 250,  # Coste anual estimado del seguro de vida
         "tipo_irpf": 17.0,  # Tipo impositivo del IRPF
-        "porcentaje_amortizacion": 0.0,  # No se considera amortización anticipada
+        "porcentaje_amortizacion": 40.0,  # No se considera amortización anticipada
     },
     "segunda_vivienda": {
         "porcentaje_entrada": 30.0,  # Mayor entrada requerida para segunda vivienda
-        "coste_reformas": 3000,  # Coste estimado para reformas menores
-        "comision_agencia": 3.0,  # Comisión típica de agencia inmobiliaria
+        "coste_reformas": 5000,  # Coste estimado para reformas menores
+        "comision_agencia": 4.0,  # Comisión típica de agencia inmobiliaria
         "anios": 25,  # Plazo de hipoteca más corto
         "tin": 3.5,  # Tipo de Interés Nominal ligeramente superior
         "seguro_vida": 250,  # Coste anual estimado del seguro de vida
         "tipo_irpf": 19.0,  # Tipo impositivo del IRPF
-        "porcentaje_amortizacion": 0.0,  # No se considera amortización anticipada
+        "porcentaje_amortizacion": 40.0,  # No se considera amortización anticipada
     },
     "inversion": {
         "porcentaje_entrada": 40.0,  # Entrada más alta requerida para inversiones
         "coste_reformas": 10000,  # Coste estimado para reformas significativas
-        "comision_agencia": 3.0,  # Comisión típica de agencia inmobiliaria
+        "comision_agencia": 4.0,  # Comisión típica de agencia inmobiliaria
         "anios": 20,  # Plazo de hipoteca más corto
         "tin": 4.0,  # Tipo de Interés Nominal más alto debido al mayor riesgo
         "seguro_vida": 250,  # Coste anual estimado del seguro de vida
