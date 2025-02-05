@@ -3,6 +3,7 @@ import math
 import time
 import ast
 from datetime import datetime
+
 import pandas as pd
 import streamlit as st
 import plotly.express as px
@@ -10,7 +11,7 @@ import plotly.graph_objects as go
 import folium
 from streamlit_folium import st_folium
 
-# Append modules path and import modules
+# Append local modules path and import custom modules
 sys.path.append("../src")
 import src.soporte_rentabilidad as sr
 import src.soporte_mongo as sm
@@ -153,6 +154,7 @@ def render_header():
     st.markdown("<hr>", unsafe_allow_html=True)
 
 def render_datos_compra_financiacion(data):
+    st.write("\n\n")
     st.radio(
         "Selecciona el tipo de inversión que vas a realizar para aplicar los valores predefinidos. Modifícalos para adaptarse a tus condiciones personales.",
         options=["primera_vivienda", "segunda_vivienda", "inversion"],
@@ -167,96 +169,113 @@ def render_datos_compra_financiacion(data):
         help="De acuerdo con el tipo de inversión que vayas a realizar, los parámetros pueden variar."
     )
     col1, col2 = st.columns(2)
+    
     # Datos generales
     col1.write("**Datos generales**")
-    st.session_state.inputs["porcentaje_entrada"] = col1.number_input(
+    if "porcentaje_entrada_input" not in st.session_state:
+        st.session_state["porcentaje_entrada_input"] = st.session_state.inputs["porcentaje_entrada"]
+    col1.number_input(
         "Porcentaje de entrada (%)",
         min_value=0.0,
         max_value=100.0,
         step=0.1,
-        value=st.session_state.inputs["porcentaje_entrada"],
         key="porcentaje_entrada_input",
         on_change=update_input,
         args=("porcentaje_entrada",),
         help=stxt.entrada
     )
-    st.session_state.inputs["coste_reformas"] = col1.number_input(
+    
+    if "coste_reformas_input" not in st.session_state:
+        st.session_state["coste_reformas_input"] = st.session_state.inputs["coste_reformas"]
+    col1.number_input(
         "Coste de reformas (€)",
         min_value=0,
         max_value=100000,
-        value=st.session_state.inputs["coste_reformas"],
         key="coste_reformas_input",
         on_change=update_input,
         args=("coste_reformas",),
         help=stxt.reformas
     )
-    st.session_state.inputs["comision_agencia"] = col1.number_input(
+    
+    if "comision_agencia_input" not in st.session_state:
+        st.session_state["comision_agencia_input"] = st.session_state.inputs["comision_agencia"]
+    col1.number_input(
         "Comisión de agencia (%)",
         min_value=0.0,
         max_value=100.0,
         step=0.1,
-        value=st.session_state.inputs["comision_agencia"],
         key="comision_agencia_input",
         on_change=update_input,
         args=("comision_agencia",),
         help=stxt.agencia
     )
-    st.session_state.inputs["seguro_vida"] = col1.number_input(
+    
+    if "seguro_vida_input" not in st.session_state:
+        st.session_state["seguro_vida_input"] = st.session_state.inputs["seguro_vida"]
+    col1.number_input(
         "Seguro de vida anual (€)",
         min_value=0,
         max_value=1000,
-        value=st.session_state.inputs["seguro_vida"],
         key="seguro_vida_input",
         on_change=update_input,
         args=("seguro_vida",),
         help=stxt.segurovida
     )
+    
     # Datos de financiación
     col2.write("**Datos de financiación**")
-    st.session_state.inputs["anios"] = col2.number_input(
+    if "anios_input" not in st.session_state:
+        st.session_state["anios_input"] = st.session_state.inputs["anios"]
+    col2.number_input(
         "Años del préstamo",
         min_value=1,
         max_value=40,
         step=1,
-        value=st.session_state.inputs["anios"],
         key="anios_input",
         on_change=update_input,
         args=("anios",),
         help=stxt.plazo
     )
-    st.session_state.inputs["tin"] = col2.number_input(
+    
+    if "tin_input" not in st.session_state:
+        st.session_state["tin_input"] = st.session_state.inputs["tin"]
+    col2.number_input(
         "Tasa de interés nominal (TIN %)",
         min_value=0.0,
         max_value=100.0,
         step=0.1,
-        value=st.session_state.inputs["tin"],
         key="tin_input",
         on_change=update_input,
         args=("tin",),
         help=stxt.tin
     )
-    st.session_state.inputs["tipo_irpf"] = col2.number_input(
+    
+    if "tipo_irpf_input" not in st.session_state:
+        st.session_state["tipo_irpf_input"] = st.session_state.inputs["tipo_irpf"]
+    col2.number_input(
         "Tipo de IRPF (%)",
         min_value=0.0,
         max_value=100.0,
         step=0.1,
-        value=st.session_state.inputs["tipo_irpf"],
         key="tipo_irpf_input",
         on_change=update_input,
         args=("tipo_irpf",),
         help=stxt.irpf
     )
-    st.session_state.inputs["porcentaje_amortizacion"] = col2.number_input(
+    
+    if "porcentaje_amortizacion_input" not in st.session_state:
+        st.session_state["porcentaje_amortizacion_input"] = st.session_state.inputs["porcentaje_amortizacion"]
+    col2.number_input(
         "Porcentaje de amortización (%)",
         min_value=0.0,
         max_value=100.0,
         step=0.1,
-        value=st.session_state.inputs["porcentaje_amortizacion"],
         key="porcentaje_amortizacion_input",
         on_change=update_input,
         args=("porcentaje_amortizacion",),
         help=stxt.amortizacion
     )
+    
     # Reduction options
     col1, col2 = st.columns(2)
     with col1:
@@ -271,11 +290,13 @@ def render_datos_compra_financiacion(data):
         )
     with col2:
         if st.session_state.aplicar_reduccion:
+            if "slider_reduccion" not in st.session_state:
+                st.session_state["slider_reduccion"] = 10
             st.session_state.reduccion_porcentaje = st.slider(
                 "Selecciona el porcentaje de reducción:",
                 min_value=5,
                 max_value=20,
-                value=10,
+                value=st.session_state["slider_reduccion"],
                 step=1,
                 key="slider_reduccion",
                 help="Selecciona el porcentaje de reducción a aplicar al precio de compra."
@@ -284,6 +305,7 @@ def render_datos_compra_financiacion(data):
             st.session_state.reduccion_porcentaje = 0
         if st.session_state.reduccion_porcentaje != 0:
             st.write(f"Se aplicará una reducción del {st.session_state.reduccion_porcentaje}% al precio de compra.")
+    
     # Custom button style
     st.markdown(
         """
@@ -329,7 +351,7 @@ def render_resultados(data):
         selected_distritos = st.multiselect(
             "Selecciona uno o más distritos",
             options=data["distrito"].unique(),
-            default=data["distrito"].unique()
+            default=list(data["distrito"].unique())
         )
     with col2:
         precio_min, precio_max = st.slider(
@@ -490,7 +512,7 @@ def render_mapa(data):
     selected_distritos = st.multiselect(
         "Selecciona los distritos",
         options=data["distrito"].unique(),
-        default=data["distrito"].unique()
+        default=list(data["distrito"].unique())
     )
     col1, col2 = st.columns(2)
     with col1:
@@ -598,7 +620,7 @@ def render_datos_completos(data):
     selected_distritos = st.multiselect(
         "Selecciona distritos",
         options=data["distrito"].unique(),
-        default=data["distrito"].unique(),
+        default=list(data["distrito"].unique()),
         key="distrito_filtro"
     )
     col1, col2 = st.columns(2)
@@ -656,7 +678,6 @@ def render_informacion_soporte():
 # -------------------------------------------------------------------
 def main():
     data = load_data()
-    # Initialize session state defaults if not already set
     if "page" not in st.session_state:
         st.session_state.page = "Datos de compra y financiación"
     if "tipo_vivienda" not in st.session_state:
