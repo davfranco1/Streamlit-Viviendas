@@ -279,14 +279,13 @@ def render_datos_compra_financiacion(data):
     # Reduction options
     col1, col2 = st.columns(2)
     with col1:
-        if "aplicar_reduccion" not in st.session_state:
-            st.session_state.aplicar_reduccion = True
-        st.checkbox(
-            "Aplicar una reducción a los precios de compra.",
-            value=st.session_state.aplicar_reduccion,
-            key="checkbox_reduccion",
-            on_change=update_reduction_checkbox,
-            help="De media, en España, una vivienda suele venderse entre un 10 y 15% por debajo del precio publicado."
+        st.session_state.reduccion_porcentaje = st.slider(
+            "Selecciona el porcentaje de reducción:",
+            min_value=5, max_value=20, 
+            value=st.session_state.get('reduccion_porcentaje', 10),  # Use get() to provide a default
+            step=1,
+            key="slider_reduccion",
+            help="Selecciona el porcentaje de reducción a aplicar al precio de compra."
         )
     with col2:
         if st.session_state.aplicar_reduccion:
