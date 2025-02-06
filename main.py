@@ -457,8 +457,8 @@ def render_resultados(data):
                             - **Planta**: {row["planta"]}
                             - **Habitaciones**: {row["habitaciones"]}
                             - **Baños**: {row["banios"]}
-                            - **Estado del baño**: {row["puntuacion_banio"]}
-                            - **Estado de la cocina**: {row["puntuacion_cocina"]}
+                            - **Estado del baño**: {int(row["puntuacion_banio"])}
+                            - **Estado de la cocina**: {int(row["puntuacion_cocina"])}
                             """
                         )
                     with col2:

@@ -214,7 +214,7 @@ def display_property_details(property_data):
     col1.write(f"**Tamaño**: {property_data['tamanio']:,.0f} m²")
     col1.write(f"**Habitaciones**: {property_data['habitaciones']}")
     col1.write(f"**Baños**: {property_data['banios']}")
-    col1.write(f"**Estado de la cocina y baño**: {property_data['puntuacion_cocina']} y {property_data['puntuacion_cocina']}")
+    col1.write(f"**Estado de la cocina y baño**: {int(property_data['puntuacion_cocina'])} y {int(property_data['puntuacion_cocina'])}")
     
     col2.write(f"**Planta**: {property_data['planta']}")
     col2.write(f"**Ascensor**: {'Sí' if property_data['ascensor'] else 'No'}")
