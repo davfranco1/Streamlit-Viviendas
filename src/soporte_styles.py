@@ -10,6 +10,7 @@ styles="""
     /* Make padding responsive on mobile */
     @media (max-width: 768px) {
         .block-container {
+            padding-top: 2.5 rem;
             padding-left: 1rem;
             padding-right: 1rem;
         }
@@ -85,7 +86,7 @@ styles="""
         transform: translateY(-50%);
         white-space: wrap;
         background-color: #FFFFFF;
-        padding: 10px;
+        padding: 9px;
         display: inline-block;
         color: #4B5F6D;       /* Sets the text color */
         font-weight: bold;    /* Makes the text bold */
