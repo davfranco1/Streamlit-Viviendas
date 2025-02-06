@@ -76,14 +76,27 @@ styles="""
         width: auto !important;
         padding-right: 60px !important;
     }
-    
+
     [data-testid="stBaseButton-headerNoPadding"]::after {
         content: "Menu";
         position: absolute;
         top: 50%;
         left: 24px;
         transform: translateY(-50%);
-        white-space: nowrap;
+        white-space: wrap;
+        background-color: #FFFFFF;
+        padding: 10px;
+        display: inline-block;
+        color: #4B5F6D;       /* Sets the text color */
+        font-weight: bold;    /* Makes the text bold */
+    }
+
+    [data-testid="stBaseButton-headerNoPadding"] {
+        color: #FFFFFF !important;
+    }
+
+    [data-testid="stBaseButton-headerNoPadding"] svg {
+        fill: #4B5F6D !important;
     }
 
     /* Styling input elements */
