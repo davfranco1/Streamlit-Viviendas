@@ -438,6 +438,7 @@ def render_resultados(data):
                 """,
                 unsafe_allow_html=True
             )
+
             with st.expander(f"Más detalles: {row.get('direccion', 'Sin dirección')}"):
                 tab1, tab2, tab3, tab4, tab5 = st.tabs([
                     "Información General",
@@ -487,21 +488,21 @@ def render_resultados(data):
                     marker.add_to(m)
                     st_folium(m, height=300)
                 with tab4:
-                    st.markdown(f"- **Alquiler predicho**: {row["alquiler_predicho"]:,.0f} €")
-                    col1, col2, col3 = st.columns(3)
-                    with col1:
+                    st.markdown(f"- **Alquiler predicho**: {row['alquiler_predicho']:,.0f} €")
+                    col1_tab4, col2_tab4, col3_tab4 = st.columns(3)
+                    with col1_tab4:
                         st.metric("Coste Total", f"{row['Coste Total']:,.0f} €")
                         st.metric("Rentabilidad Bruta", f"{row['Rentabilidad Bruta']}%")
                         st.metric("Beneficio Antes de Impuestos", f"{row['Beneficio Antes de Impuestos']:,.0f} €")
                         st.metric("Rentabilidad Neta", f"{row['Rentabilidad Neta']}%")
                         st.metric("Cuota Mensual Hipoteca", f"{row['Cuota Mensual Hipoteca']:,.0f} €")
-                    with col2:
+                    with col2_tab4:
                         st.metric("Cash Necesario Compra", f"{row['Cash Necesario Compra']:,.0f} €")
                         st.metric("Cash Total Compra y Reforma", f"{row['Cash Total Compra y Reforma']:,.0f} €")
                         st.metric("Beneficio Neto", f"{row['Beneficio Neto']:,.0f} €")
                         st.metric("Cashflow Antes de Impuestos", f"{row['Cashflow Antes de Impuestos']:,.0f} €")
                         st.metric("Cashflow Después de Impuestos", f"{row['Cashflow Después de Impuestos']:,.0f} €")
-                    with col3:
+                    with col3_tab4:
                         st.metric("ROCE", f"{row['ROCE']}%")
                         st.metric("ROCE (Años)", f"{row['ROCE (Años)']:,.0f} años")
                         st.metric("Cash-on-Cash Return", f"{row['Cash-on-Cash Return']}%")
@@ -514,22 +515,25 @@ def render_resultados(data):
                         """
                     )
                 st.markdown("  \n")
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    for i, row in paginated_data.iterrows():
-                        pdf_buffer = spdf.generate_pdf(row)
-                        st.download_button(
-                            label="📄 Descargar informe en PDF",
-                            data=pdf_buffer,
-                            file_name=f"detalles_vivienda_{row['direccion'].replace(' ', '_')}.pdf",
-                            mime="application/pdf",
-                            key=f"download_pdf_{row['direccion'].replace(' ', '_')}_{i}"
-                        )
-                with col2:
+                col1_final, col2_final, col3_final = st.columns(3)
+                with col1_final:
+                    pdf_buffer = spdf.generate_pdf(row)
+                    unique_key = f"download_pdf_{row['direccion'].replace(' ', '_')}_{row.name}"
+                    st.download_button(
+                        label="📄 Descargar informe en PDF",
+                        data=pdf_buffer,
+                        file_name=f"detalles_vivienda_{row['direccion'].replace(' ', '_')}.pdf",
+                        mime="application/pdf",
+                        key=unique_key
+                    )
+                with col2_final:
                     st.link_button("🔗 Ver en Idealista", url=idealista_url)
-                with col3:
+                with col3_final:
                     current_time = datetime.now().strftime("%d %b, %Y | %H:%M")
-                    st.write(f'<span style="color: grey;">📅 Fecha consulta: {current_time}</span>', unsafe_allow_html=True)
+                    st.write(
+                        f'<span style="color: grey;">📅 Fecha consulta: {current_time}</span>',
+                        unsafe_allow_html=True
+                    )
         st.markdown(f"**Página {page_number} de {total_pages}**")
     else:
         st.write("No hay propiedades que coincidan con los filtros.")
