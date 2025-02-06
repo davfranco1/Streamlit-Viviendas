@@ -439,14 +439,15 @@ def render_resultados(data):
                 unsafe_allow_html=True
             )
             with st.expander(f"Más detalles: {row.get('direccion', 'Sin dirección')}"):
-                tab1, tab2, tab3, tab4 = st.tabs([
+                tab1, tab2, tab3, tab4, tab5 = st.tabs([
                     "Información General",
                     "Descripción",
                     "Mapa",
-                    "Métricas de rentabilidad"
+                    "Métricas de rentabilidad",
+                    "Contacto"
                 ])
                 with tab1:
-                    col1, col2 = st.columns([1, 1])
+                    col1, col2, col3 = st.columns([1, 1, 2])
                     with col1:
                         st.markdown(
                             f"""
@@ -457,12 +458,21 @@ def render_resultados(data):
                             - **Baños**: {row["banios"]}
                             - **Estado del baño**: {row["puntuacion_banio"]}
                             - **Estado de la cocina**: {row["puntuacion_cocina"]}
-                            - **Alquiler predicho**: {row["alquiler_predicho"]:,.0f} €
-                            - **Anunciante**: {row["anunciante"]}
-                            - **Teléfono**: {row["contacto"]}
                             """
                         )
                     with col2:
+                        st.markdown(
+                            f"""
+                            - **Exterior**: {'Sí' if row['exterior'] else 'No'}
+                            - **Ascensor**: {'Sí' if row['ascensor'] else 'No'}
+                            - **Aire acondicionado**: {'Sí' if row['ascensor'] else 'No'}
+                            - **Terraza**: {'Sí' if row['terraza'] else 'No'}
+                            - **Patio**: {'Sí' if row['patio'] else 'No'}
+                            - **Trastero**: {'Sí' if row['trastero'] else 'No'}
+                            - **Parking**: {'Sí' if row['trastero'] else 'No'}
+                            """
+                        )
+                    with col3:
                         if image_urls:
                             sc.render_image_carousel(image_urls)
                 with tab2:
@@ -477,7 +487,7 @@ def render_resultados(data):
                     marker.add_to(m)
                     st_folium(m, height=300)
                 with tab4:
-                    st.markdown("**Métricas de rentabilidad**")
+                    st.markdown(f"- **Alquiler predicho**: {row["alquiler_predicho"]:,.0f} €")
                     col1, col2, col3 = st.columns(3)
                     with col1:
                         st.metric("Coste Total", f"{row['Coste Total']:,.0f} €")
@@ -496,6 +506,13 @@ def render_resultados(data):
                         st.metric("ROCE (Años)", f"{row['ROCE (Años)']:,.0f} años")
                         st.metric("Cash-on-Cash Return", f"{row['Cash-on-Cash Return']}%")
                         st.metric("COCR (Años)", f"{row['COCR (Años)']:,.0f} años")
+                with tab5:
+                    st.markdown(
+                        f"""
+                        - **Anunciante**: {row["anunciante"]}
+                        - **Teléfono**: {row["contacto"]}
+                        """
+                    )
                 st.markdown("  \n")
                 col1, col2, col3 = st.columns(3)
                 with col1:

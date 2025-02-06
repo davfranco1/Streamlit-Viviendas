@@ -63,7 +63,7 @@ def render_image_carousel(image_urls):
 # Define valid columns (to ensure GPT only outputs correct field names)
 VALID_COLUMNS = [
     "codigo", "precio", "precio_por_zona", "tipo", "exterior", "planta", "ascensor", "tamanio", "habitaciones", "banios",
-    "aire_acondicionado", "trastero", "terraza", "patio", "direccion", "distrito", "alquiler_predicho", 
+    "aire_acondicionado", "trastero", "terraza", "patio", "parking", "direccion", "distrito", "alquiler_predicho", 
     "puntuacion_cocina", "puntuacion_banio", "mts_cocina", "mts_banio", "Coste Total", "Rentabilidad Bruta",
     "Beneficio Antes de Impuestos", "Rentabilidad Neta", "Cuota Mensual Hipoteca", "Cash Necesario Compra", 
     "Cash Total Compra y Reforma", "Beneficio Neto", "Cashflow Antes de Impuestos", "Cashflow Después de Impuestos",
@@ -217,11 +217,13 @@ def display_property_details(property_data):
 
     col2.write(f"**Planta**: {property_data['planta']}")
     col2.write(f"**Ascensor**: {'Sí' if property_data['ascensor'] else 'No'}")
+    col2.write(f"**Exterior**: {'Sí' if property_data['exterior'] else 'No'}")
     col2.write(f"**Aire acondicionado**: {'Sí' if property_data['aire_acondicionado'] else 'No'}")
     
     col3.write(f"**Patio**: {'Sí' if property_data['patio'] else 'No'}")
     col3.write(f"**Terraza**: {'Sí' if property_data['terraza'] else 'No'}")
     col3.write(f"**Trastero**: {'Sí' if property_data['trastero'] else 'No'}")
+    col3.write(f"**Parking**: {'Sí' if property_data['trastero'] else 'No'}")
 
     st.write(f"**Descripción**: {property_data['descripcion']}")
     st.write(f"**Anunciante**: {property_data['anunciante']}. **Teléfono**: {property_data['contacto']}")
