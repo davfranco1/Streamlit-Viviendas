@@ -400,7 +400,7 @@ def render_resultados(data):
             filtered_data,
             **st.session_state.inputs
         )
-        results_per_page = 3
+        results_per_page = 10
         total_pages = math.ceil(len(filtered_data) / results_per_page)
         st.markdown(ss.card_styles, unsafe_allow_html=True)
         with st.container():
