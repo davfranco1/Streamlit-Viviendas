@@ -516,14 +516,15 @@ def render_resultados(data):
                 st.markdown("  \n")
                 col1, col2, col3 = st.columns(3)
                 with col1:
-                    pdf_buffer = spdf.generate_pdf(row)
-                    st.download_button(
-                        label="📄 Descargar informe en PDF",
-                        data=pdf_buffer,
-                        file_name=f"detalles_vivienda_{row['direccion'].replace(' ', '_')}.pdf",
-                        mime="application/pdf",
-                        key=f"download_pdf_{row['direccion']}"
-                    )
+                    for i, row in paginated_data.iterrows():
+                        pdf_buffer = spdf.generate_pdf(row)
+                        st.download_button(
+                            label="📄 Descargar informe en PDF",
+                            data=pdf_buffer,
+                            file_name=f"detalles_vivienda_{row['direccion'].replace(' ', '_')}.pdf",
+                            mime="application/pdf",
+                            key=f"download_pdf_{row['direccion'].replace(' ', '_')}_{i}"
+                        )
                 with col2:
                     st.link_button("🔗 Ver en Idealista", url=idealista_url)
                 with col3:
