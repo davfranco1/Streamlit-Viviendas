@@ -351,7 +351,7 @@ def render_datos_compra_financiacion(data):
 
 def render_resultados(data):
     st.markdown(
-        '<p style="color: #224094; font-size: 18px;">• Mostrando hasta <strong>20 resultados por página</strong>, ordenados de mayor a menor rentabilidad bruta.<br>• No se muestran propiedades que requieran de una reforma integral o casas de campo.</p>',
+        '<p style="color: #224094; font-size: 18px;">• Mostrando resultados ordenados <strong>de mayor a menor rentabilidad bruta</strong>.<br>• No se muestran propiedades que requieran de una reforma integral o casas de campo.</p>',
         unsafe_allow_html=True
     )
     col1, col2, col3 = st.columns(3)
