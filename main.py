@@ -83,6 +83,7 @@ def render_top_nav():
         st.markdown(
             """
             <div class="title-sub">Calculadora de Rentabilidad Inmobiliaria / ZGZ</div>
+            <hr>
             """,
             unsafe_allow_html=True
         )
