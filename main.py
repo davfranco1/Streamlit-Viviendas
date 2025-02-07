@@ -80,76 +80,11 @@ def is_mobile():
 
 def render_top_nav():
     st.markdown(
-        """
-        <style>
-        .block-container {
-            padding-top: 0;
-            padding-bottom: 0;
-        }
-        .top-nav {
-            display: flex;
-            align-items: center;
-            background-color: #170058;
-            border-radius: 20px;
-            padding: 10px 20px;
-            margin-bottom: 20px;
-            justify-content: space-between;
-        }
-        .top-nav-logo img {
-            height: 50px;
-            width: auto;
-        }
-        .top-nav-buttons {
-            display: flex;
-            gap: 15px;
-        }
-        .top-nav-buttons a {
-            text-decoration: none;
-            background-color: transparent;
-            color: white;
-            font-size: 16px;
-            padding: 10px 20px;
-            border-radius: 20px;
-            transition: background-color 0.3s;
-        }
-        .top-nav-buttons a:hover {
-            background-color: #2a007a;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-    nav_options = [
-        "Datos de compra y financiación",
-        "Resultados",
-        "Mapa",
-        "Housebot",
-        "Datos Completos",
-        "Información de Soporte"
-    ]
-
-    # Use st.query_params instead of the deprecated st.experimental_get_query_params()
-    query_params = st.query_params
-    if "page" in query_params and query_params["page"]:
-        st.session_state.page = query_params["page"][0]
-    elif "page" not in st.session_state:
-        st.session_state.page = nav_options[0]
-
-    # Create anchor tags that update the URL and force a reload
-    buttons_html = "".join(
-        f"<a href='?page={option}' onclick='window.location.reload();' class='nav-button'>{option}</a>"
-        for option in nav_options
-    )
-
-    st.markdown(
         f"""
         <div class="top-nav">
+            <div class="title-main">Calculadora de Rentabilidad Inmobiliaria / ZGZ</div>
             <div class="top-nav-logo">
-                <img src="https://raw.githubusercontent.com/davfranco1/Streamlit-Viviendas/refs/heads/main/images/logo_transparent.png" alt="Logo">
-            </div>
-            <div class="top-nav-buttons">
-                {buttons_html}
+                <img src="https://raw.githubusercontent.com/davfranco1/Streamlit-Viviendas/refs/heads/main/images/zaragoza.png" alt="Logo">
             </div>
         </div>
         """,
@@ -830,9 +765,9 @@ def main():
     data = load_data()
 
     # Render components
-    render_header()
-    #render_top_nav()
     render_sidebar()
+    render_top_nav()
+    #render_header()
 
     # Render the selected page
     if st.session_state.page == "Datos de compra y financiación":

@@ -17,6 +17,40 @@ styles="""
         }
     }
 
+    /* Top-nav */
+    .block-container {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .top-nav {
+        display: flex;
+        align-items: center;
+        background-color: #170058;
+        border-radius: 20px;
+        padding: 10px 20px;
+        margin-bottom: 20px;
+        justify-content: space-between; /* Pushes elements apart */
+    }
+
+    .title-main {
+        font-size: 20px;
+        font-weight: bold;
+        color: white; /* Ensures contrast */
+        flex-grow: 1; /* Takes up available space */
+        text-align: left;
+    }
+
+    .top-nav-logo {
+        flex-shrink: 0; /* Prevents shrinking */
+    }
+
+    .top-nav-logo img {
+        height: 50px;
+        width: auto;
+    }
+
+
     /* Adjust margin for element container */
     .element-container {
         margin-top: -0.5rem;
@@ -63,7 +97,7 @@ styles="""
 
     /* Title styling */
     .title-main {
-        color: #0b5394;
+        color: white;
         font-size: 26px;
         font-weight: bold;
     }
