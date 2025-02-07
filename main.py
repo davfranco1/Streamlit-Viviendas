@@ -25,7 +25,7 @@ import src.soporte_pdf as spdf
 # -------------------------------------------------------------------
 st.set_page_config(
     page_title="Las Casas de David: Calculadora de Rentabilidad Inmobiliaria",
-    page_icon="images/favicon.ico",
+    page_icon="🏡",
     layout="wide"
 )
 
@@ -64,6 +64,84 @@ def load_data():
         st.error(f"Error loading data: {e}")
         return pd.DataFrame()
 
+def render_top_nav():
+    st.markdown(
+        """
+        <style>
+        .block-container {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .top-nav {
+            display: flex;
+            align-items: center;
+            background-color: #170058;
+            border-radius: 20px;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            justify-content: space-between;
+        }
+        .top-nav-logo img {
+            height: 50px;
+            width: auto;
+        }
+        .top-nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        .top-nav-buttons a {
+            text-decoration: none;
+            background-color: transparent;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 20px;
+            transition: background-color 0.3s;
+        }
+        .top-nav-buttons a:hover {
+            background-color: #2a007a;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    nav_options = [
+        "Datos de compra y financiación",
+        "Resultados",
+        "Mapa",
+        "Housebot",
+        "Datos Completos",
+        "Información de Soporte"
+    ]
+
+    # Use st.query_params instead of the deprecated st.experimental_get_query_params()
+    query_params = st.query_params
+    if "page" in query_params and query_params["page"]:
+        st.session_state.page = query_params["page"][0]
+    elif "page" not in st.session_state:
+        st.session_state.page = nav_options[0]
+
+    # Create anchor tags that update the URL and force a reload
+    buttons_html = "".join(
+        f"<a href='?page={option}' onclick='window.location.reload();' class='nav-button'>{option}</a>"
+        for option in nav_options
+    )
+
+    st.markdown(
+        f"""
+        <div class="top-nav">
+            <div class="top-nav-logo">
+                <img src="https://raw.githubusercontent.com/davfranco1/Streamlit-Viviendas/refs/heads/main/images/logo_transparent.png" alt="Logo">
+            </div>
+            <div class="top-nav-buttons">
+                {buttons_html}
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
 def handle_tipo_vivienda_change():
     apply_preset(st.session_state.tipo_vivienda_radio)
     st.session_state.tipo_vivienda = st.session_state.tipo_vivienda_radio
@@ -84,7 +162,8 @@ def process_housebot_data(_data, aplicar_reduccion, reduccion_porcentaje, inputs
     return sr.calcular_rentabilidad_inmobiliaria_wrapper(filtered_data, **inputs)
 
 def handle_nav_change():
-    st.session_state.page = st.session_state.navigation
+    if "navigation" in st.session_state:
+        st.session_state.page = st.session_state.navigation
 
 def go_to_results():
     st.session_state.loading = True
@@ -134,7 +213,7 @@ def render_sidebar():
         )
 
 def render_header():
-    col1, col2 = st.columns([5, 1])
+    col1, col2 = st.columns([6, 1])
     with col1:
         st.markdown(
             """
@@ -146,7 +225,7 @@ def render_header():
         st.markdown(
             """
             <div style="display: flex; justify-content: flex-end;">
-                <img src="https://raw.githubusercontent.com/davfranco1/Streamlit-Viviendas/refs/heads/main/images/zaragoza.png" width="100">
+                <img src="https://raw.githubusercontent.com/davfranco1/Streamlit-Viviendas/refs/heads/main/images/zaragoza.png" width="50">
             </div>
             """,
             unsafe_allow_html=True
@@ -706,31 +785,33 @@ def render_informacion_soporte():
 # -------------------------------------------------------------------
 # Main function
 # -------------------------------------------------------------------
+
 def main():
+    # Ensure session state variables exist
+    st.session_state.setdefault("page", "Datos de compra y financiación")
+    st.session_state.setdefault("tipo_vivienda", "primera_vivienda")
+    st.session_state.setdefault("inputs", {
+        "porcentaje_entrada": 20.0,
+        "coste_reformas": 5000,
+        "comision_agencia": 3.0,
+        "anios": 30,
+        "tin": 3.0,
+        "seguro_vida": 250,
+        "tipo_irpf": 17.0,
+        "porcentaje_amortizacion": 40.0,
+    })
+    st.session_state.setdefault("aplicar_reduccion", True)
+    st.session_state.setdefault("reduccion_porcentaje", 10)
+    st.session_state.setdefault("loading", False)
+
     data = load_data()
-    if "page" not in st.session_state:
-        st.session_state.page = "Datos de compra y financiación"
-    if "tipo_vivienda" not in st.session_state:
-        st.session_state.tipo_vivienda = "primera_vivienda"
-    if "inputs" not in st.session_state:
-        st.session_state.inputs = {
-            "porcentaje_entrada": 20.0,
-            "coste_reformas": 5000,
-            "comision_agencia": 3.0,
-            "anios": 30,
-            "tin": 3.0,
-            "seguro_vida": 250,
-            "tipo_irpf": 17.0,
-            "porcentaje_amortizacion": 40.0,
-        }
-    if st.session_state.get("loading", False):
-        with st.spinner("Cargando resultados..."):
-            time.sleep(2)
-            st.session_state.loading = False
 
-    render_sidebar()
+    # Render components
     render_header()
+    #render_top_nav()
+    render_sidebar()
 
+    # Render the selected page
     if st.session_state.page == "Datos de compra y financiación":
         render_datos_compra_financiacion(data)
     elif st.session_state.page == "Resultados":

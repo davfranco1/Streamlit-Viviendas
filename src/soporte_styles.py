@@ -37,7 +37,7 @@ styles="""
 
     .title-main {
         color: #0b5394;
-        font-size: 36px;
+        font-size: 26px;
         font-weight: bold;
     }
     .title-sub {
