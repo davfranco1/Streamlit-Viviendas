@@ -18,10 +18,6 @@ styles="""
     }
 
     /* Top-nav */
-    .block-container {
-        padding-top: 0;
-        padding-bottom: 0;
-    }
 
     .top-nav {
         display: flex;
