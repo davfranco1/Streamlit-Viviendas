@@ -221,23 +221,31 @@ def render_sidebar():
         )
 
 def render_header():
-    col1, col2 = st.columns([6, 1])
-    with col1:
+    if is_mobile():
         st.markdown(
             """
             <div class="title-main">Calculadora de Rentabilidad Inmobiliaria / ZGZ</div>
             """,
             unsafe_allow_html=True
         )
-    with col2:
-        if not is_mobile():
+
+    else: 
+        col1, col2 = st.columns([6, 1])
+        with col1:
             st.markdown(
                 """
-                <div style="display: flex; justify-content: flex-end;">
-                    <img src="https://raw.githubusercontent.com/davfranco1/Streamlit-Viviendas/refs/heads/main/images/zaragoza.png" width="60">
-                </div>
+                <div class="title-main">Calculadora de Rentabilidad Inmobiliaria / ZGZ</div>
                 """,
                 unsafe_allow_html=True
+            )
+        with col2:
+            st.markdown(
+                        """
+                        <div style="display: flex; justify-content: flex-end;">
+                            <img src="https://raw.githubusercontent.com/davfranco1/Streamlit-Viviendas/refs/heads/main/images/zaragoza.png" width="60">
+                        </div>
+                        """,
+                        unsafe_allow_html=True
             )
     st.markdown("<hr>", unsafe_allow_html=True)
 
