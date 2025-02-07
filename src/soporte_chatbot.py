@@ -62,12 +62,9 @@ def render_image_carousel(image_urls):
 
 # Define valid columns (to ensure GPT only outputs correct field names)
 VALID_COLUMNS = [
-    "codigo", "precio", "precio_por_zona", "tipo", "exterior", "planta", "ascensor", "tamanio", "habitaciones", "banios",
-    "aire_acondicionado", "trastero", "terraza", "patio", "parking", "direccion", "distrito", "alquiler_predicho", 
-    "puntuacion_cocina", "puntuacion_banio", "mts_cocina", "mts_banio", "Coste Total", "Rentabilidad Bruta",
-    "Beneficio Antes de Impuestos", "Rentabilidad Neta", "Cuota Mensual Hipoteca", "Cash Necesario Compra", 
-    "Cash Total Compra y Reforma", "Beneficio Neto", "Cashflow Antes de Impuestos", "Cashflow Después de Impuestos",
-    "ROCE", "ROCE (Años)", "Cash-on-Cash Return", "COCR (Años)"
+    "precio", "tipo", "exterior", "planta", "ascensor", "tamanio", "habitaciones", "banios",
+    "aire_acondicionado", "trastero", "terraza", "patio", "parking", "direccion", "distrito", "alquiler_predicho",
+    "Rentabilidad Bruta", "Cuota Mensual Hipoteca"
 ]
 
 # Chatbot Query Function
