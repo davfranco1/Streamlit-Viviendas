@@ -5,11 +5,13 @@ import ast
 from datetime import datetime
 
 import pandas as pd
+import re
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import folium
 from streamlit_folium import st_folium
+from streamlit_javascript import st_javascript
 
 # Append local modules path and import custom modules
 sys.path.append("../src")
@@ -63,6 +65,12 @@ def load_data():
     except Exception as e:
         st.error(f"Error loading data: {e}")
         return pd.DataFrame()
+
+def is_mobile():
+    # Function to check if user agent is mobile
+    user_agent = st_javascript("navigator.userAgent")
+    mobile_pattern = re.compile(r"Mobile|Android|iPhone|iPad|iPod", re.IGNORECASE)
+    return bool(mobile_pattern.search(user_agent))
 
 def render_top_nav():
     st.markdown(
@@ -222,14 +230,15 @@ def render_header():
             unsafe_allow_html=True
         )
     with col2:
-        st.markdown(
-            """
-            <div style="display: flex; justify-content: flex-end;">
-                <img src="https://raw.githubusercontent.com/davfranco1/Streamlit-Viviendas/refs/heads/main/images/zaragoza.png" width="60">
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        if is_mobile():
+            st.markdown(
+                """
+                <div style="display: flex; justify-content: flex-end;">
+                    <img src="https://raw.githubusercontent.com/davfranco1/Streamlit-Viviendas/refs/heads/main/images/zaragoza.png" width="60">
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
     st.markdown("<hr>", unsafe_allow_html=True)
 
 def render_datos_compra_financiacion(data):
