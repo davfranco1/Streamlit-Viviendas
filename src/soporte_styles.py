@@ -120,7 +120,7 @@ styles="""
     }
     .title-sub {
         color: #0b5394;
-        font-size: 20px;
+        font-size: 24px;
         font-weight: bold;
     }
 

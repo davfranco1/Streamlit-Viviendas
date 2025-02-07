@@ -165,7 +165,7 @@ def render_header():
     if is_mobile():
         st.markdown(
             """
-            <div class="title-main">Calculadora de Rentabilidad Inmobiliaria / ZGZ</div>
+            <div class="title-sub">Calculadora de Rentabilidad Inmobiliaria / ZGZ</div>
             """,
             unsafe_allow_html=True
         )
@@ -766,8 +766,11 @@ def main():
 
     # Render components
     render_sidebar()
-    render_top_nav()
-    #render_header()
+
+    if not is_mobile:
+        render_header()
+    else:
+        render_top_nav()
 
     # Render the selected page
     if st.session_state.page == "Datos de compra y financiación":
