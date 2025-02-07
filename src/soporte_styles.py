@@ -26,15 +26,17 @@ styles="""
         border-radius: 20px;
         padding: 10px 20px;
         margin-bottom: 20px;
-        justify-content: space-between; /* Pushes elements apart */
+        justify-content: space-between;
+        flex-wrap: wrap; /* Ensures wrapping on small screens */
     }
 
     .title-main {
         font-size: 20px;
         font-weight: bold;
-        color: white; /* Ensures contrast */
-        flex-grow: 1; /* Takes up available space */
+        color: white;
+        flex-grow: 1;
         text-align: left;
+        white-space: nowrap; /* Prevents text from breaking */
     }
 
     .top-nav-logo {
@@ -44,6 +46,25 @@ styles="""
     .top-nav-logo img {
         height: 50px;
         width: auto;
+    }
+
+    /* Responsive Design for Small Screens */
+    @media (max-width: 768px) {
+        .top-nav {
+            flex-direction: column; /* Stack elements vertically on mobile */
+            align-items: center;
+            text-align: center;
+        }
+
+        .title-main {
+            font-size: 18px;
+            text-align: center; /* Centers text on small screens */
+            margin-bottom: 10px; /* Adds spacing */
+        }
+
+        .top-nav-logo img {
+            height: 40px; /* Slightly smaller image for mobile */
+        }
     }
 
 
