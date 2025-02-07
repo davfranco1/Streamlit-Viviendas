@@ -1,5 +1,6 @@
 styles="""
     <style>
+    /* Container styles for padding */
     .block-container {
         padding-top: 1.5rem;
         padding-bottom: 5rem;
@@ -16,25 +17,51 @@ styles="""
         }
     }
 
-    /* Hide top padding in other elements */
+    /* Adjust margin for element container */
     .element-container {
         margin-top: -0.5rem;
     }
 
-
-    /* Ocultamos el header por defecto de Streamlit para que no compita con nuestro topbar */
+    /* Hide default Streamlit header to avoid conflict with custom topbar */
     header[data-testid="stHeader"] {
         display: none;
     }
-    /* Ocultamos el pie de página por defecto (opcional) */
-    footer {visibility: hidden;
+    /* Hide the default footer (optional) */
+    footer {
+        visibility: hidden;
     }
 
-    /* Markdown elements spacing */
+    /* Custom styles for range input sliders */
+    /* For WebKit browsers (Chrome, Safari, Opera) */
+    input[type="range"]::-webkit-slider-thumb {
+        background: #170058 !important;
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+        background: #EFEFEF !important;
+    }
+
+    /* For Firefox */
+    input[type="range"]::-moz-range-thumb {
+        background: #170058 !important;
+    }
+    input[type="range"]::-moz-range-track {
+        background: #EFEFEF !important;
+    }
+
+    /* For Internet Explorer */
+    input[type="range"]::-ms-thumb {
+        background: #170058 !important;
+    }
+    input[type="range"]::-ms-track {
+        background: #EFEFEF !important;
+    }
+
+    /* Adjust spacing for markdown elements */
     .stMarkdown {
         margin-top: 0.5rem;
     }
 
+    /* Title styling */
     .title-main {
         color: #0b5394;
         font-size: 26px;
@@ -46,6 +73,7 @@ styles="""
         font-weight: bold;
     }
 
+    /* Custom button styles */
     .preset-button {
         display: inline-block;
         margin: 10px;
@@ -59,6 +87,8 @@ styles="""
     .preset-button:hover {
         background-color: #2a007a;
     }
+    
+    /* Container for preset buttons */
     .preset-container {
         display: flex;
         justify-content: center;
@@ -66,13 +96,15 @@ styles="""
         margin-bottom: 30px;
     }
 
+    /* Styling for horizontal lines */
     hr {
         border: 1px solid #0b5394 !important; /* Make the line bolder and blue */
         margin: 0px 0px; /* Add spacing above and below */
         width: 100%; /* Ensure full width */
     }
 
-        [data-testid="stBaseButton-headerNoPadding"] {
+    /* Custom header button styling */
+    [data-testid="stBaseButton-headerNoPadding"] {
         position: relative;
         width: auto !important;
         padding-right: 60px !important;
@@ -96,11 +128,12 @@ styles="""
         color: #FFFFFF !important;
     }
 
+    /* Custom styles for SVG icons inside buttons */
     [data-testid="stBaseButton-headerNoPadding"] svg {
         fill: #4B5F6D !important;
     }
 
-    /* Styling input elements */
+    /* Styling for input elements */
     .stTextInput, .stSelectbox, .stNumberInput, .stSlider, .stRadio {
         background-color: white;
         border: 2px solid #00185E;
@@ -108,6 +141,7 @@ styles="""
         padding: 10px;
     }
 
+    /* General app container styling */
     .stApp {
         background-color: #EFEFEF;
         border-radius: 15px;
@@ -125,6 +159,7 @@ styles="""
         background-color: #f9f9f9;
     }
 
+    /* Card component styling */
     .card {
         background-color: #ffffff;
         border: 1px solid #cccccc;
@@ -136,6 +171,7 @@ styles="""
         align-items: center;
     }
 
+    /* Image styling inside cards */
     .card img {
         width: 150px;
         height: 150px;
@@ -144,31 +180,28 @@ styles="""
         border: 1px solid #cccccc;
     }
 
+    /* Card details styling */
     .card-details {
         flex: 1;
         padding-right: 15px;
     }
-
     .card-details h3 {
         color: #007bff;
         margin-bottom: 5px;
         text-decoration: none;
     }
-
     .card-details h3 a {
         color: #007bff;
         text-decoration: none;
     }
-
     .card-details h3 a:hover {
         text-decoration: underline;
     }
-
     .card-details p {
         margin: 5px 0;
     }
 
-    /* Responsive Sidebar */
+    /* Sidebar styling */
     [data-testid="stSidebar"] {
         background: #4B5F6D !important;
         padding: 15px !important;
@@ -182,17 +215,18 @@ styles="""
         }
     }
 
+    /* Custom title styling */
     .custom-title {
-    text-transform: capitalize;
-    color: #3253AA !important;  /* Ensure color applies */
-    font-weight: bold;
-    text-decoration: none;  /* Remove underline */
+        text-transform: capitalize;
+        color: #3253AA !important;  /* Ensure color applies */
+        font-weight: bold;
+        text-decoration: none;  /* Remove underline */
     }
     .custom-title:hover {
         text-decoration: underline; /* Add underline on hover */
     }
-
     </style>
+
     """
 
 
