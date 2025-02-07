@@ -79,17 +79,26 @@ def is_mobile():
     return bool(mobile_pattern.search(user_agent))
 
 def render_top_nav():
-    st.markdown(
-        f"""
-        <div class="top-nav">
-            <div class="title-main">Calculadora de Rentabilidad Inmobiliaria / ZGZ</div>
-            <div class="top-nav-logo">
-                <img src="https://raw.githubusercontent.com/davfranco1/Streamlit-Viviendas/refs/heads/main/images/zaragoza.png" alt="Logo">
+    if is_mobile():
+        st.markdown(
+            """
+            <div class="title-sub">Calculadora de Rentabilidad Inmobiliaria / ZGZ</div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    else: 
+        st.markdown(
+            f"""
+            <div class="top-nav">
+                <div class="title-main">Calculadora de Rentabilidad Inmobiliaria / ZGZ</div>
+                <div class="top-nav-logo">
+                    <img src="https://raw.githubusercontent.com/davfranco1/Streamlit-Viviendas/refs/heads/main/images/zaragoza.png" alt="Logo">
+                </div>
             </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+            """,
+            unsafe_allow_html=True
+        )
 
 def handle_tipo_vivienda_change():
     apply_preset(st.session_state.tipo_vivienda_radio)
@@ -766,11 +775,7 @@ def main():
 
     # Render components
     render_sidebar()
-
-    if not is_mobile:
-        render_header()
-    else:
-        render_top_nav()
+    render_top_nav()
 
     # Render the selected page
     if st.session_state.page == "Datos de compra y financiación":
