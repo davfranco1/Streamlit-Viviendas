@@ -230,7 +230,7 @@ def render_header():
             unsafe_allow_html=True
         )
     with col2:
-        if is_mobile():
+        if not is_mobile():
             st.markdown(
                 """
                 <div style="display: flex; justify-content: flex-end;">
