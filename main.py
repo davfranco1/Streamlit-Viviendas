@@ -80,13 +80,7 @@ def is_mobile():
 
 def render_top_nav():
     if is_mobile():
-        st.markdown(
-            """
-            <div class="title-sub">Calculadora de Rentabilidad Inmobiliaria / ZGZ</div>
-            <hr>
-            """,
-            unsafe_allow_html=True
-        )
+        st.image("images/mobile_logo.png")
 
     else: 
         st.markdown(

@@ -2,6 +2,8 @@
 .DS_Store
 .pyc
 
+testing.ipynb
+
 # Tokens
 .env
 
