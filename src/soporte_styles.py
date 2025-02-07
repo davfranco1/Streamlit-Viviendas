@@ -2,7 +2,7 @@ styles="""
     <style>
     /* Container styles for padding */
     .block-container {
-        padding-top: 1.5rem;
+        padding-top: 0.5rem;
         padding-bottom: 5rem;
         padding-left: 5rem;
         padding-right: 5rem;
