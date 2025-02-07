@@ -10,7 +10,7 @@ styles="""
     /* Make padding responsive on mobile */
     @media (max-width: 768px) {
         .block-container {
-            padding-top: 2.5rem;
+            padding-top: 3.5rem;
             padding-left: 1rem;
             padding-right: 1rem;
         }
