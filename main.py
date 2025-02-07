@@ -67,8 +67,14 @@ def load_data():
         return pd.DataFrame()
 
 def is_mobile():
-    # Function to check if user agent is mobile
-    user_agent = st_javascript("navigator.userAgent")
+    # Get user agent string
+    user_agent = st_javascript("navigator.userAgent")  
+
+    # Ensure it's a string before running regex
+    if not isinstance(user_agent, str):
+        return False  # Default to False if the value is unexpected
+
+    # Check if user agent contains mobile keywords
     mobile_pattern = re.compile(r"Mobile|Android|iPhone|iPad|iPod", re.IGNORECASE)
     return bool(mobile_pattern.search(user_agent))
 
