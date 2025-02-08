@@ -16,4 +16,3 @@ reportlab
 requests
 streamlit_javascript
 shapely
-json
