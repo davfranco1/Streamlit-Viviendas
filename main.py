@@ -696,126 +696,143 @@ def render_insights(data):
     )
 
     # Filtros en la página principal
-    st.markdown("❗ Esta herramienta **no muestra** viviendas que requieran una **reforma integral** o **casas de campo**, y las métricas se muestran acorde.")
+    tab1, tab2 = st.tabs(["Datos", "Sobre estos datos"])
+    with tab1:
 
-    # Filtro para distritos
-    opciones_distrito = df["distrito"].unique()
-    distritos_seleccionados = st.multiselect(
-        "Selecciona el distrito(s)",
-        options=opciones_distrito,
-        default=["Delicias", "San José", "Casco Histórico"]
-    )
-
-    # Filtro para tipo de vivienda
-    opciones_tipo = df["tipo"].unique()
-    tipos_seleccionados = st.multiselect(
-        "Seleccione el tipo(s) de vivienda",
-        options=opciones_tipo,
-        default=["piso", "estudio", "ático"]
-    )
-
-    # Filtrar el DataFrame según los distritos y tipo seleccionados
-    df_filtrado = df[
-        (df["distrito"].isin(distritos_seleccionados)) &
-        (df["tipo"].isin(tipos_seleccionados))
-    ].copy()
-
-    # Eliminar filas donde el tamaño ("tamanio") no sea positivo para evitar errores
-    df_filtrado = df_filtrado[df_filtrado["tamanio"] > 0]
-
-    # Convertir la columna "planta" a numérico, convirtiendo a NaN los valores no convertibles
-    df_filtrado["planta"] = pd.to_numeric(df_filtrado["planta"], errors="coerce")
-
-    # Crear columnas adicionales para el análisis
-    df_filtrado["alquiler_por_m2"] = df_filtrado["alquiler_predicho"] / df_filtrado["tamanio"]
-    df_filtrado["precio_por_m2"] = df_filtrado["precio"] / df_filtrado["tamanio"]
-
-    # Sección de Métricas Clave
-    st.header("Métricas Clave")
-    if not df_filtrado.empty:
-        mediana_alquiler_m2 = df_filtrado["alquiler_por_m2"].median()
-        mediana_precio_m2 = df_filtrado["precio_por_m2"].median()
-        promedio_tamanio = df_filtrado["tamanio"].mean()
-        promedio_habitaciones = df_filtrado["habitaciones"].mean()
-        promedio_banios = df_filtrado["banios"].mean()
-        promedio_planta = df_filtrado["planta"].median()
-        
-        col1, col2 = st.columns(2)
-        col1.metric("💵 Mediana Alquiler", f"{mediana_alquiler_m2:,.2f} €/m²")
-        col2.metric("🏷️ Mediana Venta", f"{mediana_precio_m2:,.0f} €/m²")
-        
-        col3, col4 = st.columns(2)
-        col3.metric("📏 Tamaño Promedio", f"{promedio_tamanio:,.0f} m²")
-        col4.metric("🛏️ Habitaciones Promedio", f"{promedio_habitaciones:,.1f}")
-        
-        col5, col6 = st.columns(2)
-        col5.metric("🛁 Baños Promedio", f"{promedio_banios:,.1f}")
-        col6.metric("🏢 Planta Promedio", f"{promedio_planta:,.1f}")
-    else:
-        st.write("No hay datos disponibles para los filtros seleccionados.")
-
-    # Sección de Visualizaciones
-    st.header("Visualizaciones")
-    if not df_filtrado.empty:
-        # Agrupar por distrito para calcular las medianas
-        df_agrupado = df_filtrado.groupby("distrito").agg({
-            "alquiler_por_m2": "median",
-            "precio_por_m2": "median"
-        }).reset_index()
-        
-        # Gráfico 1: Mediana de Alquiler/m² por Distrito
-        fig_alquiler = px.bar(
-            df_agrupado,
-            x="distrito",
-            y="alquiler_por_m2",
-            title="Mediana Alquiler/m² por Distrito",
-            labels={"distrito": "Distrito", "alquiler_por_m2": "Alquiler/m²"},
-            text_auto=".2f"  # Añade etiquetas con dos decimales
+        # Filtro para distritos
+        opciones_distrito = df["distrito"].unique()
+        distritos_seleccionados = st.multiselect(
+            "Selecciona el distrito(s)",
+            options=opciones_distrito,
+            default=["Delicias", "San José", "Casco Histórico"]
         )
-        st.plotly_chart(fig_alquiler, use_container_width=True)
-        
-        # Gráfico 2: Mediana de Precio/m² por Distrito
-        fig_precio = px.bar(
-            df_agrupado,
-            x="distrito",
-            y="precio_por_m2",
-            title="Mediana Precio/m² por Distrito",
-            labels={"distrito": "Distrito", "precio_por_m2": "Precio/m²"},
-            text_auto=".2f"
+
+        # Filtro para tipo de vivienda
+        opciones_tipo = df["tipo"].unique()
+        tipos_seleccionados = st.multiselect(
+            "Seleccione el tipo(s) de vivienda",
+            options=opciones_tipo,
+            default=["piso", "estudio", "ático"]
         )
-        st.plotly_chart(fig_precio, use_container_width=True)
-        
-        # Gráfico 3: Diagrama de dispersión Precio vs Tamaño de la Propiedad
-        fig_dispersion = px.scatter(
-            df_filtrado,
-            x="tamanio",
-            y="precio",
-            color="tipo",
-            hover_data=["distrito", "habitaciones", "banios"],
-            title="Precio vs Tamaño de la Propiedad"
-        )
-        st.plotly_chart(fig_dispersion, use_container_width=True)
-        
-        # Gráfico 4: Rentabilidad Bruta Promedio por Tipo y Distrito (visualización simplificada)
-        if "Rentabilidad Bruta" in df_filtrado.columns:
-            df_rentabilidad = df_filtrado.groupby(["tipo", "distrito"]).agg({"Rentabilidad Bruta": "mean"}).reset_index()
-            fig_rent = px.bar(
-                df_rentabilidad,
-                x="tipo",
-                y="Rentabilidad Bruta",
-                color="distrito",
-                barmode="group",
-                title="Rentabilidad Bruta Promedio por Tipo y Distrito",
-                labels={
-                    "tipo": "Tipo de Propiedad",
-                    "Rentabilidad Bruta": "Rentabilidad Bruta Promedio",
-                    "distrito": "Distrito"
-                },
+
+        # Filtrar el DataFrame según los distritos y tipo seleccionados
+        df_filtrado = df[
+            (df["distrito"].isin(distritos_seleccionados)) &
+            (df["tipo"].isin(tipos_seleccionados))
+        ].copy()
+
+        # Eliminar filas donde el tamaño ("tamanio") no sea positivo para evitar errores
+        df_filtrado = df_filtrado[df_filtrado["tamanio"] > 0]
+
+        # Convertir la columna "planta" a numérico, convirtiendo a NaN los valores no convertibles
+        df_filtrado["planta"] = pd.to_numeric(df_filtrado["planta"], errors="coerce")
+
+        # Crear columnas adicionales para el análisis
+        df_filtrado["alquiler_por_m2"] = df_filtrado["alquiler_predicho"] / df_filtrado["tamanio"]
+        df_filtrado["precio_por_m2"] = df_filtrado["precio"] / df_filtrado["tamanio"]
+
+        # Sección de Métricas Clave
+        st.write("### 📈 Métricas Clave")
+        if not df_filtrado.empty:
+            media_alquiler_m2 = df_filtrado["alquiler_por_m2"].mean()
+            media_alquiler = df_filtrado["alquiler_predicho"].mean()
+            media_precio_m2 = df_filtrado["precio_por_m2"].mean()
+            promedio_tamanio = df_filtrado["tamanio"].mean()
+            promedio_habitaciones = df_filtrado["habitaciones"].mean()
+            promedio_banios = df_filtrado["banios"].mean()
+            promedio_planta = df_filtrado["planta"].median()
+            promedio_rentabilidad = df_filtrado["Rentabilidad Bruta"].mean()
+            
+            st.write("#### Rentabilidad")
+            col1, col2 = st.columns(2)
+            col1.metric("💵 Media Alquiler", f"{media_alquiler_m2:,.2f} €/m²")
+            col1.metric("💵 Media Alquiler", f"{media_alquiler:,.2f} €")
+            col2.metric("🏷️ Media Venta", f"{media_precio_m2:,.0f} €/m²")
+            col2.metric("🏷️ Media Rentilidad Bruta", f"{promedio_rentabilidad:,.2f}%")
+            
+            st.write("#### Características de las viviendas")
+            col3, col4 = st.columns(2)
+            col3.metric("📏 Tamaño Promedio", f"{promedio_tamanio:,.0f} m²")
+            col4.metric("🛏️ Habitaciones Promedio", f"{promedio_habitaciones:,.1f}")
+            
+            col5, col6 = st.columns(2)
+            col5.metric("🛁 Baños Promedio", f"{promedio_banios:,.1f}")
+            col6.metric("🏢 Planta Promedio", f"{promedio_planta:,.1f}")
+        else:
+            st.write("No hay datos disponibles para los filtros seleccionados.")
+
+        # Sección de Visualizaciones
+        st.markdown("<br>", unsafe_allow_html=True) 
+        st.write("### 📊 Visualizaciones")
+        if not df_filtrado.empty:
+            # Agrupar por distrito para calcular las medianas
+            df_agrupado = df_filtrado.groupby("distrito").agg({
+                "alquiler_por_m2": "median",
+                "precio_por_m2": "median"
+            }).reset_index()
+            
+            # Gráfico 1: Mediana de Alquiler/m² por Distrito
+            fig_alquiler = px.bar(
+                df_agrupado,
+                x="distrito",
+                y="alquiler_por_m2",
+                title="Mediana Alquiler/m² por Distrito",
+                labels={"distrito": "Distrito", "alquiler_por_m2": "Alquiler/m²"},
+                text_auto=".2f"  # Añade etiquetas con dos decimales
+            )
+            st.plotly_chart(fig_alquiler, use_container_width=True)
+            
+            # Gráfico 2: Mediana de Precio/m² por Distrito
+            fig_precio = px.bar(
+                df_agrupado,
+                x="distrito",
+                y="precio_por_m2",
+                title="Mediana Precio/m² por Distrito",
+                labels={"distrito": "Distrito", "precio_por_m2": "Precio/m²"},
                 text_auto=".2f"
             )
-            st.plotly_chart(fig_rent, use_container_width=True)
-    else:
-        st.write("No hay visualizaciones para mostrar.")
+            st.plotly_chart(fig_precio, use_container_width=True)
+            
+            # Gráfico 3: Diagrama de dispersión Precio vs Tamaño de la Propiedad
+            fig_dispersion = px.scatter(
+                df_filtrado,
+                x="tamanio",
+                y="precio",
+                color="tipo",
+                hover_data=["distrito", "habitaciones", "banios"],
+                title="Precio vs Tamaño de la Propiedad"
+            )
+            st.plotly_chart(fig_dispersion, use_container_width=True)
+            
+            # Gráfico 4: Rentabilidad Bruta Promedio por Tipo y Distrito (visualización simplificada)
+            if "Rentabilidad Bruta" in df_filtrado.columns:
+                df_rentabilidad = df_filtrado.groupby(["tipo", "distrito"]).agg({"Rentabilidad Bruta": "mean"}).reset_index()
+                fig_rent = px.bar(
+                    df_rentabilidad,
+                    x="tipo",
+                    y="Rentabilidad Bruta",
+                    color="distrito",
+                    barmode="group",
+                    title="Rentabilidad Bruta Promedio por Tipo y Distrito",
+                    labels={
+                        "tipo": "Tipo de Propiedad",
+                        "Rentabilidad Bruta": "Rentabilidad Bruta Promedio",
+                        "distrito": "Distrito"
+                    },
+                    text_auto=".2f"
+                )
+                st.plotly_chart(fig_rent, use_container_width=True)
+        else:
+            st.write("No hay visualizaciones para mostrar.")
+      
+    with tab2:
+        st.write("""
+        ❗ Esta herramienta **no muestra** viviendas que requieran una **reforma integral** o **casas de campo**, y las métricas se calculan acorde.
+
+        ❗ El modelo de cálculo de alquiler se ha creado con viviendas que se alquilan entre **400 y 1500 €**. Por su parte, únicamente figuran viviendas entre **60 y 150 mil €**.
+
+        ❗ Los precios se han ajustado a la reducción que hayas aplicado en la página de *Datos de compra y financiación*, puedes modificarla y volver a esta página.
+        """)
 
 def render_datos_completos(data):
     st.header("Datos completos")
@@ -876,6 +893,7 @@ def render_datos_completos(data):
         st.dataframe(resultados_rentabilidad[selected_columns])
     else:
         st.write("No hay datos que coincidan con los filtros.")
+
 
 def render_informacion_soporte():
     stxt.imprimir_metricas()
