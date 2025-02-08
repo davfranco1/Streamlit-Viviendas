@@ -420,11 +420,11 @@ def render_resultados(data):
         )
     with col3:
         estado_bano_min, estado_bano_max = st.slider(
-            "Estado del baño (entre 1 y 5)", 0, 5, (3, 5),
+            "Estado del baño (entre 1 y 5, 0 sin imagen)", 0, 5, (1, 5),
             help="Siendo 0 imagen no detectada, 1 muy malo y 5 perfecto estado."
         )
         estado_cocina_min, estado_cocina_max = st.slider(
-            "Estado de la cocina (entre 1 y 5)", 0, 5, (3, 5),
+            "Estado de la cocina (entre 1 y 5, 0 sin imagen)", 0, 5, (1, 5),
             help="Siendo 0 imagen no detectada, 1 muy malo y 5 perfecto estado."
         )
     filtered_data = data[
