@@ -696,7 +696,7 @@ def render_insights(data):
     )
 
     # Filtros en la página principal
-    st.markdown("Recuerda que esta herramienta **no muestra** viviendas que requieran una **reforma integral** o **casas de campo**, y las métricas se muestran acorde.")
+    st.markdown("❗ Recuerda que esta herramienta **no muestra** viviendas que requieran una **reforma integral** o **casas de campo**, y las métricas se muestran acorde.")
 
     # Filtro para distritos
     opciones_distrito = df["distrito"].unique()
