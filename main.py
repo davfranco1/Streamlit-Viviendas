@@ -789,21 +789,21 @@ def render_mapa(data, db):
         fig.update_layout(
             mapbox=dict(
                 style="open-street-map",
-                zoom=11,
+                zoom=12,
                 center=dict(lat=center_lat, lon=center_lon),
                 layers=[
                     {
                         "source": geojson_distritos,
                         "type": "fill",
                         "below": "traces",
-                        "color": "rgba(163,22,19,0.2)",  # Slight transparency
+                        "color": "rgba(173, 216, 230, 0.3)",  # Slight transparency
                     },
                     {
                         "source": geojson_distritos,
                         "type": "line",
                         "below": "traces",
-                        "color": "rgba(163,22,19,1.0)",  # Stronger outline
-                        "line": {"width": 2}
+                        "color": "rgba(0, 0, 139, 0.9)",  # Stronger outline
+                        "line": {"width": 1}
                     }
                 ]
             ),
