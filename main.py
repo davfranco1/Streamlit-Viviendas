@@ -767,8 +767,8 @@ def render_insights(data):
         if not df_filtrado.empty:
             # Agrupar por distrito para calcular las medianas
             df_agrupado = df_filtrado.groupby("distrito").agg({
-                "alquiler_por_m2": "median",
-                "precio_por_m2": "median"
+                "alquiler_por_m2": "mean",
+                "precio_por_m2": "mean"
             }).reset_index()
             
             # Gráfico 1: Mediana de Alquiler/m² por Distrito
@@ -776,7 +776,7 @@ def render_insights(data):
                 df_agrupado,
                 x="distrito",
                 y="alquiler_por_m2",
-                title="Mediana Alquiler/m² por Distrito",
+                title="Alquiler Medio por m² y por Distrito",
                 labels={"distrito": "Distrito", "alquiler_por_m2": "Alquiler/m²"},
                 text_auto=".2f"  # Añade etiquetas con dos decimales
             )
@@ -787,9 +787,9 @@ def render_insights(data):
                 df_agrupado,
                 x="distrito",
                 y="precio_por_m2",
-                title="Mediana Precio/m² por Distrito",
+                title="Precio Medio de Venta por m² y por Distrito",
                 labels={"distrito": "Distrito", "precio_por_m2": "Precio/m²"},
-                text_auto=".2f"
+                text_auto=".0f"
             )
             st.plotly_chart(fig_precio, use_container_width=True)
             
