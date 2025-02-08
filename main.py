@@ -5,12 +5,15 @@ import ast
 from datetime import datetime
 
 import pandas as pd
+import geopandas as gpd
 import re
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 import folium
+import json
+from shapely.geometry import mapping
+from shapely.geometry import Polygon, MultiPolygon, shape
 from streamlit_folium import st_folium
 from streamlit_javascript import st_javascript
 
@@ -64,8 +67,83 @@ def load_data():
             )
         return data
     except Exception as e:
-        st.error(f"Error loading data: {e}")
+        st.error(f"Error cargando datos de viviendas: {e}")
         return pd.DataFrame()
+
+def load_poligonos_distritos(bd, collection_name="distritos"):
+    try:
+        # Get data from MongoDB
+        data = list(bd[collection_name].find())
+
+        # Lists to store processed data
+        districts = []
+        geometries = []
+
+        for record in data:
+            try:
+                district_name = record.get("properties", {}).get("distrito")
+                geom_data = record.get("geometry")
+
+                if not geom_data or not district_name:
+                    continue
+
+                # Convert geometry from JSON string if necessary
+                if isinstance(geom_data, str):
+                    geom_data = json.loads(geom_data)
+
+                # Extract and ensure coordinates are float
+                def extract_coordinates(coords):
+                    if isinstance(coords, list):
+                        return [extract_coordinates(c) for c in coords]
+                    if isinstance(coords, dict) and "$numberDouble" in coords:
+                        return float(coords["$numberDouble"])
+                    return coords
+
+                if "coordinates" in geom_data:
+                    geom_data["coordinates"] = extract_coordinates(geom_data["coordinates"])
+
+                # Create shapely geometry
+                geom = shape(geom_data)
+
+                # Ensure it's a valid geometry
+                if not geom.is_valid:
+                    geom = geom.buffer(0)
+
+                # Convert to MultiPolygon if necessary
+                if isinstance(geom, Polygon):
+                    geom = MultiPolygon([geom])
+
+                districts.append(district_name)
+                geometries.append(geom)
+
+            except Exception as e:
+                print(f"Error processing district {record.get('properties', {}).get('distrito', 'unknown')}: {e}")
+                continue
+
+        if not districts:
+            return gpd.GeoDataFrame()
+
+        # Create GeoDataFrame
+        gdf = gpd.GeoDataFrame(
+            {"distrito": districts, "geometry": geometries}, geometry="geometry"
+        )
+
+        # Set CRS
+        if gdf.crs is None:
+            gdf.set_crs("EPSG:4326", inplace=True)
+
+        return gdf
+
+    except Exception as e:
+        print(f"Error loading polygons: {e}")
+        return gpd.GeoDataFrame()
+
+# Fix coordinate conversion for MultiPolygons
+def convert_coords_to_float(coords):
+    """Recursively convert coordinates to float type."""
+    if isinstance(coords, (int, float)):
+        return float(coords)
+    return [convert_coords_to_float(c) for c in coords]
 
 def is_mobile():
     # Get user agent string
@@ -581,12 +659,21 @@ def render_resultados(data):
     else:
         st.write("No hay propiedades que coincidan con los filtros.")
 
-def render_mapa(data):
+def render_mapa(data, db):
+    # Load district polygons using the improved function
+    distritos = load_poligonos_distritos(db)
+    
+    if distritos.empty:
+        st.error("No se pudieron cargar los polígonos de los distritos.")
+        return
+    
+    # UI Controls
     selected_distritos = st.multiselect(
         "Selecciona los distritos",
         options=data["distrito"].unique(),
         default=list(data["distrito"].unique())
     )
+    
     col1, col2 = st.columns(2)
     with col1:
         precio_min, precio_max = st.slider(
@@ -603,25 +690,40 @@ def render_mapa(data):
             int(data["tamanio"].max()),
             (int(data["tamanio"].min()), int(data["tamanio"].max()))
         )
+
+    # Filter data based on user selection
     filtered_data = data[
         (data["distrito"].isin(selected_distritos)) &
         (data["tamanio"].between(metros_min, metros_max)) &
         (data["precio"].between(precio_min, precio_max))
     ].dropna(subset=["lat", "lon"])
+
     if not filtered_data.empty:
+        # Apply price reduction if enabled
         if st.session_state.aplicar_reduccion:
             filtered_data = filtered_data.copy()
             filtered_data["precio"] = filtered_data["precio"] * (1 - st.session_state.reduccion_porcentaje / 100)
+        
+        # Calculate property metrics
         resultados_rentabilidad = sr.calcular_rentabilidad_inmobiliaria_wrapper(
             filtered_data,
             **st.session_state.inputs
         )
+
+        # Create the base figure
         fig = go.Figure()
+
+        # Add property markers
         fig.add_trace(go.Scattermapbox(
             lat=resultados_rentabilidad["lat"],
             lon=resultados_rentabilidad["lon"],
             mode="markers",
-            marker=dict(size=10, symbol="circle", color="#3253aa"),
+            marker=dict(
+                size=10,
+                symbol="circle",
+                color="#3253aa",
+                opacity=0.7
+            ),
             text=resultados_rentabilidad.apply(lambda row: (
                 f"<b><a href=\"https://www.idealista.com/inmueble/{row['codigo']}/\" target=\"_blank\" style=\"color:#3253aa;\">"
                 f"{row['tipo'].capitalize()} en {row['direccion']} (ver en idealista)</a></b><br>"
@@ -632,22 +734,88 @@ def render_mapa(data):
                 f"Alquiler Predicho: {row['alquiler_predicho']:,.0f} €<br>"
                 f"Cuota Mensual Hipoteca: {abs(row['Cuota Mensual Hipoteca']):,.0f} €"
             ), axis=1),
-            hoverinfo="text"
+            hoverinfo="text",
+            showlegend=False  # Hide "Propiedades" from the legend
         ))
+
+        # Filter and prepare district polygons
+        filtered_distritos = distritos[distritos["distrito"].isin(selected_distritos)]
+        features = []
+        distrito_hover_texts = []
+
+        for _, row in filtered_distritos.iterrows():
+            try:
+                geom = mapping(row["geometry"])
+                if "coordinates" in geom:
+                    geom["coordinates"] = convert_coords_to_float(geom["coordinates"])
+                features.append({
+                    "type": "Feature",
+                    "properties": {"distrito": row["distrito"]},
+                    "geometry": geom
+                })
+                distrito_hover_texts.append((row["geometry"].centroid.y, row["geometry"].centroid.x, row["distrito"]))
+            except Exception as e:
+                st.warning(f"Error al procesar distrito {row['distrito']}: {e}")
+                continue
+
+        geojson_distritos = {"type": "FeatureCollection", "features": features}
+
+        # Calculate centroids for district labels
+        filtered_distritos["centroid"] = filtered_distritos["geometry"].centroid
+        filtered_distritos["centroid_lat"] = filtered_distritos["centroid"].apply(lambda p: p.y)
+        filtered_distritos["centroid_lon"] = filtered_distritos["centroid"].apply(lambda p: p.x)
+
+        # Add Scattermapbox trace for district labels
+        fig.add_trace(go.Scattermapbox(
+            lat=filtered_distritos["centroid_lat"],
+            lon=filtered_distritos["centroid_lon"],
+            mode="text",
+            text=filtered_distritos["distrito"],  # Show district names
+            hoverinfo="text",
+            textfont=dict(size=14, color="black"),
+            name="Distritos"
+        ))
+
+        # Calculate map center dynamically based on the filtered properties
+        if not resultados_rentabilidad.empty:
+            center_lat = resultados_rentabilidad["lat"].mean()
+            center_lon = resultados_rentabilidad["lon"].mean()
+        else:
+            # Default center (e.g., Zaragoza) if no properties are available
+            center_lat = 41.6488  
+            center_lon = -0.8891
+
+        # Set map layout with permanent polygons
         fig.update_layout(
             mapbox=dict(
                 style="open-street-map",
                 zoom=11,
-                center=dict(
-                    lat=resultados_rentabilidad["lat"].mean(),
-                    lon=resultados_rentabilidad["lon"].mean()
-                )
+                center=dict(lat=center_lat, lon=center_lon),
+                layers=[
+                    {
+                        "source": geojson_distritos,
+                        "type": "fill",
+                        "below": "traces",
+                        "color": "rgba(163,22,19,0.2)",  # Slight transparency
+                    },
+                    {
+                        "source": geojson_distritos,
+                        "type": "line",
+                        "below": "traces",
+                        "color": "rgba(163,22,19,1.0)",  # Stronger outline
+                        "line": {"width": 2}
+                    }
+                ]
             ),
-            margin=dict(l=0, r=0, t=0, b=0)
+            margin=dict(l=0, r=0, t=0, b=0),
+            showlegend=False,  # Hide legend completely
+            height=500  # Maintain the original size
         )
+
+        # Display the map
         st.plotly_chart(fig, use_container_width=True)
     else:
-        st.write("No hay datos para mostrar en el mapa.")
+        st.warning("No hay datos para mostrar en el mapa.")
 
 def render_housebot(data):
     if "housebot_df" not in st.session_state:
@@ -894,7 +1062,6 @@ def render_datos_completos(data):
     else:
         st.write("No hay datos que coincidan con los filtros.")
 
-
 def render_informacion_soporte():
     stxt.imprimir_metricas()
 
@@ -932,7 +1099,7 @@ def main():
     elif st.session_state.page == "Resultados":
         render_resultados(data)
     elif st.session_state.page == "Mapa":
-        render_mapa(data)
+        render_mapa(data, bd)
     elif st.session_state.page == "Housebot":
         render_housebot(data)
     elif st.session_state.page == "Insights":
