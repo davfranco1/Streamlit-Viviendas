@@ -63,8 +63,7 @@ def render_image_carousel(image_urls):
 # Define valid columns (to ensure GPT only outputs correct field names)
 VALID_COLUMNS = [
     "precio", "tipo", "exterior", "planta", "ascensor", "tamanio", "habitaciones", "banios",
-    "aire_acondicionado", "trastero", "terraza", "patio", "parking", "direccion", "distrito", "alquiler_predicho",
-    "Rentabilidad Bruta", "Cuota Mensual Hipoteca"
+    "aire_acondicionado", "trastero", "terraza", "patio", "parking", "direccion", "distrito"
 ]
 
 # Chatbot Query Function
@@ -241,7 +240,7 @@ def display_property_details(property_data):
     col6.metric("Cashflow Después de Impuestos", f"{property_data['Cashflow Después de Impuestos']:,.0f} €")
     
     col7, col8, col9 = st.columns(3)
-    col7.metric("Cuota Mensual Hipoteca", f"{property_data['Cuota Mensual Hipoteca']:,.0f} €")
+    col7.metric("Cuota Mensual Hipoteca", f"{abs(property_data['Cuota Mensual Hipoteca']):,.0f} €")
     col8.metric("Cash Necesario Compra", f"{property_data['Cash Necesario Compra']:,.0f} €")
     col9.metric("Cash Total Compra y Reforma", f"{property_data['Cash Total Compra y Reforma']:,.0f} €")
     

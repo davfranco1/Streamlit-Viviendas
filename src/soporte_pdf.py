@@ -203,7 +203,7 @@ def generate_pdf(data):
     metrics = [
         ["Coste Total:", f"{data['Coste Total']:,.0f} €"],
         ["Beneficio Antes de Impuestos:", f"{data['Beneficio Antes de Impuestos']:,.0f} €"],
-        ["Cuota Mensual Hipoteca:", f"{data['Cuota Mensual Hipoteca']:,.0f} €"],
+        ["Cuota Mensual Hipoteca:", f"{abs(data['Cuota Mensual Hipoteca']):,.0f} €"],
         ["Cash Necesario Compra:", f"{data['Cash Necesario Compra']:,.0f} €"],
         ["Cash Total Compra y Reforma:", f"{data['Cash Total Compra y Reforma']:,.0f} €"],
         ["Beneficio Neto:", f"{data['Beneficio Neto']:,.0f} €"],

@@ -536,7 +536,7 @@ def render_resultados(data):
                         st.metric("Rentabilidad Bruta", f"{row['Rentabilidad Bruta']}%")
                         st.metric("Beneficio Antes de Impuestos", f"{row['Beneficio Antes de Impuestos']:,.0f} €")
                         st.metric("Rentabilidad Neta", f"{row['Rentabilidad Neta']}%")
-                        st.metric("Cuota Mensual Hipoteca", f"{row['Cuota Mensual Hipoteca']:,.0f} €")
+                        st.metric("Cuota Mensual Hipoteca", f"{abs(row['Cuota Mensual Hipoteca']):,.0f} €")
                     with col2_tab4:
                         st.metric("Cash Necesario Compra", f"{row['Cash Necesario Compra']:,.0f} €")
                         st.metric("Cash Total Compra y Reforma", f"{row['Cash Total Compra y Reforma']:,.0f} €")
@@ -628,7 +628,7 @@ def render_mapa(data):
                 f"Habitaciones y baños: {row['habitaciones']} y {row['banios']}<br>"
                 f"Rentabilidad Bruta: {row['Rentabilidad Bruta']:.2f}%<br>"
                 f"Alquiler Predicho: {row['alquiler_predicho']:,.0f} €<br>"
-                f"Cuota Mensual Hipoteca: {row['Cuota Mensual Hipoteca']:,.0f} €"
+                f"Cuota Mensual Hipoteca: {abs(row['Cuota Mensual Hipoteca']):,.0f} €"
             ), axis=1),
             hoverinfo="text"
         ))
