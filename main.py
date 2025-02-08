@@ -701,7 +701,7 @@ def render_insights(data):
     # Filtro para distritos
     opciones_distrito = df["distrito"].unique()
     distritos_seleccionados = st.multiselect(
-        "Seleccione Distrito(s)",
+        "Selecciona el distrito(s)",
         options=opciones_distrito,
         default=["Delicias", "San José", "Casco Histórico"]
     )
@@ -709,7 +709,7 @@ def render_insights(data):
     # Filtro para tipo de vivienda
     opciones_tipo = df["tipo"].unique()
     tipos_seleccionados = st.multiselect(
-        "Seleccione Tipo(s) de Vivienda",
+        "Seleccione el tipo(s) de vivienda",
         options=opciones_tipo,
         default=["piso", "estudio", "ático"]
     )
@@ -738,19 +738,19 @@ def render_insights(data):
         promedio_tamanio = df_filtrado["tamanio"].mean()
         promedio_habitaciones = df_filtrado["habitaciones"].mean()
         promedio_banios = df_filtrado["banios"].mean()
-        promedio_planta = df_filtrado["planta"].mean()
+        promedio_planta = df_filtrado["planta"].median()
         
         col1, col2 = st.columns(2)
-        col1.metric("Mediana Alquiler/m²", f"{mediana_alquiler_m2:,.2f}")
-        col2.metric("Mediana Precio/m²", f"{mediana_precio_m2:,.2f}")
+        col1.metric("💵 Mediana Alquiler", f"{mediana_alquiler_m2:,.0f} €/m²")
+        col2.metric("🏷️ Mediana Venta", f"{mediana_precio_m2:,.0f} €/m²")
         
         col3, col4 = st.columns(2)
-        col3.metric("Tamaño Promedio", f"{promedio_tamanio:,.2f}")
-        col4.metric("Habitaciones Promedio", f"{promedio_habitaciones:,.2f}")
+        col3.metric("📏 Tamaño Promedio", f"{promedio_tamanio:,.0f} m²")
+        col4.metric("🛏️ Habitaciones Promedio", f"{promedio_habitaciones:,.1f}")
         
         col5, col6 = st.columns(2)
-        col5.metric("Baños Promedio", f"{promedio_banios:,.2f}")
-        col6.metric("Planta Promedio", f"{promedio_planta:,.2f}")
+        col5.metric("🛁 Baños Promedio", f"{promedio_banios:,.1f}")
+        col6.metric("🏢 Planta Promedio", f"{promedio_planta:,.1f}")
     else:
         st.write("No hay datos disponibles para los filtros seleccionados.")
 
