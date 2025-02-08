@@ -741,7 +741,7 @@ def render_insights(data):
         promedio_planta = df_filtrado["planta"].median()
         
         col1, col2 = st.columns(2)
-        col1.metric("💵 Mediana Alquiler", f"{mediana_alquiler_m2:,.0f} €/m²")
+        col1.metric("💵 Mediana Alquiler", f"{mediana_alquiler_m2:,.2f} €/m²")
         col2.metric("🏷️ Mediana Venta", f"{mediana_precio_m2:,.0f} €/m²")
         
         col3, col4 = st.columns(2)
