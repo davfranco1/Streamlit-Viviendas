@@ -772,7 +772,7 @@ def render_mapa(data, db):
             mode="text",
             text=filtered_distritos["distrito"],  # Show district names
             hoverinfo="text",
-            textfont=dict(size=14, color="black"),
+            textfont=dict(size=14, color="#00008B"),
             name="Distritos"
         ))
 
