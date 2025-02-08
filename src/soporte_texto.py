@@ -168,6 +168,13 @@ def imprimir_metricas():
     - **Tasa de Amortización**: 3%
     """)
 
+    st.header("Desarrollador")
+    st.write("""
+             Desarrollado por David Franco.
+            - [Github](https://github.com/davfranco1)
+            - [LinkedIn](https://linkedin.com/in/franco-david)
+            """)
+
 ## Inputs usuario helpers
 
 entrada = "En España, la mayoría de los bancos financian hasta un 80% del valor de tasación o compra, por lo que el comprador debe aportar al menos un 20% de entrada. En el caso de las primeras viviendas y personas jóvenes, las Comunidades pueden avalar al tomador para obtener una financiación del 100%."
