@@ -967,9 +967,13 @@ def render_insights(data):
                 df_filtrado,
                 x="tamanio",
                 y="precio",
+                labels={
+                    "tamanio" : "Tamaño en m²",
+                    "precio" : "Precio"
+                },
                 color="tipo",
                 hover_data=["distrito", "habitaciones", "banios"],
-                title="Precio vs Tamaño de la Propiedad"
+                title="Precio de venta vs Tamaño de la Vivienda"
             )
             st.plotly_chart(fig_dispersion, use_container_width=True)
             
@@ -984,7 +988,7 @@ def render_insights(data):
                     barmode="group",
                     title="Rentabilidad Bruta Promedio por Tipo y Distrito",
                     labels={
-                        "tipo": "Tipo de Propiedad",
+                        "tipo": "Tipo de Vivienda",
                         "Rentabilidad Bruta": "Rentabilidad Bruta Promedio",
                         "distrito": "Distrito"
                     },
