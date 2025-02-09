@@ -162,17 +162,18 @@ def render_top_nav():
         st.image("images/mobile_logo.png")
 
     else: 
-        st.markdown(
-            f"""
-            <div class="top-nav">
-                <div class="title-main">Calculadora de Rentabilidad Inmobiliaria / ZGZ</div>
-                <div class="top-nav-logo">
-                    <img src="https://raw.githubusercontent.com/davfranco1/Streamlit-Viviendas/refs/heads/main/images/zaragoza.png" alt="Logo">
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        st.image("images/header.png")
+        # st.markdown(
+        #     f"""
+        #     <div class="top-nav">
+        #         <div class="title-main">Calculadora de Rentabilidad Inmobiliaria / ZGZ</div>
+        #         <div class="top-nav-logo">
+        #             <img src="https://raw.githubusercontent.com/davfranco1/Streamlit-Viviendas/refs/heads/main/images/zaragoza.png" alt="Logo">
+        #         </div>
+        #     </div>
+        #     """,
+        #     unsafe_allow_html=True
+        # )
 
 def handle_tipo_vivienda_change():
     apply_preset(st.session_state.tipo_vivienda_radio)

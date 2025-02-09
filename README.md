@@ -1,6 +1,6 @@
 # Streamlit Las Casas de David
 
-<img src="images/logo_transparent-glow.png" width="200">
+<img src="images/header_github.png">
 
 Este repositorio contiene una aplicación desarrollada en **Streamlit** para el análisis y visualización de datos relacionados con la compra y alquiler de viviendas en Zaragoza. La aplicación permite explorar diferentes métricas y realizar comparaciones basadas en datos del usuario y el mercado, facilitando la toma de decisiones en el sector inmobiliario.
 
