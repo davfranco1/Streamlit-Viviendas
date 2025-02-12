@@ -476,7 +476,7 @@ def render_resultados(data):
         '<p style="color: #224094; font-size: 18px;">• Mostrando resultados ordenados <strong>de mayor a menor rentabilidad bruta</strong>.<br>• No se muestran propiedades que requieran de una reforma integral o casas de campo.</p>',
         unsafe_allow_html=True
     )
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns([2,1,1])
     with col1:
         selected_distritos = st.multiselect(
             "Selecciona uno o más distritos",
@@ -484,6 +484,7 @@ def render_resultados(data):
             default=list(data["distrito"].unique())
         )
     with col2:
+        st.write("Características de vivienda:")
         precio_min, precio_max = st.slider(
             "Precio (€)",
             int(data["precio"].min()),
@@ -498,13 +499,14 @@ def render_resultados(data):
             (int(data["tamanio"].min()), int(data["tamanio"].max()))
         )
     with col3:
+        st.markdown("Estado de vivienda:")
         estado_bano_min, estado_bano_max = st.slider(
-            "Estado baño (entre 1 y 5, 0 sin imagen)", 0, 5, (1, 5),
-            help="Siendo 0 imagen no detectada, 1 muy malo y 5 perfecto estado."
+            "Baño", 0, 5, (1, 5),
+            help="0 imagen no detectada, 1 muy malo y 5 perfecto estado."
         )
         estado_cocina_min, estado_cocina_max = st.slider(
-            "Estado cocina (entre 1 y 5, 0 sin imagen)", 0, 5, (1, 5),
-            help="Siendo 0 imagen no detectada, 1 muy malo y 5 perfecto estado."
+            "Cocina", 0, 5, (1, 5),
+            help="0 imagen no detectada, 1 muy malo y 5 perfecto estado."
         )
     filtered_data = data[
         (data["distrito"].isin(selected_distritos)) &
@@ -909,13 +911,13 @@ def render_insights(data):
             promedio_tamanio = df_filtrado["tamanio"].mean()
             promedio_habitaciones = df_filtrado["habitaciones"].mean()
             promedio_banios = df_filtrado["banios"].mean()
-            promedio_planta = df_filtrado["planta"].median()
+            moda_planta = df_filtrado["planta"].mode()[0]
             promedio_rentabilidad = df_filtrado["Rentabilidad Bruta"].mean()
             
             st.write("#### Rentabilidad")
             col1, col2 = st.columns(2)
             col1.metric("💵 Media Alquiler", f"{media_alquiler_m2:,.2f} €/m²")
-            col1.metric("💵 Media Alquiler", f"{media_alquiler:,.2f} €")
+            col1.metric("💵 Media Alquiler", f"{media_alquiler:,.0f} €")
             col2.metric("🏷️ Media Venta", f"{media_precio_m2:,.0f} €/m²")
             col2.metric("🏷️ Media Rentilidad Bruta", f"{promedio_rentabilidad:,.2f}%")
             
@@ -926,7 +928,7 @@ def render_insights(data):
             
             col5, col6 = st.columns(2)
             col5.metric("🛁 Baños Promedio", f"{promedio_banios:,.1f}")
-            col6.metric("🏢 Planta Promedio", f"{promedio_planta:,.1f}")
+            col6.metric("🏢 Planta más frecuente", f"{moda_planta:,.0f}")
         else:
             st.write("No hay datos disponibles para los filtros seleccionados.")
 
