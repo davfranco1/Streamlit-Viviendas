@@ -1004,7 +1004,7 @@ def render_insights(data):
         st.write("""
         ❗ Esta herramienta **no muestra** viviendas que requieran una **reforma integral** o **casas de campo**, y las métricas se calculan acorde.
 
-        ❗ El modelo de cálculo de alquiler se ha creado con viviendas que se alquilan entre **400 y 1500 €**. Por su parte, únicamente figuran viviendas entre **60 y 150 mil €**.
+        ❗ El modelo de cálculo de alquiler se ha creado con viviendas que se alquilan entre **400 y 1500 €**. Por su parte, únicamente figuran viviendas en venta con precios entre **60 y 150 mil €**.
 
         ❗ Los precios se han ajustado a la reducción que hayas aplicado en la página de *Datos de compra y financiación*, puedes modificarla y volver a esta página.
         """)
